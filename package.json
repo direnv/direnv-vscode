@@ -1,0 +1,91 @@
+{
+	"name": "direnv",
+	"displayName": "direnv",
+	"description": "unclutter your .profile",
+	"version": "0.0.1",
+	"preview": true,
+	"icon": "assets/icon.png",
+	"author": "Martin Kühl <martin.kuehl@gmail.com>",
+	"publisher": "mkhl",
+	"license": "0BSD",
+	"repository": {
+		"type": "git",
+		"url": "https://codeberg.org/mkhl/vscode-direnv"
+	},
+	"engines": {
+		"vscode": "^1.62.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onStartupFinished"
+	],
+	"capabilities": {
+		"untrustedWorkspaces": {
+			"supported": false,
+			"description": "direnv can run arbitrary shell code"
+		}
+	},
+	"contributes": {
+		"commands": [
+			{
+				"command": "direnv.allow",
+				"title": "direnv: Allow this .envrc file"
+			},
+			{
+				"command": "direnv.block",
+				"title": "direnv: Block this .envrc file"
+			},
+			{
+				"command": "direnv.create",
+				"title": "direnv: Create .envrc file"
+			},
+			{
+				"command": "direnv.open",
+				"title": "direnv: Open .envrc file"
+			},
+			{
+				"command": "direnv.reload",
+				"title": "direnv: Reload environment"
+			}
+		],
+		"menus": {
+			"commandPalette": [
+				{
+					"command": "direnv.allow",
+					"when": "editorLangId == shellscript"
+				},
+				{
+					"command": "direnv.block",
+					"when": "editorLangId == shellscript"
+				}
+			]
+		}
+	},
+	"main": "./out/extension.js",
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"pretest": "npm run compile && npm run lint",
+		"lint": "eslint src --ext ts",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.1.4",
+		"@types/mocha": "^9.0.0",
+		"@types/node": "14.x",
+		"@types/sinon": "^10.0.6",
+		"@types/vscode": "^1.62.0",
+		"@typescript-eslint/eslint-plugin": "^5.1.0",
+		"@typescript-eslint/parser": "^5.1.0",
+		"@vscode/test-electron": "^1.6.2",
+		"eslint": "^8.1.0",
+		"glob": "^7.1.7",
+		"mocha": "^9.1.3",
+		"sinon": "^12.0.1",
+		"typescript": "^4.4.4",
+		"vsce": "^2.4.0"
+	}
+}
