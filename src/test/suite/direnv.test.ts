@@ -44,7 +44,7 @@ describe('direnv', () => {
 		});
 	});
 
-	describe('in a subdirectory', () => {
+	describe('in a subdirectory workspace', () => {
 		const subdir = path.join(workspaceRoot, 'subdir');
 		const subfile = path.join(subdir, '.envrc');
 

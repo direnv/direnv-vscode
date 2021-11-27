@@ -43,68 +43,97 @@ describe('the extension', () => {
 		}
 	});
 
-	describe('in the empty workspace', () => {
-		beforeEach(async () => {
-			await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+	describe('in the test workspace', () => {
+		describe('without any editors', () => {
+			beforeEach(async () => {
+				await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+			});
+
+			it('opens the .envrc file with direnv.open', async () => {
+				await vscode.commands.executeCommand('direnv.open');
+				const path = vscode.window.activeTextEditor?.document.fileName;
+				assert.strict.equal(path, file);
+			});
+
+			it('opens the .envrc file with direnv.create', async () => {
+				await vscode.commands.executeCommand('direnv.create');
+				const path = vscode.window.activeTextEditor?.document.fileName;
+				assert.strict.equal(path, file);
+			});
+
+			describe('with simulated user interaction', () => {
+				it('allows and loads the .envrc on direnv.reload', async () => {
+					sinon.replace(vscode.window, 'showWarningMessage', sinon.fake.resolves('Allow'));
+					await vscode.commands.executeCommand('direnv.reload');
+					await assertEnvironmentIsLoaded();
+				});
+
+				it('opens and allows and loads the .envrc on direnv.reload', async () => {
+					sinon.replace(vscode.window, 'showWarningMessage', sinon.fake.resolves('View'));
+					sinon.replace(vscode.window, 'showInformationMessage', sinon.fake.resolves('Allow'));
+					await vscode.commands.executeCommand('direnv.reload');
+					await assertEnvironmentIsLoaded();
+				});
+			});
 		});
 
-		it('opens the .envrc file with direnv.create', async () => {
-			await vscode.commands.executeCommand('direnv.create');
-			const path = vscode.window.activeTextEditor?.document.fileName;
-			assert.strict.equal(path, file);
-		});
+		describe('with the .envrc file open', () => {
+			beforeEach(async () => {
+				await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+				await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(file));
+			});
 
-		it('opens the .envrc file with direnv.open', async () => {
-			await vscode.commands.executeCommand('direnv.open');
-			const path = vscode.window.activeTextEditor?.document.fileName;
-			assert.strict.equal(path, file);
-		});
+			it('switches to the .envrc file with direnv.open', async () => {
+				await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(text));
+				await vscode.commands.executeCommand('direnv.open');
+				const path = vscode.window.activeTextEditor?.document.fileName;
+				assert.strict.equal(path, file);
+			});
 
-		describe('with simulated user interaction', () => {
-			it('allows and loads the .envrc on direnv.reload', async () => {
-				sinon.replace(vscode.window, 'showWarningMessage', sinon.fake.resolves('Allow'));
-				await vscode.commands.executeCommand('direnv.reload');
+			it('switches to the .envrc file with direnv.create', async () => {
+				await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(text));
+				await vscode.commands.executeCommand('direnv.create');
+				const path = vscode.window.activeTextEditor?.document.fileName;
+				assert.strict.equal(path, file);
+			});
+
+			it('loads the .envrc file with direnv.allow', async () => {
+				await vscode.commands.executeCommand('direnv.allow');
 				await assertEnvironmentIsLoaded();
 			});
 
-			it('opens and allows and loads the .envrc on direnv.reload', async () => {
-				sinon.replace(vscode.window, 'showWarningMessage', sinon.fake.resolves('View'));
-				sinon.replace(vscode.window, 'showInformationMessage', sinon.fake.resolves('Allow'));
-				await vscode.commands.executeCommand('direnv.reload');
-				await assertEnvironmentIsLoaded();
+			it('unloads the .envrc file with direnv.block', async () => {
+				await vscode.commands.executeCommand('direnv.allow');
+				await vscode.commands.executeCommand('direnv.block');
+				await assertEnvironmentIsNotLoaded();
 			});
 		});
 	});
 
-	describe('with the .envrc file open', () => {
-		beforeEach(async () => {
-			await vscode.commands.executeCommand('workbench.action.closeAllEditors');
-			await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(file));
+	describe('in a subdirectory workspace', () => {
+		const subdir = path.join(workspaceRoot, 'subdir');
+		const subfile = path.join(subdir, '.envrc');
+
+		beforeEach(() => {
+			sinon.replaceGetter(vscode.workspace, 'workspaceFolders', () => [{ index: 0, name: 'subdir', uri: vscode.Uri.file(subdir) }]);
 		});
 
-		it('switches to the .envrc file with direnv.create', async () => {
-			await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(text));
-			await vscode.commands.executeCommand('direnv.create');
-			const path = vscode.window.activeTextEditor?.document.fileName;
-			assert.strict.equal(path, file);
-		});
+		describe('without any editors', () => {
+			beforeEach(async () => {
+				await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+			});
 
-		it('switches to the .envrc file with direnv.open', async () => {
-			await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(text));
-			await vscode.commands.executeCommand('direnv.open');
-			const path = vscode.window.activeTextEditor?.document.fileName;
-			assert.strict.equal(path, file);
-		});
+			it('opens the parent .envrc file with direnv.open', async () => {
+				await vscode.commands.executeCommand('direnv.open');
+				const path = vscode.window.activeTextEditor?.document.fileName;
+				assert.strict.equal(path, file);
+			});
 
-		it('loads the .envrc file with direnv.allow', async () => {
-			await vscode.commands.executeCommand('direnv.allow');
-			await assertEnvironmentIsLoaded();
-		});
-
-		it('unloads the .envrc file with direnv.block', async () => {
-			await vscode.commands.executeCommand('direnv.allow');
-			await vscode.commands.executeCommand('direnv.block');
-			await assertEnvironmentIsNotLoaded();
+			it('opens a new .envrc file with direnv.create', async () => {
+				await vscode.commands.executeCommand('direnv.create');
+				const path = vscode.window.activeTextEditor?.document.fileName;
+				assert.strict.equal(path, subfile);
+			});
 		});
 	});
 });

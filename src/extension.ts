@@ -1,9 +1,19 @@
+import * as fs from 'fs/promises';
 import * as vscode from 'vscode';
 import * as direnv from './direnv';
 import * as status from './status';
 
 const backup = new Map<string, string | undefined>();
 let environment: vscode.EnvironmentVariableCollection;
+
+async function uri(path: string): Promise<vscode.Uri> {
+	try {
+		await fs.access(path);
+		return vscode.Uri.file(path);
+	} catch (_) {
+		return vscode.Uri.file(path).with({ scheme: 'untitled' });
+	}
+}
 
 async function dump(): Promise<direnv.Data> {
 	try {
@@ -34,7 +44,7 @@ async function reloadEnvironment(): Promise<void> {
 }
 
 async function open(path: string): Promise<void> {
-	const document = await vscode.workspace.openTextDocument(path);
+	const document = await vscode.workspace.openTextDocument(await uri(path));
 	await vscode.window.showTextDocument(document);
 }
 
