@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as direnv from './direnv';
 import * as status from './status';
 
-let backup = new Map<string, string | undefined>();
+const backup = new Map<string, string | undefined>();
 let environment: vscode.EnvironmentVariableCollection;
 
 async function dump(): Promise<direnv.Data> {
@@ -79,16 +79,16 @@ async function block(path: string): Promise<void> {
 }
 
 export function activate(context: vscode.ExtensionContext) {
-	status.init();
+	context.subscriptions.push(status.init());
 	environment = context.environmentVariableCollection;
 	context.subscriptions.push(vscode.commands.registerCommand('direnv.reload', async () => {
 		await reload();
 	}));
-	context.subscriptions.push(vscode.commands.registerCommand('direnv.allow', async () => {
-		await allow(vscode.window.activeTextEditor!.document.fileName);
+	context.subscriptions.push(vscode.commands.registerTextEditorCommand('direnv.allow', async (editor) => {
+		await allow(editor.document.fileName);
 	}));
-	context.subscriptions.push(vscode.commands.registerCommand('direnv.block', async () => {
-		await block(vscode.window.activeTextEditor!.document.fileName);
+	context.subscriptions.push(vscode.commands.registerTextEditorCommand('direnv.block', async (editor) => {
+		await block(editor.document.fileName);
 	}));
 	context.subscriptions.push(vscode.commands.registerCommand('direnv.create', async () => {
 		await open(await direnv.create());
@@ -99,4 +99,6 @@ export function activate(context: vscode.ExtensionContext) {
 	reload();
 }
 
-export function deactivate() { }
+export function deactivate() {
+	// nothing
+}

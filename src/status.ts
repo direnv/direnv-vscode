@@ -6,9 +6,10 @@ export const ok = '$(check)';
 export const no = '$(alert)';
 export const item = vscode.window.createStatusBarItem();
 
-export function init() {
+export function init(): vscode.Disposable {
 	item.text = `${icon}`;
 	item.show();
+	return item;
 }
 
 function loading() {

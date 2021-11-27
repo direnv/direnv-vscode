@@ -4,6 +4,8 @@ import * as path from 'path';
 import * as sinon from 'sinon';
 import * as vscode from 'vscode';
 
+export const workspaceRoot = path.resolve(__dirname, '../../../test/workspace');
+
 export function run(): Promise<void> {
 	const mocha = new Mocha({
 		ui: 'bdd',

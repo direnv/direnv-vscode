@@ -12,7 +12,8 @@
 		"@typescript-eslint"
 	],
 	"extends": [
-		"eslint:recommended"
+		"eslint:recommended",
+		"plugin:@typescript-eslint/recommended"
 	],
 	"rules": {
 		"@typescript-eslint/naming-convention": "warn",

@@ -2,11 +2,11 @@ import * as assert from 'assert';
 import * as path from 'path';
 import * as sinon from 'sinon';
 import * as vscode from 'vscode';
+import { workspaceRoot } from '.';
 import * as direnv from '../../direnv';
 
 describe('direnv', () => {
-	const root = vscode.workspace.rootPath!;
-	const file = path.join(root, '.envrc');
+	const file = path.join(workspaceRoot, '.envrc');
 
 	afterEach(async () => {
 		try {
@@ -45,11 +45,11 @@ describe('direnv', () => {
 	});
 
 	describe('in a subdirectory', () => {
-		const subdir = path.join(root, 'subdir');
+		const subdir = path.join(workspaceRoot, 'subdir');
 		const subfile = path.join(subdir, '.envrc');
 
 		beforeEach(() => {
-			sinon.replaceGetter(vscode.workspace, 'rootPath', () => subdir);
+			sinon.replaceGetter(vscode.workspace, 'workspaceFolders', () => [{ index: 0, name: 'subdir', uri: vscode.Uri.file(subdir) }]);
 		});
 
 		it('finds the .envrc file in the parent directory', async () => {

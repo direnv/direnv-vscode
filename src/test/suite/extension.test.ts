@@ -2,20 +2,22 @@ import * as assert from 'assert';
 import * as path from 'path';
 import * as sinon from 'sinon';
 import * as vscode from 'vscode';
+import { workspaceRoot } from '.';
 import * as direnv from '../../direnv';
 
 async function runTask(name: string): Promise<number> {
 	const tasks = await vscode.tasks.fetchTasks();
 	const test = tasks.find(task => task.name === name);
+	assert(test);
 	const promise = new Promise<number>(ok => {
 		const done = vscode.tasks.onDidEndTaskProcess(event => {
 			if (event.execution.task.name === name) {
 				done.dispose();
-				ok(event.exitCode!);
+				ok(event.exitCode ?? -1);
 			}
 		});
 	});
-	await vscode.tasks.executeTask(test!);
+	await vscode.tasks.executeTask(test);
 	return promise;
 }
 
@@ -30,9 +32,8 @@ async function assertEnvironmentIsNotLoaded() {
 }
 
 describe('the extension', () => {
-	const root = vscode.workspace.rootPath!;
-	const file = path.join(root, '.envrc');
-	const text = path.join(root, 'file.txt');
+	const file = path.join(workspaceRoot, '.envrc');
+	const text = path.join(workspaceRoot, 'file.txt');
 
 	afterEach(async () => {
 		try {
