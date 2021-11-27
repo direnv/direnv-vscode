@@ -3,6 +3,7 @@ import * as direnv from './direnv';
 import * as status from './status';
 import { BlockedError, Data } from './types';
 
+let backup = new Map<string, string | undefined>();
 let environment: vscode.EnvironmentVariableCollection;
 
 async function dump(): Promise<Data> {
@@ -16,9 +17,21 @@ async function dump(): Promise<Data> {
 }
 
 async function reloadEnvironment(): Promise<void> {
-	const data = await dump();
+	backup.forEach((value, key) => {
+		if (value === undefined) {
+			delete process.env[key];
+		} else {
+			process.env[key] = value;
+		}
+	});
+	backup.clear();
 	environment.clear();
-	Object.entries(data).forEach(([key, value]) => environment.replace(key, value));
+	const data = await dump();
+	Object.entries(data).forEach(([key, value]) => {
+		environment.replace(key, value);
+		backup.set(key, process.env[key]);
+		process.env[key] = value;
+	});
 }
 
 async function open(path: string): Promise<void> {

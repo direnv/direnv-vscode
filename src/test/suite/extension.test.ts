@@ -4,18 +4,29 @@ import * as sinon from 'sinon';
 import * as vscode from 'vscode';
 import * as direnv from '../../direnv';
 
-async function environmentLoaded(): Promise<boolean> {
+async function runTask(name: string): Promise<number> {
 	const tasks = await vscode.tasks.fetchTasks();
-	const test = tasks.find(task => task.name === 'test');
+	const test = tasks.find(task => task.name === name);
 	const promise = new Promise<number>(ok => {
 		const done = vscode.tasks.onDidEndTaskProcess(event => {
-			done.dispose();
-			ok(event.exitCode!);
+			if (event.execution.task.name === name) {
+				done.dispose();
+				ok(event.exitCode!);
+			}
 		});
 	});
 	await vscode.tasks.executeTask(test!);
-	const exitCode = await promise;
-	return exitCode === 0;
+	return promise;
+}
+
+async function assertEnvironmentIsLoaded() {
+	assert.strict.equal(await runTask("test-task"), 0, "environment is loaded in task");
+	assert.strict.equal(await runTask("test-process"), 0, "environment is loaded in process");
+}
+
+async function assertEnvironmentIsNotLoaded() {
+	assert.strict.notEqual(await runTask("test-task"), 0, "environment is not loaded in task");
+	assert.strict.notEqual(await runTask("test-process"), 0, "environment is not loaded in process");
 }
 
 describe('the extension', () => {
@@ -52,14 +63,14 @@ describe('the extension', () => {
 			it('allows and loads the .envrc on direnv.reload', async () => {
 				sinon.replace(vscode.window, 'showWarningMessage', sinon.fake.resolves('Allow'));
 				await vscode.commands.executeCommand('direnv.reload');
-				assert(await environmentLoaded());
+				await assertEnvironmentIsLoaded();
 			});
 
 			it('opens and allows and loads the .envrc on direnv.reload', async () => {
 				sinon.replace(vscode.window, 'showWarningMessage', sinon.fake.resolves('View'));
 				sinon.replace(vscode.window, 'showInformationMessage', sinon.fake.resolves('Allow'));
 				await vscode.commands.executeCommand('direnv.reload');
-				assert(await environmentLoaded());
+				await assertEnvironmentIsLoaded();
 			});
 		});
 	});
@@ -86,13 +97,13 @@ describe('the extension', () => {
 
 		it('loads the .envrc file with direnv.allow', async () => {
 			await vscode.commands.executeCommand('direnv.allow');
-			assert(await environmentLoaded());
+			await assertEnvironmentIsLoaded();
 		});
 
 		it('unloads the .envrc file with direnv.block', async () => {
 			await vscode.commands.executeCommand('direnv.allow');
 			await vscode.commands.executeCommand('direnv.block');
-			assert(!await environmentLoaded());
+			await assertEnvironmentIsNotLoaded();
 		});
 	});
 });
