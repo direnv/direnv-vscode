@@ -5,7 +5,7 @@ import * as status from '../../status';
 describe('the status item', () => {
 	const item = status.item;
 
-	it('loads during the callback', async()=>{
+	it('loads during the callback', async () => {
 		const promise = sinon.promise();
 		const watch = status.watch(() => promise);
 		assert.strict.equal(item.command, undefined);
@@ -27,7 +27,7 @@ describe('the status item', () => {
 		const watch = status.watch(() => promise);
 		try {
 			await watch;
-		} catch(e) {
+		} catch (e) {
 			assert.strict.equal(e, 2);
 			assert.strict.equal(item.command, 'direnv.reload');
 			assert.strict.equal(item.text, `${status.icon}${status.no}`);
