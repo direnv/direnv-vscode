@@ -2,6 +2,7 @@ import * as glob from 'glob';
 import * as Mocha from 'mocha';
 import * as path from 'path';
 import * as sinon from 'sinon';
+import * as vscode from 'vscode';
 
 export function run(): Promise<void> {
 	const mocha = new Mocha({
@@ -10,7 +11,10 @@ export function run(): Promise<void> {
 		rootHooks: {
 			afterEach() {
 				sinon.restore();
-			}
+			},
+			afterAll() {
+				return vscode.commands.executeCommand('workbench.action.closeFolder');
+			},
 		}
 	});
 
