@@ -1,9 +1,23 @@
 import * as cp from 'child_process';
 import { promisify } from 'util';
 import * as vscode from 'vscode';
-import { BlockedError, Data, Stdio } from './types';
 
 const exec = promisify(cp.execFile);
+
+export class BlockedError extends Error {
+	constructor(public readonly path: string) {
+		super(`${path} is blocked`);
+	}
+}
+
+export type Data = {
+	[key: string]: string;
+};
+
+export type Stdio = {
+	stdout: string,
+	stderr: string,
+};
 
 const echo: Data = {
 	// eslint-disable-next-line @typescript-eslint/naming-convention

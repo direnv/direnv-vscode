@@ -1,16 +1,15 @@
 import * as vscode from 'vscode';
 import * as direnv from './direnv';
 import * as status from './status';
-import { BlockedError, Data } from './types';
 
 let backup = new Map<string, string | undefined>();
 let environment: vscode.EnvironmentVariableCollection;
 
-async function dump(): Promise<Data> {
+async function dump(): Promise<direnv.Data> {
 	try {
 		return await direnv.dump();
 	} catch (e) {
-		if (!(e instanceof BlockedError)) { throw e; }
+		if (!(e instanceof direnv.BlockedError)) { throw e; }
 		handleBlocked(e.path);
 		return {};
 	}
