@@ -17,6 +17,6 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.0.1] - 2021-11-23
 - Initial release
 
-[Unreleased]: https://codeberg.org/mkhl/vscode-direnv/compare/v0.1.0...HEAD
-[0.1.0]: https://codeberg.org/mkhl/vscode-direnv/compare/v0.0.1...v0.1.0
-[0.0.1]: https://codeberg.org/mkhl/vscode-direnv/releases/tag/v0.0.1
+[Unreleased]: https://github.com/direnv/direnv-vscode/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/direnv/direnv-vscode/compare/v0.0.1...v0.1.0
+[0.0.1]: https://github.com/direnv/direnv-vscode/releases/tag/v0.0.1

@@ -10,7 +10,7 @@
 	"license": "0BSD",
 	"repository": {
 		"type": "git",
-		"url": "https://codeberg.org/mkhl/vscode-direnv"
+		"url": "https://github.com/direnv/direnv-vscode"
 	},
 	"engines": {
 		"vscode": "^1.62.0"
