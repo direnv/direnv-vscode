@@ -80,18 +80,18 @@ describe('the extension', () => {
 		describe('with the .envrc file open', () => {
 			beforeEach(async () => {
 				await vscode.commands.executeCommand('workbench.action.closeAllEditors');
-				await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(file));
+				await vscode.commands.executeCommand('vscode.open', vscode.Uri.file(file));
 			});
 
 			it('switches to the .envrc file with direnv.open', async () => {
-				await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(text));
+				await vscode.commands.executeCommand('vscode.open', vscode.Uri.file(text));
 				await vscode.commands.executeCommand('direnv.open');
 				const path = vscode.window.activeTextEditor?.document.fileName;
 				assert.strict.equal(path, file);
 			});
 
 			it('switches to the .envrc file with direnv.create', async () => {
-				await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(text));
+				await vscode.commands.executeCommand('vscode.open', vscode.Uri.file(text));
 				await vscode.commands.executeCommand('direnv.create');
 				const path = vscode.window.activeTextEditor?.document.fileName;
 				assert.strict.equal(path, file);

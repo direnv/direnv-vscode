@@ -44,8 +44,7 @@ async function reloadEnvironment(): Promise<void> {
 }
 
 async function open(path: string): Promise<void> {
-	const document = await vscode.workspace.openTextDocument(await uri(path));
-	await vscode.window.showTextDocument(document);
+	await vscode.commands.executeCommand('vscode.open', await(uri(path)));
 }
 
 async function openThenAllow(path: string): Promise<void> {
