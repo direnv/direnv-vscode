@@ -66,6 +66,8 @@
 	"main": "./out/extension.js",
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
+		"clean": "rm -r ./out",
+		"precompile": "npm run clean",
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"lint": "tsfmt --verify && eslint ./src --ext ts",
