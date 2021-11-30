@@ -3,7 +3,6 @@ import * as path from 'path';
 import * as sinon from 'sinon';
 import * as vscode from 'vscode';
 import { workspaceRoot } from '.';
-import * as direnv from '../../direnv';
 
 async function runTask(name: string): Promise<number> {
 	const tasks = await vscode.tasks.fetchTasks();
@@ -34,14 +33,6 @@ async function assertEnvironmentIsNotLoaded() {
 describe('the extension', () => {
 	const file = path.join(workspaceRoot, '.envrc');
 	const text = path.join(workspaceRoot, 'file.txt');
-
-	afterEach(async () => {
-		try {
-			await direnv.block(file);
-		} catch (_) {
-			// ignore errors
-		}
-	});
 
 	describe('in the test workspace', () => {
 		describe('without any editors', () => {

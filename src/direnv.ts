@@ -2,7 +2,7 @@ import * as cp from 'child_process';
 import { promisify } from 'util';
 import * as vscode from 'vscode';
 
-const exec = promisify(cp.execFile);
+const execFile = promisify(cp.execFile);
 
 export class BlockedError extends Error {
 	constructor(public readonly path: string) {
@@ -42,7 +42,7 @@ function direnv(args: string[], env: Data | null = null): Promise<Stdio> {
 			...env,
 		}
 	};
-	return exec('direnv', args, options);
+	return execFile('direnv', args, options);
 }
 
 export async function allow(path: string): Promise<void> {
