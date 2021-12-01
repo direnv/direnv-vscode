@@ -1,6 +1,6 @@
-import * as vscode from 'vscode';
+import * as vscode from 'vscode'
 
-const icon = '$(folder)';
+const icon = '$(folder)'
 
 export const enum State {
 	loading = '$(sync~spin)',
@@ -12,25 +12,25 @@ export const enum State {
 
 export class Item implements vscode.Disposable {
 	constructor(private item: vscode.StatusBarItem) {
-		item.text = icon;
-		item.show();
+		item.text = icon
+		item.show()
 	}
 
 	dispose() {
-		this.item.dispose();
+		this.item.dispose()
 	}
 
 	set state(state: State) {
-		this.item.text = icon + state;
+		this.item.text = icon + state
 		switch (state) {
 			case State.loading:
-				this.item.command = undefined;
-				this.item.tooltip = 'Loading direnv environment…';
-				break;
+				this.item.command = undefined
+				this.item.tooltip = 'Loading direnv environment…'
+				break
 			default:
-				this.item.command = 'direnv.reload';
-				this.item.tooltip = 'Reload direnv environment';
-				break;
+				this.item.command = 'direnv.reload'
+				this.item.tooltip = 'Reload direnv environment'
+				break
 		}
 	}
 }
