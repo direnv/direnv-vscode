@@ -79,7 +79,7 @@ export async function dump(): Promise<Data> {
 	try {
 		const { stdout } = await direnv(['export', 'json']);
 		if (!stdout) { return {}; }
-		return JSON.parse(stdout);
+		return JSON.parse(stdout) as Data;
 	} catch (e) {
 		if (isStdio(e)) {
 			const found = /direnv: error (?<path>.+) is blocked./.exec(e.stderr);

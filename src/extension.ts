@@ -98,8 +98,10 @@ class Direnv implements vscode.Disposable {
 
 	private async onFailed(err: unknown) {
 		this.status.state = status.State.failed;
-		const msg = (err instanceof Error) ? err.message : err;
-		await vscode.window.showErrorMessage(`direnv error: ${msg}`);
+		const msg = message(err);
+		if (msg !== undefined) {
+			await vscode.window.showErrorMessage(`direnv error: ${msg}`);
+		}
 	}
 
 	private async onBlocked(path: string) {
@@ -124,6 +126,13 @@ class Direnv implements vscode.Disposable {
 	}
 }
 
+function message(err: unknown): string | undefined {
+	if (typeof err === 'string') { return err; }
+	if (err instanceof Error) { return err.message; }
+	console.error('unhandled error', err);
+	return undefined;
+}
+
 async function uri(path: string): Promise<vscode.Uri> {
 	try {
 		await fs.access(path);
@@ -143,14 +152,20 @@ export function activate(context: vscode.ExtensionContext) {
 	const instance = new Direnv(environment, statusItem);
 	context.subscriptions.push(instance);
 	context.subscriptions.push(
-		vscode.commands.registerCommand('direnv.reload', async () => {
-			await instance.reload();
+		vscode.commands.registerCommand('direnv.reload', () => {
+			instance.reload();
 		}),
-		vscode.commands.registerTextEditorCommand('direnv.allow', async (editor) => {
-			await instance.allow(editor.document.fileName);
+		vscode.commands.registerCommand('direnv.allow', async () => {
+			const path = vscode.window.activeTextEditor?.document.fileName;
+			if (path !== undefined) {
+				await instance.allow(path);
+			}
 		}),
-		vscode.commands.registerTextEditorCommand('direnv.block', async (editor) => {
-			await instance.block(editor.document.fileName);
+		vscode.commands.registerCommand('direnv.block', async () => {
+			const path = vscode.window.activeTextEditor?.document.fileName;
+			if (path !== undefined) {
+				await instance.block(path);
+			}
 		}),
 		vscode.commands.registerCommand('direnv.create', async () => {
 			await open(await direnv.create());
