@@ -1,44 +1,36 @@
 import * as vscode from 'vscode';
 
-export const icon = '$(combine)';
-export const wait = '$(sync~spin)';
-export const ok = '$(check)';
-export const no = '$(alert)';
-export const item = vscode.window.createStatusBarItem();
+const icon = '$(folder)';
 
-export function init(): vscode.Disposable {
-	item.text = `${icon}`;
-	item.show();
-	return item;
+export const enum State {
+	loading = '$(sync~spin)',
+	loaded = '$(pass)',
+	empty = '$(question)',
+	failed = '$(flame)',
+	blocked = '$(error)',
 }
 
-function loading() {
-	item.command = undefined;
-	item.tooltip = 'direnv: Loading environment...';
-	item.text = `${icon}${wait}`;
-}
+export class Item implements vscode.Disposable {
+	constructor(private item: vscode.StatusBarItem) {
+		item.text = icon;
+		item.show();
+	}
 
-function loaded() {
-	item.command = 'direnv.reload';
-	item.tooltip = 'direnv loaded. Reload environment?';
-	item.text = `${icon}${ok}`;
-}
+	dispose() {
+		this.item.dispose();
+	}
 
-function failed() {
-	item.command = 'direnv.reload';
-	item.tooltip = 'direnv failed. Reload environment?';
-	item.text = `${icon}${no}`;
-}
-
-export async function watch<T>(callback: () => Promise<T>): Promise<T> {
-	loading();
-	try {
-		const result = await callback();
-		loaded();
-		return result;
-	} catch (e) {
-		console.error('direnv: reload failed', e);
-		failed();
-		throw e;
+	set state(state: State) {
+		this.item.text = icon + state;
+		switch (state) {
+			case State.loading:
+				this.item.command = undefined;
+				this.item.tooltip = 'Loading direnv environment…';
+				break;
+			default:
+				this.item.command = 'direnv.reload';
+				this.item.tooltip = 'Reload direnv environment';
+				break;
+		}
 	}
 }

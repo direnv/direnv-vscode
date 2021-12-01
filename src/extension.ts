@@ -3,8 +3,126 @@ import * as vscode from 'vscode';
 import * as direnv from './direnv';
 import * as status from './status';
 
-const backup = new Map<string, string | undefined>();
-let environment: vscode.EnvironmentVariableCollection;
+class Direnv implements vscode.Disposable {
+	private backup = new Map<string, string | undefined>();
+	private willLoad = new vscode.EventEmitter<void>();
+	private didLoad = new vscode.EventEmitter<direnv.Data>();
+	private loaded = new vscode.EventEmitter<void>();
+	private failed = new vscode.EventEmitter<unknown>();
+	private blocked = new vscode.EventEmitter<string>();
+	private viewBlocked = new vscode.EventEmitter<string>();
+
+	constructor(private environment: vscode.EnvironmentVariableCollection, private status: status.Item) {
+		this.willLoad.event(() => this.onWillLoad());
+		this.didLoad.event(e => this.onDidLoad(e));
+		this.loaded.event(() => this.onLoaded());
+		this.failed.event(e => this.onFailed(e));
+		this.blocked.event(e => this.onBlocked(e));
+		this.viewBlocked.event(e => this.onViewBlocked(e));
+	}
+
+	dispose() {
+		this.status.dispose();
+	}
+
+	async allow(path: string) {
+		await this.try(async () => {
+			await direnv.allow(path);
+			this.willLoad.fire();
+		});
+	}
+
+	async block(path: string) {
+		await this.try(async () => {
+			await direnv.block(path);
+			this.willLoad.fire();
+		});
+	}
+
+	reload() {
+		this.willLoad.fire();
+	}
+
+	private updateEnvironment(data: direnv.Data) {
+		Object.entries(data).forEach(([key, value]) => {
+			if (!this.backup.has(key)) { // keep the oldest value
+				this.backup.set(key, process.env[key]);
+			}
+			process.env[key] = value;
+			this.environment.replace(key, value);
+
+		});
+	}
+
+	private resetEnvironment() {
+		this.backup.forEach((value, key) => {
+			if (value === undefined) {
+				delete process.env[key];
+			} else {
+				process.env[key] = value;
+			}
+		});
+		this.backup.clear();
+		this.environment.clear();
+	}
+
+	private async try<T>(callback: () => Promise<T>): Promise<void> {
+		try {
+			await callback();
+		} catch (err) {
+			this.failed.fire(err);
+		}
+	}
+
+	private async onWillLoad() {
+		this.status.state = status.State.loading;
+		try {
+			const data = await direnv.dump();
+			this.didLoad.fire(data);
+		} catch (e) {
+			if (e instanceof direnv.BlockedError) {
+				this.blocked.fire(e.path);
+			}
+		}
+	}
+
+	private onDidLoad(data: direnv.Data) {
+		this.updateEnvironment(data);
+		this.loaded.fire();
+	}
+
+	private onLoaded() {
+		this.status.state = this.backup.size ? status.State.loaded : status.State.empty;
+		// TODO: restart extension host here?
+	}
+
+	private async onFailed(err: unknown) {
+		this.status.state = status.State.failed;
+		const msg = (err instanceof Error) ? err.message : err;
+		await vscode.window.showErrorMessage(`direnv error: ${msg}`);
+	}
+
+	private async onBlocked(path: string) {
+		this.resetEnvironment();
+		this.status.state = status.State.blocked;
+		const options = ['Allow', 'View'];
+		const choice = await vscode.window.showWarningMessage(`direnv: ${path} is blocked`, ...options);
+		if (choice === 'Allow') {
+			await this.allow(path);
+		}
+		if (choice === 'View') {
+			await open(path);
+			this.viewBlocked.fire(path);
+		}
+	}
+
+	private async onViewBlocked(path: string) {
+		const choice = await vscode.window.showInformationMessage(`direnv: Allow ${path}?`, 'Allow');
+		if (choice === 'Allow') {
+			await this.allow(path);
+		}
+	}
+}
 
 async function uri(path: string): Promise<vscode.Uri> {
 	try {
@@ -15,97 +133,33 @@ async function uri(path: string): Promise<vscode.Uri> {
 	}
 }
 
-async function dump(): Promise<direnv.Data> {
-	try {
-		return await direnv.dump();
-	} catch (e) {
-		if (!(e instanceof direnv.BlockedError)) { throw e; }
-		handleBlocked(e.path);
-		return {};
-	}
-}
-
-async function reloadEnvironment(): Promise<void> {
-	backup.forEach((value, key) => {
-		if (value === undefined) {
-			delete process.env[key];
-		} else {
-			process.env[key] = value;
-		}
-	});
-	backup.clear();
-	environment.clear();
-	const data = await dump();
-	Object.entries(data).forEach(([key, value]) => {
-		environment.replace(key, value);
-		backup.set(key, process.env[key]);
-		process.env[key] = value;
-	});
-}
-
 async function open(path: string): Promise<void> {
 	await vscode.commands.executeCommand('vscode.open', await uri(path));
 }
 
-async function openThenAllow(path: string): Promise<void> {
-	await open(path);
-	const choice = await vscode.window.showInformationMessage(`direnv: Allow ${path}?`, 'Allow', 'Ignore');
-	if (choice !== 'Allow') { return; }
-	return allow(path);
-}
-
-async function handleBlocked(path: string): Promise<void> {
-	const options = ['Allow', 'View', 'Ignore'];
-	const choice = await vscode.window.showWarningMessage(`direnv: ${path} is blocked`, ...options);
-	if (choice === 'Allow') {
-		allowThenReload(path);
-	}
-	if (choice === 'View') {
-		openThenAllow(path);
-	}
-}
-
-async function allowThenReload(path: string): Promise<void> {
-	await direnv.allow(path);
-	return reloadEnvironment();
-}
-
-async function blockThenReload(path: string): Promise<void> {
-	await direnv.block(path);
-	return reloadEnvironment();
-}
-
-async function reload(): Promise<void> {
-	return status.watch(() => reloadEnvironment());
-}
-
-async function allow(path: string): Promise<void> {
-	return status.watch(() => allowThenReload(path));
-}
-
-async function block(path: string): Promise<void> {
-	return status.watch(() => blockThenReload(path));
-}
-
 export function activate(context: vscode.ExtensionContext) {
-	context.subscriptions.push(status.init());
-	environment = context.environmentVariableCollection;
-	context.subscriptions.push(vscode.commands.registerCommand('direnv.reload', async () => {
-		await reload();
-	}));
-	context.subscriptions.push(vscode.commands.registerTextEditorCommand('direnv.allow', async (editor) => {
-		await allow(editor.document.fileName);
-	}));
-	context.subscriptions.push(vscode.commands.registerTextEditorCommand('direnv.block', async (editor) => {
-		await block(editor.document.fileName);
-	}));
-	context.subscriptions.push(vscode.commands.registerCommand('direnv.create', async () => {
-		await open(await direnv.create());
-	}));
-	context.subscriptions.push(vscode.commands.registerCommand('direnv.open', async () => {
-		await open(await direnv.find());
-	}));
-	reload();
+	const environment = context.environmentVariableCollection;
+	const statusItem = new status.Item(vscode.window.createStatusBarItem());
+	const instance = new Direnv(environment, statusItem);
+	context.subscriptions.push(instance);
+	context.subscriptions.push(
+		vscode.commands.registerCommand('direnv.reload', async () => {
+			await instance.reload();
+		}),
+		vscode.commands.registerTextEditorCommand('direnv.allow', async (editor) => {
+			await instance.allow(editor.document.fileName);
+		}),
+		vscode.commands.registerTextEditorCommand('direnv.block', async (editor) => {
+			await instance.block(editor.document.fileName);
+		}),
+		vscode.commands.registerCommand('direnv.create', async () => {
+			await open(await direnv.create());
+		}),
+		vscode.commands.registerCommand('direnv.open', async () => {
+			await open(await direnv.find());
+		}),
+	);
+	instance.reload();
 }
 
 export function deactivate() {
