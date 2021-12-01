@@ -20,8 +20,16 @@ direnv provides for the workspace.
 If the corresponding .envrc file is not allowed yet
 it provides the option to allow or view and then allow the file.
 
+The custom environment is available in [integrated terminals][vscode-terminal],
+in [custom tasks of type `shell`][vscode-tasks],
+and in [environment variable substitutions (`${env:VAR}`)][vscode-env-vars]
+
 **Only allow .envrc files from sources you trust
 since direnv executes arbitrary shell script.**
+
+[vscode-terminal]: https://code.visualstudio.com/docs/editor/integrated-terminal
+[vscode-tasks]: https://code.visualstudio.com/docs/editor/tasks#_custom-tasks
+[vscode-env-vars]: https://code.visualstudio.com/docs/editor/variables-reference#_environment-variables
 
 ### Commands
 
@@ -59,6 +67,9 @@ We also recommend hooking direnv into your shell.
 
 This extension does *not* watch the filesystems for changes.
 You will have to reload your environment manually for now.
+
+Custom tasks with type `process` don't pick up on the modified environment.
+Several task provider extensions provide these kinds of tasks.
 
 direnv executes arbitrary shell scripts
 so this extension requires trusted workspaces.
