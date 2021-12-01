@@ -7,6 +7,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 ### Fixed
 - Create new .envrc files when they do not exist
+### Added
+- Notify about errors
+### Changed
+- Activate as early as possible
+- Update status bar icons
+- Remove unnecessary dialog options
 
 ## [0.1.0] - 2021-11-27
 ### Added
