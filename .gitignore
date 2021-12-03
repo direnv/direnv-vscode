@@ -1,5 +1,7 @@
 out
 dist
 node_modules
+result
+.direnv/
 .vscode-test/
 *.vsix
