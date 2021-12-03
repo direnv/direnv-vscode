@@ -11,6 +11,7 @@ class Direnv implements vscode.Disposable {
 	private failed = new vscode.EventEmitter<unknown>()
 	private blocked = new vscode.EventEmitter<string>()
 	private viewBlocked = new vscode.EventEmitter<string>()
+	private blockedPath: string | undefined
 
 	constructor(private environment: vscode.EnvironmentVariableCollection, private status: status.Item) {
 		this.willLoad.event(() => this.onWillLoad())
@@ -37,6 +38,12 @@ class Direnv implements vscode.Disposable {
 			await direnv.block(path)
 			this.willLoad.fire()
 		})
+	}
+
+	didOpen(path: string) {
+		if (this.blockedPath === path) {
+			this.viewBlocked.fire(path)
+		}
 	}
 
 	reload() {
@@ -75,6 +82,7 @@ class Direnv implements vscode.Disposable {
 	}
 
 	private async onWillLoad() {
+		this.blockedPath = undefined
 		this.status.state = status.State.loading
 		try {
 			const data = await direnv.dump()
@@ -105,6 +113,7 @@ class Direnv implements vscode.Disposable {
 	}
 
 	private async onBlocked(path: string) {
+		this.blockedPath = path
 		this.resetEnvironment()
 		this.status.state = status.State.blocked
 		const options = ['Allow', 'View']
@@ -114,7 +123,6 @@ class Direnv implements vscode.Disposable {
 		}
 		if (choice === 'View') {
 			await open(path)
-			this.viewBlocked.fire(path)
 		}
 	}
 
@@ -172,6 +180,9 @@ export function activate(context: vscode.ExtensionContext) {
 		}),
 		vscode.commands.registerCommand('direnv.open', async () => {
 			await open(await direnv.find())
+		}),
+		vscode.workspace.onDidOpenTextDocument(e => {
+			instance.didOpen(e.fileName)
 		}),
 	)
 	instance.reload()

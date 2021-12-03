@@ -65,6 +65,14 @@ describe('the extension', () => {
 					await vscode.commands.executeCommand('direnv.reload')
 					await assertEnvironmentIsLoaded()
 				})
+
+				it('allows and loads the .envrc on direnv.open', async () => {
+					sinon.replace(vscode.window, 'showWarningMessage', sinon.fake.resolves(undefined))
+					sinon.replace(vscode.window, 'showInformationMessage', sinon.fake.resolves('Allow'))
+					await vscode.commands.executeCommand('direnv.reload')
+					await vscode.commands.executeCommand('direnv.open')
+					await assertEnvironmentIsLoaded()
+				})
 			})
 		})
 
