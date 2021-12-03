@@ -70,6 +70,7 @@
 		"precompile": "npm run clean",
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
+		"package": "vsce package",
 		"lint": "tsfmt --verify && eslint ./src --ext ts",
 		"fix": "tsfmt --replace && eslint ./src --ext ts --fix",
 		"pretest": "npm run compile && npm run lint",

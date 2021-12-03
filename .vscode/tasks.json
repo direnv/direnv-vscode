@@ -30,5 +30,12 @@
 			"label": "npm: fix",
 			"detail": "tsfmt --replace && eslint ./src --ext ts --fix"
 		},
+		{
+			"type": "npm",
+			"script": "package",
+			"problemMatcher": [],
+			"label": "npm: package",
+			"detail": "vsce package"
+		}
 	]
 }
