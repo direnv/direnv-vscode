@@ -1,18 +1,16 @@
 import * as vscode from 'vscode'
 
-const icon = '$(folder)'
-
 export const enum State {
-	loading = '$(sync~spin)',
-	loaded = '$(pass)',
-	empty = '$(question)',
-	failed = '$(flame)',
-	blocked = '$(error)',
+	loading = '$(folder)$(sync~spin)',
+	loaded = '$(folder-active)',
+	empty = '$(folder)',
+	blocked = '$(folder)$(shield)',
+	failed = '$(folder)$(flame)',
 }
 
 export class Item implements vscode.Disposable {
 	constructor(private item: vscode.StatusBarItem) {
-		item.text = icon
+		item.text = State.empty
 		item.show()
 	}
 
@@ -21,15 +19,27 @@ export class Item implements vscode.Disposable {
 	}
 
 	set state(state: State) {
-		this.item.text = icon + state
+		this.item.text = state
 		switch (state) {
 			case State.loading:
+				this.item.tooltip = 'direnv loading environment…'
 				this.item.command = undefined
-				this.item.tooltip = 'Loading direnv environment…'
 				break
-			default:
+			case State.loaded:
+				this.item.tooltip = 'direnv environment loaded\nClick to reload'
 				this.item.command = 'direnv.reload'
-				this.item.tooltip = 'Reload direnv environment'
+				break
+			case State.empty:
+				this.item.tooltip = 'direnv environment empty\nClick to create'
+				this.item.command = 'direnv.create'
+				break
+			case State.blocked:
+				this.item.tooltip = 'direnv environment blocked\nClick to review'
+				this.item.command = 'direnv.open'
+				break
+			case State.failed:
+				this.item.tooltip = 'direnv failed\nClick to reload'
+				this.item.command = 'direnv.reload'
 				break
 		}
 	}

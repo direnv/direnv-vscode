@@ -5,6 +5,8 @@ All notable changes to the "direnv" extension will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+### Changed
+- Improve status item
 
 ## [0.2.0] - 2021-12-01
 ### Fixed
