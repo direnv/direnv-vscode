@@ -1,7 +1,9 @@
+.direnv/
 .vscode/**
 .vscode-test/**
 src/**
 test/**
+result
 .editorconfig
 .envrc
 .gitignore
