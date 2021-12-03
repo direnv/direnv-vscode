@@ -2,10 +2,10 @@
 	"name": "direnv",
 	"displayName": "direnv",
 	"description": "unclutter your .profile",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"preview": true,
 	"icon": "assets/icon.png",
-	"author": "Martin Kühl <martin.kuehl@gmail.com>",
+	"author": "Martin Kühl <martin.kuehl@posteo.net>",
 	"publisher": "mkhl",
 	"license": "0BSD",
 	"repository": {
