@@ -38,6 +38,33 @@
           devShell = prev.mkShell {
             inputsFrom = [ this.${name}.defaultPackage ];
           };
+
+          checks = {
+            compile = prev.mkYarnPackage {
+              src = ./.;
+              name = "${name}-${version}.compile";
+              buildPhase = "yarn run compile";
+              installPhase = "mkdir $out";
+              distPhase = "true";
+            };
+
+            lint = prev.mkYarnPackage {
+              src = ./.;
+              name = "${name}-${version}.lint";
+              buildPhase = "yarn run lint";
+              installPhase = "mkdir $out";
+              distPhase = "true";
+            };
+
+            # TODO: @vscode/test-electron downloads vscode to run the tests in...
+            # test = prev.mkYarnPackage {
+            #   src = ./.;
+            #   name = "${name}-${version}.test";
+            #   buildPhase = "yarn run test";
+            #   installPhase = "mkdir $out";
+            #   distPhase = "true";
+            # };
+          };
         };
       };
     };
