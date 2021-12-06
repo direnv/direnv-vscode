@@ -6,7 +6,13 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        cfg:
+          - os: macos-latest
+          - os: ubuntu-latest
+    runs-on: {{ matrix.cfg.os }}
     steps:
       - uses: actions/checkout@v2
       - uses: cachix/install-nix-action@v16
