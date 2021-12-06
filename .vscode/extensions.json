@@ -1,12 +1,6 @@
 {
-<<<<<<< HEAD
 	"recommendations": [
 		"EditorConfig.EditorConfig",
 		"dbaeumer.vscode-eslint",
 	]
-=======
-    "recommendations": [
-        "editorconfig.editorconfig"
-    ]
->>>>>>> 243df2f (vscode: added editorconfig to recommends)
 }
