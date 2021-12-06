@@ -11,7 +11,7 @@ on:
       - main
 
 jobs:
-  yarn:
+  test:
     strategy:
       fail-fast: false
       matrix:
