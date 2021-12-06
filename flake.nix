@@ -43,7 +43,7 @@
             compile = prev.mkYarnPackage {
               src = ./.;
               name = "${name}-${version}.compile";
-              buildPhase = "yarn run compile";
+              buildPhase = "yarn run --offline compile";
               installPhase = "mkdir $out";
               distPhase = "true";
             };
@@ -51,19 +51,22 @@
             lint = prev.mkYarnPackage {
               src = ./.;
               name = "${name}-${version}.lint";
-              buildPhase = "yarn run lint";
+              buildPhase = "yarn run --offline lint";
               installPhase = "mkdir $out";
               distPhase = "true";
             };
 
-            # TODO: @vscode/test-electron downloads vscode to run the tests in...
-            # test = prev.mkYarnPackage {
-            #   src = ./.;
-            #   name = "${name}-${version}.test";
-            #   buildPhase = "yarn run test";
-            #   installPhase = "mkdir $out";
-            #   distPhase = "true";
-            # };
+            test = prev.mkYarnPackage {
+              src = ./.;
+              name = "${name}-${version}.test";
+              postConfigure = ''
+                mkdir -p deps/${name}/.vscode-test/vscode-linux-x64-${prev.vscode.version}/
+                ln -s ${prev.vscode}/bin deps/${name}/.vscode-test/vscode-linux-x64-${prev.vscode.version}/VSCode-linux-x64
+              '';
+              buildPhase = "yarn run --offline test";
+              installPhase = "mkdir $out";
+              distPhase = "true";
+            };
           };
         };
       };
