@@ -1,4 +1,4 @@
-.envrc
+.envrc.local
 out
 dist
 node_modules
