@@ -15,6 +15,7 @@
     in
     flake-utils.lib.simpleFlake {
       inherit name self nixpkgs;
+      systems = flake-utils.lib.defaultSystems;
       overlay = this: prev: {
         ${name} = {
           vsix = prev.mkYarnPackage {
