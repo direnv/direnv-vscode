@@ -1,0 +1,21 @@
+name: Build extension
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Nix
+        uses: cachix/install-nix-action@v13
+
+      - uses: actions/checkout@v2.3.4
+
+      - run: |
+          nix-build
+          cp result $(readlink result | tail -c+45)
+
+      - name: Upload built extension
+        uses: actions/upload-artifact@v2
+        with:
+          name: "vscode-direnv.vsix"
+          path: "./*.vsix"
