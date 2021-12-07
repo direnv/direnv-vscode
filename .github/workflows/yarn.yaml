@@ -1,4 +1,4 @@
-name: ci
+name: Test extension with yarn
 
 on:
   push:
