@@ -8,21 +8,16 @@
 		"node": true,
 		"mocha": true
 	},
-	"plugins": [
-		"@typescript-eslint"
-	],
 	"extends": [
 		"eslint:recommended",
 		"plugin:@typescript-eslint/recommended",
-		"plugin:@typescript-eslint/recommended-requiring-type-checking"
+		"plugin:@typescript-eslint/recommended-requiring-type-checking",
+		"plugin:prettier/recommended"
 	],
 	"rules": {
 		"@typescript-eslint/naming-convention": "warn",
-		"@typescript-eslint/semi": ["warn", "never"],
-		"curly": "warn",
 		"eqeqeq": "warn",
-		"no-throw-literal": "warn",
-		"semi": "off"
+		"no-throw-literal": "warn"
 	},
 	"ignorePatterns": [
 		"out",
