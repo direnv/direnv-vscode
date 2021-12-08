@@ -5,10 +5,12 @@ All notable changes to the "direnv" extension will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+### Added
+- Offer to allow .envrc when saving it
 
 ## [0.3.0] - 2021-12-03
 ### Added
-- Offer to allow blocked envrc when opening it
+- Offer to allow blocked .envrc when opening it
 ### Changed
 - Improve status item
 

@@ -46,6 +46,13 @@ class Direnv implements vscode.Disposable {
 		}
 	}
 
+	async didSave(path: string) {
+		const envrc = await direnv.find()
+		if (envrc === path) {
+			this.viewBlocked.fire(path)
+		}
+	}
+
 	reload() {
 		this.willLoad.fire()
 	}
@@ -183,6 +190,9 @@ export function activate(context: vscode.ExtensionContext) {
 		}),
 		vscode.workspace.onDidOpenTextDocument(e => {
 			instance.didOpen(e.fileName)
+		}),
+		vscode.workspace.onDidSaveTextDocument(async e => {
+			await instance.didSave(e.fileName)
 		}),
 	)
 	instance.reload()

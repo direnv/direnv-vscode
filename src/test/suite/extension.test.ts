@@ -73,6 +73,13 @@ describe('the extension', () => {
 					await vscode.commands.executeCommand('direnv.open')
 					await assertEnvironmentIsLoaded()
 				})
+
+				it('allows and loads the .envrc on save', async () => {
+					sinon.replace(vscode.window, 'showInformationMessage', sinon.fake.resolves('Allow'))
+					await vscode.commands.executeCommand('direnv.open')
+					await vscode.window.activeTextEditor?.document.save()
+					await assertEnvironmentIsLoaded()
+				})
 			})
 		})
 
