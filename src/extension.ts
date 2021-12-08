@@ -55,8 +55,14 @@ class Direnv implements vscode.Disposable {
 			if (!this.backup.has(key)) { // keep the oldest value
 				this.backup.set(key, process.env[key])
 			}
-			process.env[key] = value
-			this.environment.replace(key, value)
+
+			if (value !== null) {
+				process.env[key] = value
+				this.environment.replace(key, value)
+			} else {
+				delete process.env[key]
+				this.environment.delete(key)
+			}
 
 		})
 	}
