@@ -1,5 +1,6 @@
 import * as fs from 'fs/promises'
 import * as vscode from 'vscode'
+import * as command from './command'
 import * as direnv from './direnv'
 import * as status from './status'
 
@@ -199,25 +200,25 @@ export function activate(context: vscode.ExtensionContext) {
 	const instance = new Direnv(environment, statusItem)
 	context.subscriptions.push(instance)
 	context.subscriptions.push(
-		vscode.commands.registerCommand('direnv.reload', () => {
+		vscode.commands.registerCommand(command.Direnv.reload, () => {
 			instance.reload()
 		}),
-		vscode.commands.registerCommand('direnv.allow', async () => {
+		vscode.commands.registerCommand(command.Direnv.allow, async () => {
 			const path = vscode.window.activeTextEditor?.document.fileName
 			if (path !== undefined) {
 				await instance.allow(path)
 			}
 		}),
-		vscode.commands.registerCommand('direnv.block', async () => {
+		vscode.commands.registerCommand(command.Direnv.block, async () => {
 			const path = vscode.window.activeTextEditor?.document.fileName
 			if (path !== undefined) {
 				await instance.block(path)
 			}
 		}),
-		vscode.commands.registerCommand('direnv.create', async () => {
+		vscode.commands.registerCommand(command.Direnv.create, async () => {
 			await open(await direnv.create())
 		}),
-		vscode.commands.registerCommand('direnv.open', async () => {
+		vscode.commands.registerCommand(command.Direnv.open, async () => {
 			await open(await direnv.find())
 		}),
 		vscode.workspace.onDidOpenTextDocument((e) => {

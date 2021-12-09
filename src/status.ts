@@ -1,4 +1,5 @@
 import * as vscode from 'vscode'
+import * as command from './command'
 
 export type Delta = {
 	changed: number
@@ -9,7 +10,7 @@ export class State {
 	private constructor(
 		readonly text: string,
 		readonly tooltip: string,
-		readonly command: string | undefined = undefined,
+		readonly command: command.Direnv | undefined = undefined,
 	) {}
 
 	static loading = new State('$(folder)$(sync~spin)', 'direnv loading environment…')
@@ -17,23 +18,23 @@ export class State {
 		return new State(
 			`$(folder-active) +${delta.changed}/-${delta.removed}`,
 			`direnv environment loaded: ${delta.changed} changed, ${delta.removed} removed\nReload…`,
-			'direnv.reload',
+			command.Direnv.reload,
 		)
 	}
 	static empty = new State(
 		'$(folder)',
 		'direnv environment empty\nCreate…',
-		'direnv.create',
+		command.Direnv.create,
 	)
 	static blocked = new State(
 		'$(folder)$(shield)',
 		'direnv environment blocked\nReview…',
-		'direnv.open',
+		command.Direnv.open,
 	)
 	static failed = new State(
 		'$(folder)$(flame)',
 		'direnv failed\nReload…',
-		'direnv.reload',
+		command.Direnv.reload,
 	)
 }
 
