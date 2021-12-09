@@ -9,6 +9,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Handle null values exported by direnv
 ### Added
 - Offer to allow .envrc when saving it
+- Show modified environment variable counts in status item
 
 ## [0.3.0] - 2021-12-03
 ### Added

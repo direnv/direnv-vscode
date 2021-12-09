@@ -1,5 +1,10 @@
 import * as vscode from 'vscode'
 
+export type Delta = {
+	changed: number
+	removed: number
+}
+
 export class State {
 	private constructor(
 		readonly text: string,
@@ -8,22 +13,28 @@ export class State {
 	) {}
 
 	static loading = new State('$(folder)$(sync~spin)', 'direnv loading environment…')
-	static loaded = new State(
-		'$(folder-active)',
-		'direnv environment loaded\nClick to reload',
-		'direnv.reload',
-	)
+	static loaded(delta: Delta) {
+		return new State(
+			`$(folder-active) +${delta.changed}/-${delta.removed}`,
+			`direnv environment loaded: ${delta.changed} changed, ${delta.removed} removed\nReload…`,
+			'direnv.reload',
+		)
+	}
 	static empty = new State(
 		'$(folder)',
-		'direnv environment empty\nClick to create',
+		'direnv environment empty\nCreate…',
 		'direnv.create',
 	)
 	static blocked = new State(
 		'$(folder)$(shield)',
-		'direnv environment blocked\nClick to review',
+		'direnv environment blocked\nReview…',
 		'direnv.open',
 	)
-	static failed = new State('$(folder)$(flame)', 'direnv failed\nClick to reload', 'direnv.reload')
+	static failed = new State(
+		'$(folder)$(flame)',
+		'direnv failed\nReload…',
+		'direnv.reload',
+	)
 }
 
 export class Item implements vscode.Disposable {
