@@ -65,15 +65,15 @@
 	},
 	"main": "./out/extension.js",
 	"scripts": {
-		"vscode:prepublish": "yarn run compile",
+		"vscode:prepublish": "npm run compile",
 		"clean": "rm -rf ./out",
-		"precompile": "yarn run clean",
+		"precompile": "npm run clean",
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"package": "vsce package",
 		"lint": "tsfmt --verify && eslint ./src --ext ts",
 		"fix": "tsfmt --replace && eslint ./src --ext ts --fix",
-		"pretest": "yarn run compile && yarn run lint",
+		"pretest": "npm run compile && npm run lint",
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
