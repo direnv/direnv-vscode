@@ -12,21 +12,23 @@ export class BlockedError extends Error {
 }
 
 export type Data = {
-	[key: string]: string;
+	[key: string]: string
 }
 
 export type Stdio = {
-	stdout: string,
-	stderr: string,
+	stdout: string
+	stderr: string
 }
 
 function isStdio(e: unknown): e is Stdio {
-	if (typeof (e) !== 'object' || e === null || e === undefined) { return false }
+	if (typeof e !== 'object' || e === null || e === undefined) {
+		return false
+	}
 	return 'stdout' in e && 'stderr' in e
 }
 
 const echo: Data = {
-	EDITOR: 'echo'
+	EDITOR: 'echo',
 }
 
 function cwd() {
@@ -41,7 +43,7 @@ function direnv(args: string[], env: Data | null = null): Promise<Stdio> {
 			...process.env,
 			TERM: 'dumb',
 			...env,
-		}
+		},
 	}
 	return execFile('direnv', args, options)
 }
@@ -78,7 +80,9 @@ export async function find(): Promise<string> {
 export async function dump(): Promise<Data> {
 	try {
 		const { stdout } = await direnv(['export', 'json'])
-		if (!stdout) { return {} }
+		if (!stdout) {
+			return {}
+		}
 		return JSON.parse(stdout) as Data
 	} catch (e) {
 		if (isStdio(e)) {

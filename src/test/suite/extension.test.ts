@@ -6,10 +6,10 @@ import { workspaceRoot } from '.'
 
 async function runTask(name: string): Promise<number> {
 	const tasks = await vscode.tasks.fetchTasks()
-	const test = tasks.find(task => task.name === name)
+	const test = tasks.find((task) => task.name === name)
 	assert(test)
-	const promise = new Promise<number>(ok => {
-		const done = vscode.tasks.onDidEndTaskProcess(event => {
+	const promise = new Promise<number>((ok) => {
+		const done = vscode.tasks.onDidEndTaskProcess((event) => {
 			if (event.execution.task.name === name) {
 				done.dispose()
 				ok(event.exitCode ?? -1)
@@ -21,13 +21,13 @@ async function runTask(name: string): Promise<number> {
 }
 
 async function assertEnvironmentIsLoaded() {
-	assert.strict.equal(await runTask("test-task"), 0, "environment is loaded in task")
-	assert.strict.equal(await runTask("test-process"), 0, "environment is loaded in process")
+	assert.strict.equal(await runTask('test-task'), 0, 'environment is loaded in task')
+	assert.strict.equal(await runTask('test-process'), 0, 'environment is loaded in process')
 }
 
 async function assertEnvironmentIsNotLoaded() {
-	assert.strict.notEqual(await runTask("test-task"), 0, "environment is not loaded in task")
-	assert.strict.notEqual(await runTask("test-process"), 0, "environment is not loaded in process")
+	assert.strict.notEqual(await runTask('test-task'), 0, 'environment is not loaded in task')
+	assert.strict.notEqual(await runTask('test-process'), 0, 'environment is not loaded in process')
 }
 
 describe('the extension', () => {
@@ -121,7 +121,9 @@ describe('the extension', () => {
 		const subfile = path.join(subdir, '.envrc')
 
 		beforeEach(() => {
-			sinon.replaceGetter(vscode.workspace, 'workspaceFolders', () => [{ index: 0, name: 'subdir', uri: vscode.Uri.file(subdir) }])
+			sinon.replaceGetter(vscode.workspace, 'workspaceFolders', () => [
+				{ index: 0, name: 'subdir', uri: vscode.Uri.file(subdir) },
+			])
 		})
 
 		describe('without any editors', () => {

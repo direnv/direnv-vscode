@@ -13,13 +13,16 @@ class Direnv implements vscode.Disposable {
 	private viewBlocked = new vscode.EventEmitter<string>()
 	private blockedPath: string | undefined
 
-	constructor(private environment: vscode.EnvironmentVariableCollection, private status: status.Item) {
+	constructor(
+		private environment: vscode.EnvironmentVariableCollection,
+		private status: status.Item,
+	) {
 		this.willLoad.event(() => this.onWillLoad())
-		this.didLoad.event(e => this.onDidLoad(e))
+		this.didLoad.event((e) => this.onDidLoad(e))
 		this.loaded.event(() => this.onLoaded())
-		this.failed.event(e => this.onFailed(e))
-		this.blocked.event(e => this.onBlocked(e))
-		this.viewBlocked.event(e => this.onViewBlocked(e))
+		this.failed.event((e) => this.onFailed(e))
+		this.blocked.event((e) => this.onBlocked(e))
+		this.viewBlocked.event((e) => this.onViewBlocked(e))
 	}
 
 	dispose() {
@@ -59,7 +62,8 @@ class Direnv implements vscode.Disposable {
 
 	private updateEnvironment(data: direnv.Data) {
 		Object.entries(data).forEach(([key, value]) => {
-			if (!this.backup.has(key)) { // keep the oldest value
+			if (!this.backup.has(key)) {
+				// keep the oldest value
 				this.backup.set(key, process.env[key])
 			}
 
@@ -70,7 +74,6 @@ class Direnv implements vscode.Disposable {
 				delete process.env[key]
 				this.environment.delete(key)
 			}
-
 		})
 	}
 
@@ -148,8 +151,12 @@ class Direnv implements vscode.Disposable {
 }
 
 function message(err: unknown): string | undefined {
-	if (typeof err === 'string') { return err }
-	if (err instanceof Error) { return err.message }
+	if (typeof err === 'string') {
+		return err
+	}
+	if (err instanceof Error) {
+		return err.message
+	}
 	console.error('unhandled error', err)
 	return undefined
 }
@@ -194,10 +201,10 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand('direnv.open', async () => {
 			await open(await direnv.find())
 		}),
-		vscode.workspace.onDidOpenTextDocument(e => {
+		vscode.workspace.onDidOpenTextDocument((e) => {
 			instance.didOpen(e.fileName)
 		}),
-		vscode.workspace.onDidSaveTextDocument(async e => {
+		vscode.workspace.onDidSaveTextDocument(async (e) => {
 			await instance.didSave(e.fileName)
 		}),
 	)

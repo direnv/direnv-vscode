@@ -49,7 +49,9 @@ describe('direnv', () => {
 		const subfile = path.join(subdir, '.envrc')
 
 		beforeEach(() => {
-			sinon.replaceGetter(vscode.workspace, 'workspaceFolders', () => [{ index: 0, name: 'subdir', uri: vscode.Uri.file(subdir) }])
+			sinon.replaceGetter(vscode.workspace, 'workspaceFolders', () => [
+				{ index: 0, name: 'subdir', uri: vscode.Uri.file(subdir) },
+			])
 		})
 
 		it('finds the .envrc file in the parent directory', async () => {
