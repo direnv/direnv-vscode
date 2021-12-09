@@ -5,7 +5,22 @@
 	"version": "0.3.0",
 	"preview": true,
 	"icon": "assets/icon.png",
-	"author": "Martin Kühl <martin.kuehl@posteo.net>",
+	"maintainers": [
+		{
+			"name": "The direnv VSCode extension team",
+			"url": "https://github.com/orgs/direnv/teams/vscode"
+		}
+	],
+	"contributors": [
+		{
+			"name": "cab404",
+			"url": "https://github.com/cab404"
+		},
+		{
+			"name": "mkhl",
+			"url": "https://github.com/mkhl"
+		}
+	],
 	"publisher": "mkhl",
 	"license": "0BSD",
 	"repository": {
