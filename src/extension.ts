@@ -133,7 +133,10 @@ class Direnv implements vscode.Disposable {
 		this.resetEnvironment()
 		this.status.state = status.State.blocked
 		const options = ['Allow', 'View']
-		const choice = await vscode.window.showWarningMessage(`direnv: ${path} is blocked`, ...options)
+		const choice = await vscode.window.showWarningMessage(
+			`direnv: ${path} is blocked`,
+			...options,
+		)
 		if (choice === 'Allow') {
 			await this.allow(path)
 		}
@@ -143,7 +146,10 @@ class Direnv implements vscode.Disposable {
 	}
 
 	private async onViewBlocked(path: string) {
-		const choice = await vscode.window.showInformationMessage(`direnv: Allow ${path}?`, 'Allow')
+		const choice = await vscode.window.showInformationMessage(
+			`direnv: Allow ${path}?`,
+			'Allow',
+		)
 		if (choice === 'Allow') {
 			await this.allow(path)
 		}
