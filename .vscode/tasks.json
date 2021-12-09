@@ -21,14 +21,14 @@
 			"script": "lint",
 			"problemMatcher": "$eslint-stylish",
 			"label": "npm: lint",
-			"detail": "tsfmt --verify && eslint ./src --ext ts"
+			"detail": "eslint ./src --ext ts"
 		},
 		{
 			"type": "npm",
 			"script": "fix",
 			"problemMatcher": "$eslint-stylish",
 			"label": "npm: fix",
-			"detail": "tsfmt --replace && eslint ./src --ext ts --fix"
+			"detail": "eslint ./src --ext ts --fix"
 		},
 		{
 			"type": "npm",
