@@ -1,16 +1,34 @@
 import * as vscode from 'vscode'
 
-export const enum State {
-	loading = '$(folder)$(sync~spin)',
-	loaded = '$(folder-active)',
-	empty = '$(folder)',
-	blocked = '$(folder)$(shield)',
-	failed = '$(folder)$(flame)',
+export class State {
+	private constructor(
+		readonly text: string,
+		readonly tooltip: string,
+		readonly command: string | undefined = undefined,
+	) {}
+
+	static loading = new State('$(folder)$(sync~spin)', 'direnv loading environment…')
+	static loaded = new State(
+		'$(folder-active)',
+		'direnv environment loaded\nClick to reload',
+		'direnv.reload',
+	)
+	static empty = new State(
+		'$(folder)',
+		'direnv environment empty\nClick to create',
+		'direnv.create',
+	)
+	static blocked = new State(
+		'$(folder)$(shield)',
+		'direnv environment blocked\nClick to review',
+		'direnv.open',
+	)
+	static failed = new State('$(folder)$(flame)', 'direnv failed\nClick to reload', 'direnv.reload')
 }
 
 export class Item implements vscode.Disposable {
 	constructor(private item: vscode.StatusBarItem) {
-		item.text = State.empty
+		item.text = State.empty.text
 		item.show()
 	}
 
@@ -19,28 +37,8 @@ export class Item implements vscode.Disposable {
 	}
 
 	set state(state: State) {
-		this.item.text = state
-		switch (state) {
-			case State.loading:
-				this.item.tooltip = 'direnv loading environment…'
-				this.item.command = undefined
-				break
-			case State.loaded:
-				this.item.tooltip = 'direnv environment loaded\nClick to reload'
-				this.item.command = 'direnv.reload'
-				break
-			case State.empty:
-				this.item.tooltip = 'direnv environment empty\nClick to create'
-				this.item.command = 'direnv.create'
-				break
-			case State.blocked:
-				this.item.tooltip = 'direnv environment blocked\nClick to review'
-				this.item.command = 'direnv.open'
-				break
-			case State.failed:
-				this.item.tooltip = 'direnv failed\nClick to reload'
-				this.item.command = 'direnv.reload'
-				break
-		}
+		this.item.text = state.text
+		this.item.tooltip = state.tooltip
+		this.item.command = state.command
 	}
 }
