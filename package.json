@@ -43,6 +43,16 @@
 		}
 	},
 	"contributes": {
+		"configuration": {
+			"title": "direnv",
+			"properties": {
+				"direnv.status.showChangesCount": {
+					"type": "boolean",
+					"default": true,
+					"description": "Show the number of changed environment variables"
+				}
+			}
+		},
 		"commands": [
 			{
 				"command": "direnv.allow",

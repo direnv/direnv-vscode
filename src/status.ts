@@ -1,5 +1,6 @@
 import * as vscode from 'vscode'
 import * as command from './command'
+import * as config from './config'
 
 export type Delta = {
 	changed: number
@@ -11,14 +12,20 @@ export class State {
 		readonly text: string,
 		readonly tooltip: string,
 		readonly command: command.Direnv | undefined = undefined,
+		readonly refresh: () => State = () => this,
 	) {}
 
 	static loading = new State('$(folder)$(sync~spin)', 'direnv loading environment…')
-	static loaded(delta: Delta) {
+	static loaded(delta: Delta): State {
+		let text = '$(folder-active)'
+		if (config.status.showChangesCount) {
+			text += ` +${delta.changed}/-${delta.removed}`
+		}
 		return new State(
-			`$(folder-active) +${delta.changed}/-${delta.removed}`,
+			text,
 			`direnv environment loaded: ${delta.changed} changed, ${delta.removed} removed\nReload…`,
 			command.Direnv.reload,
+			() => State.loaded(delta),
 		)
 	}
 	static empty = new State(
@@ -39,6 +46,8 @@ export class State {
 }
 
 export class Item implements vscode.Disposable {
+	private state: State = State.empty
+
 	constructor(private item: vscode.StatusBarItem) {
 		item.text = State.empty.text
 		item.show()
@@ -48,9 +57,14 @@ export class Item implements vscode.Disposable {
 		this.item.dispose()
 	}
 
-	set state(state: State) {
+	update(state: State) {
+		this.state = state
 		this.item.text = state.text
 		this.item.tooltip = state.tooltip
 		this.item.command = state.command
+	}
+
+	refresh() {
+		this.update(this.state.refresh())
 	}
 }

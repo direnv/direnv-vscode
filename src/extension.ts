@@ -1,6 +1,7 @@
 import * as fs from 'fs/promises'
 import * as vscode from 'vscode'
 import * as command from './command'
+import * as config from './config'
 import * as direnv from './direnv'
 import * as status from './status'
 
@@ -57,6 +58,13 @@ class Direnv implements vscode.Disposable {
 		}
 	}
 
+	configurationChanged(event: vscode.ConfigurationChangeEvent) {
+		if (!config.isAffectedBy(event)) return
+		if (config.status.isAffectedBy(event)) {
+			this.status.refresh()
+		}
+	}
+
 	reload() {
 		this.willLoad.fire()
 	}
@@ -100,7 +108,7 @@ class Direnv implements vscode.Disposable {
 
 	private async onWillLoad() {
 		this.blockedPath = undefined
-		this.status.state = status.State.loading
+		this.status.update(status.State.loading)
 		try {
 			const data = await direnv.dump()
 			this.didLoad.fire(data)
@@ -130,12 +138,12 @@ class Direnv implements vscode.Disposable {
 			})
 			state = status.State.loaded({ changed, removed })
 		}
-		this.status.state = state
+		this.status.update(state)
 		// TODO: restart extension host here?
 	}
 
 	private async onFailed(err: unknown) {
-		this.status.state = status.State.failed
+		this.status.update(status.State.failed)
 		const msg = message(err)
 		if (msg !== undefined) {
 			await vscode.window.showErrorMessage(`direnv error: ${msg}`)
@@ -145,7 +153,7 @@ class Direnv implements vscode.Disposable {
 	private async onBlocked(path: string) {
 		this.blockedPath = path
 		this.resetEnvironment()
-		this.status.state = status.State.blocked
+		this.status.update(status.State.blocked)
 		const options = ['Allow', 'View']
 		const choice = await vscode.window.showWarningMessage(
 			`direnv: ${path} is blocked`,
@@ -226,6 +234,9 @@ export function activate(context: vscode.ExtensionContext) {
 		}),
 		vscode.workspace.onDidSaveTextDocument(async (e) => {
 			await instance.didSave(e.fileName)
+		}),
+		vscode.workspace.onDidChangeConfiguration((e) => {
+			instance.configurationChanged(e)
 		}),
 	)
 	instance.reload()
