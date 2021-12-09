@@ -1,4 +1,4 @@
-name: Test extension with npm
+name: Test with npm
 
 on:
   push:
