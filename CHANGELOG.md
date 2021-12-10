@@ -10,6 +10,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Added
 - Offer to allow .envrc when saving it
 - Show modified environment variable counts in status item
+- Show modified environment variable counts or blocked file path in status item tooltip
 
 ## [0.3.0] - 2021-12-03
 ### Added

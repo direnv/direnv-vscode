@@ -15,7 +15,7 @@ export class State {
 		readonly refresh: () => State = () => this,
 	) {}
 
-	static loading = new State('$(folder)$(sync~spin)', 'direnv loading environment…')
+	static loading = new State('$(folder)$(sync~spin)', 'direnv loading…')
 	static loaded(delta: Delta): State {
 		let text = '$(folder-active)'
 		if (config.status.showChangesCount) {
@@ -33,11 +33,14 @@ export class State {
 		'direnv environment empty\nCreate…',
 		command.Direnv.create,
 	)
-	static blocked = new State(
-		'$(folder)$(shield)',
-		'direnv environment blocked\nReview…',
-		command.Direnv.open,
-	)
+	static blocked(path: string): State {
+		return new State(
+			'$(folder)$(shield)',
+			`direnv blocked: ${path}\nReview…`,
+			command.Direnv.open,
+			() => State.blocked(path),
+		)
+	}
 	static failed = new State(
 		'$(folder)$(flame)',
 		'direnv failed\nReload…',
