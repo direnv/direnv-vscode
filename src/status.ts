@@ -16,6 +16,7 @@ export class State {
 	) {}
 
 	static loading = new State('$(folder)$(sync~spin)', 'direnv loading…')
+	static empty = new State('$(folder)', 'direnv empty\nCreate…', command.Direnv.create)
 	static loaded(delta: Delta): State {
 		let text = '$(folder-active)'
 		if (config.status.showChangesCount) {
@@ -23,16 +24,11 @@ export class State {
 		}
 		return new State(
 			text,
-			`direnv environment loaded: ${delta.changed} changed, ${delta.removed} removed\nReload…`,
+			`direnv loaded: ${delta.changed} changed, ${delta.removed} removed\nReload…`,
 			command.Direnv.reload,
 			() => State.loaded(delta),
 		)
 	}
-	static empty = new State(
-		'$(folder)',
-		'direnv environment empty\nCreate…',
-		command.Direnv.create,
-	)
 	static blocked(path: string): State {
 		return new State(
 			'$(folder)$(shield)',
