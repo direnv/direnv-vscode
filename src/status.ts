@@ -1,16 +1,54 @@
 import * as vscode from 'vscode'
+import * as command from './command'
+import * as config from './config'
 
-export const enum State {
-	loading = '$(folder)$(sync~spin)',
-	loaded = '$(folder-active)',
-	empty = '$(folder)',
-	blocked = '$(folder)$(shield)',
-	failed = '$(folder)$(flame)',
+export type Delta = {
+	changed: number
+	removed: number
+}
+
+export class State {
+	private constructor(
+		readonly text: string,
+		readonly tooltip: string,
+		readonly command: command.Direnv | undefined = undefined,
+		readonly refresh: () => State = () => this,
+	) {}
+
+	static loading = new State('$(folder)$(sync~spin)', 'direnv loading…')
+	static empty = new State('$(folder)', 'direnv empty\nCreate…', command.Direnv.create)
+	static loaded(delta: Delta): State {
+		let text = '$(folder-active)'
+		if (config.status.showChangesCount) {
+			text += ` +${delta.changed}/-${delta.removed}`
+		}
+		return new State(
+			text,
+			`direnv loaded: ${delta.changed} changed, ${delta.removed} removed\nReload…`,
+			command.Direnv.reload,
+			() => State.loaded(delta),
+		)
+	}
+	static blocked(path: string): State {
+		return new State(
+			'$(folder)$(shield)',
+			`direnv blocked: ${path}\nReview…`,
+			command.Direnv.open,
+			() => State.blocked(path),
+		)
+	}
+	static failed = new State(
+		'$(folder)$(flame)',
+		'direnv failed\nReload…',
+		command.Direnv.reload,
+	)
 }
 
 export class Item implements vscode.Disposable {
+	private state: State = State.empty
+
 	constructor(private item: vscode.StatusBarItem) {
-		item.text = State.empty
+		item.text = State.empty.text
 		item.show()
 	}
 
@@ -18,29 +56,14 @@ export class Item implements vscode.Disposable {
 		this.item.dispose()
 	}
 
-	set state(state: State) {
-		this.item.text = state
-		switch (state) {
-			case State.loading:
-				this.item.tooltip = 'direnv loading environment…'
-				this.item.command = undefined
-				break
-			case State.loaded:
-				this.item.tooltip = 'direnv environment loaded\nClick to reload'
-				this.item.command = 'direnv.reload'
-				break
-			case State.empty:
-				this.item.tooltip = 'direnv environment empty\nClick to create'
-				this.item.command = 'direnv.create'
-				break
-			case State.blocked:
-				this.item.tooltip = 'direnv environment blocked\nClick to review'
-				this.item.command = 'direnv.open'
-				break
-			case State.failed:
-				this.item.tooltip = 'direnv failed\nClick to reload'
-				this.item.command = 'direnv.reload'
-				break
-		}
+	update(state: State) {
+		this.state = state
+		this.item.text = state.text
+		this.item.tooltip = state.tooltip
+		this.item.command = state.command
+	}
+
+	refresh() {
+		this.update(this.state.refresh())
 	}
 }

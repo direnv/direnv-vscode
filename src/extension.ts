@@ -1,5 +1,7 @@
 import * as fs from 'fs/promises'
 import * as vscode from 'vscode'
+import * as command from './command'
+import * as config from './config'
 import * as direnv from './direnv'
 import * as status from './status'
 
@@ -56,6 +58,13 @@ class Direnv implements vscode.Disposable {
 		}
 	}
 
+	configurationChanged(event: vscode.ConfigurationChangeEvent) {
+		if (!config.isAffectedBy(event)) return
+		if (config.status.isAffectedBy(event)) {
+			this.status.refresh()
+		}
+	}
+
 	reload() {
 		this.willLoad.fire()
 	}
@@ -99,7 +108,7 @@ class Direnv implements vscode.Disposable {
 
 	private async onWillLoad() {
 		this.blockedPath = undefined
-		this.status.state = status.State.loading
+		this.status.update(status.State.loading)
 		try {
 			const data = await direnv.dump()
 			this.didLoad.fire(data)
@@ -116,12 +125,25 @@ class Direnv implements vscode.Disposable {
 	}
 
 	private onLoaded() {
-		this.status.state = this.backup.size ? status.State.loaded : status.State.empty
+		let state = status.State.empty
+		if (this.backup.size) {
+			let changed = 0
+			let removed = 0
+			this.backup.forEach((_, key) => {
+				if (key in process.env) {
+					changed += 1
+				} else {
+					removed += 1
+				}
+			})
+			state = status.State.loaded({ changed, removed })
+		}
+		this.status.update(state)
 		// TODO: restart extension host here?
 	}
 
 	private async onFailed(err: unknown) {
-		this.status.state = status.State.failed
+		this.status.update(status.State.failed)
 		const msg = message(err)
 		if (msg !== undefined) {
 			await vscode.window.showErrorMessage(`direnv error: ${msg}`)
@@ -131,7 +153,7 @@ class Direnv implements vscode.Disposable {
 	private async onBlocked(path: string) {
 		this.blockedPath = path
 		this.resetEnvironment()
-		this.status.state = status.State.blocked
+		this.status.update(status.State.blocked(path))
 		const options = ['Allow', 'View']
 		const choice = await vscode.window.showWarningMessage(
 			`direnv: ${path} is blocked`,
@@ -186,25 +208,25 @@ export function activate(context: vscode.ExtensionContext) {
 	const instance = new Direnv(environment, statusItem)
 	context.subscriptions.push(instance)
 	context.subscriptions.push(
-		vscode.commands.registerCommand('direnv.reload', () => {
+		vscode.commands.registerCommand(command.Direnv.reload, () => {
 			instance.reload()
 		}),
-		vscode.commands.registerCommand('direnv.allow', async () => {
+		vscode.commands.registerCommand(command.Direnv.allow, async () => {
 			const path = vscode.window.activeTextEditor?.document.fileName
 			if (path !== undefined) {
 				await instance.allow(path)
 			}
 		}),
-		vscode.commands.registerCommand('direnv.block', async () => {
+		vscode.commands.registerCommand(command.Direnv.block, async () => {
 			const path = vscode.window.activeTextEditor?.document.fileName
 			if (path !== undefined) {
 				await instance.block(path)
 			}
 		}),
-		vscode.commands.registerCommand('direnv.create', async () => {
+		vscode.commands.registerCommand(command.Direnv.create, async () => {
 			await open(await direnv.create())
 		}),
-		vscode.commands.registerCommand('direnv.open', async () => {
+		vscode.commands.registerCommand(command.Direnv.open, async () => {
 			await open(await direnv.find())
 		}),
 		vscode.workspace.onDidOpenTextDocument((e) => {
@@ -212,6 +234,9 @@ export function activate(context: vscode.ExtensionContext) {
 		}),
 		vscode.workspace.onDidSaveTextDocument(async (e) => {
 			await instance.didSave(e.fileName)
+		}),
+		vscode.workspace.onDidChangeConfiguration((e) => {
+			instance.configurationChanged(e)
 		}),
 	)
 	instance.reload()
