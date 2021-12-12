@@ -4,38 +4,57 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
+			"label": "npm: build",
 			"type": "npm",
-			"script": "watch",
-			"problemMatcher": "$tsc-watch",
-			"isBackground": true,
-			"presentation": {
-				"reveal": "never"
-			},
+			"script": "build",
+			"problemMatcher": "$esbuild",
 			"group": {
 				"kind": "build",
 				"isDefault": true
 			}
 		},
 		{
+			"label": "npm: watch",
+			"type": "npm",
+			"script": "watch",
+			"problemMatcher": "$esbuild-watch",
+			"group": "build",
+			"isBackground": true,
+			"presentation": {
+				"reveal": "never"
+			},
+		},
+		{
+			"label": "npm: test-compile",
+			"type": "npm",
+			"script": "test-compile",
+			"group": "build",
+			"problemMatcher": "$tsc",
+			"presentation": {
+				"reveal": "silent"
+			},
+		},
+		{
+			"label": "npm: lint",
 			"type": "npm",
 			"script": "lint",
 			"problemMatcher": "$eslint-stylish",
-			"label": "npm: lint",
-			"detail": "eslint ./src --ext ts"
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			}
 		},
 		{
+			"label": "npm: fix",
 			"type": "npm",
 			"script": "fix",
 			"problemMatcher": "$eslint-stylish",
-			"label": "npm: fix",
-			"detail": "eslint ./src --ext ts --fix"
 		},
 		{
+			"label": "npm: package",
 			"type": "npm",
 			"script": "package",
 			"problemMatcher": [],
-			"label": "npm: package",
-			"detail": "vsce package"
 		}
 	]
 }
