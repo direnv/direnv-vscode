@@ -8,6 +8,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Fixed
 - Handle null values exported by direnv
 - Creating a new .envrc uses the intended file name
+- Detect when a blocked .envrc is opened more reliably
 ### Added
 - Offer to allow .envrc when saving it
 - Show modified environment variable counts in status item

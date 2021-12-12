@@ -65,6 +65,18 @@ class Direnv implements vscode.Disposable {
 		}
 	}
 
+	async create() {
+		await this.open(await direnv.create())
+	}
+
+	async open(path?: string | undefined): Promise<void> {
+		path ??= await direnv.find()
+		const uri = await uriFor(path)
+		const doc = await vscode.workspace.openTextDocument(uri)
+		await vscode.window.showTextDocument(doc)
+		this.didOpen(path)
+	}
+
 	reload() {
 		this.willLoad.fire()
 	}
@@ -163,7 +175,7 @@ class Direnv implements vscode.Disposable {
 			await this.allow(path)
 		}
 		if (choice === 'View') {
-			await open(path)
+			await this.open(path)
 		}
 	}
 
@@ -198,12 +210,6 @@ async function uriFor(path: string): Promise<vscode.Uri> {
 	}
 }
 
-async function open(path: string): Promise<void> {
-	const uri = await uriFor(path)
-	const doc = await vscode.workspace.openTextDocument(uri)
-	await vscode.window.showTextDocument(doc)
-}
-
 export function activate(context: vscode.ExtensionContext) {
 	const environment = context.environmentVariableCollection
 	const statusItem = new status.Item(vscode.window.createStatusBarItem())
@@ -226,10 +232,10 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		}),
 		vscode.commands.registerCommand(command.Direnv.create, async () => {
-			await open(await direnv.create())
+			await instance.create()
 		}),
 		vscode.commands.registerCommand(command.Direnv.open, async () => {
-			await open(await direnv.find())
+			await instance.open()
 		}),
 		vscode.workspace.onDidOpenTextDocument((e) => {
 			instance.didOpen(e.fileName)
