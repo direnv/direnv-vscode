@@ -189,7 +189,7 @@ function message(err: unknown): string | undefined {
 	return undefined
 }
 
-async function uri(path: string): Promise<vscode.Uri> {
+async function uriFor(path: string): Promise<vscode.Uri> {
 	try {
 		await fs.access(path)
 		return vscode.Uri.file(path)
@@ -199,7 +199,9 @@ async function uri(path: string): Promise<vscode.Uri> {
 }
 
 async function open(path: string): Promise<void> {
-	await vscode.commands.executeCommand('vscode.open', await uri(path))
+	const uri = await uriFor(path)
+	const doc = await vscode.workspace.openTextDocument(uri)
+	await vscode.window.showTextDocument(doc)
 }
 
 export function activate(context: vscode.ExtensionContext) {

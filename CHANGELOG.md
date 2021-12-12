@@ -7,6 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 ### Fixed
 - Handle null values exported by direnv
+- Creating a new .envrc uses the intended file name
 ### Added
 - Offer to allow .envrc when saving it
 - Show modified environment variable counts in status item
