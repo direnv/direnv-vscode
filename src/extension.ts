@@ -162,6 +162,25 @@ class Direnv implements vscode.Disposable {
 
 	private async onFailed(err: unknown) {
 		this.status.update(status.State.failed)
+		if (err instanceof direnv.CommandNotFoundError) {
+			const options = ['Install', 'Configure']
+			const choice = await vscode.window.showErrorMessage(
+				`direnv error: ${err.message}`,
+				...options,
+			)
+			if (choice === 'Install') {
+				await vscode.env.openExternal(
+					vscode.Uri.parse('https://direnv.net/docs/installation.html'),
+				)
+			}
+			if (choice === 'Configure') {
+				await vscode.commands.executeCommand(
+					'workbench.action.openSettings',
+					'direnv.path.executable',
+				)
+			}
+			return
+		}
 		const msg = message(err)
 		if (msg !== undefined) {
 			await vscode.window.showErrorMessage(`direnv error: ${msg}`)

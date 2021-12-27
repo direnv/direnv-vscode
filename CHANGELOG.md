@@ -9,6 +9,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Show error when direnv executable is missing
 ### Added
 - Make path to direnv executable configurable
+- Offer to install direnv or configure the executable path when it's not found
 
 ## [0.4.0]
 ### Fixed
