@@ -51,7 +51,7 @@ describe('direnv', () => {
 		it('fails when the direnv executable is missing', async () => {
 			const missing = '/missing/executable'
 			sinon.replaceGetter(config.path, 'executable', () => missing)
-			await assert.rejects(() => direnv.test(), { code: 'ENOENT', path: missing })
+			await assert.rejects(() => direnv.test(), new direnv.CommandNotFoundError(missing))
 		})
 	})
 

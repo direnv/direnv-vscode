@@ -77,8 +77,11 @@ class Direnv implements vscode.Disposable {
 		this.didOpen(path)
 	}
 
-	reload() {
-		this.willLoad.fire()
+	async reload() {
+		await this.try(async () => {
+			await direnv.test()
+			this.willLoad.fire()
+		})
 	}
 
 	private updateEnvironment(data: direnv.Data) {
@@ -210,14 +213,14 @@ async function uriFor(path: string): Promise<vscode.Uri> {
 	}
 }
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
 	const environment = context.environmentVariableCollection
 	const statusItem = new status.Item(vscode.window.createStatusBarItem())
 	const instance = new Direnv(environment, statusItem)
 	context.subscriptions.push(instance)
 	context.subscriptions.push(
-		vscode.commands.registerCommand(command.Direnv.reload, () => {
-			instance.reload()
+		vscode.commands.registerCommand(command.Direnv.reload, async () => {
+			await instance.reload()
 		}),
 		vscode.commands.registerCommand(command.Direnv.allow, async () => {
 			const path = vscode.window.activeTextEditor?.document.fileName
@@ -247,7 +250,7 @@ export function activate(context: vscode.ExtensionContext) {
 			instance.configurationChanged(e)
 		}),
 	)
-	instance.reload()
+	await instance.reload()
 }
 
 export function deactivate() {

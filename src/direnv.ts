@@ -11,6 +11,12 @@ export class BlockedError extends Error {
 	}
 }
 
+export class CommandNotFoundError extends Error {
+	constructor(public readonly path: string) {
+		super(`${path}: command not found`)
+	}
+}
+
 export type Data = {
 	[key: string]: string
 }
@@ -27,6 +33,12 @@ function isStdio(e: unknown): e is Stdio {
 	return 'stdout' in e && 'stderr' in e
 }
 
+function isCommandNotFound(e: unknown, path: string): boolean {
+	if (!(e instanceof Error)) return false
+	if (!('path' in e) || !('code' in e)) return false
+	return e['path'] === path && e['code'] === 'ENOENT'
+}
+
 const echo: Data = {
 	['EDITOR']: 'echo',
 }
@@ -35,7 +47,7 @@ function cwd() {
 	return vscode.workspace.workspaceFolders?.[0].uri.path ?? process.cwd()
 }
 
-function direnv(args: string[], env: Data | null = null): Promise<Stdio> {
+async function direnv(args: string[], env: Data | null = null): Promise<Stdio> {
 	const options: cp.ExecOptionsWithStringEncoding = {
 		encoding: 'utf8',
 		cwd: cwd(), // same as default cwd for shell tasks
@@ -46,7 +58,14 @@ function direnv(args: string[], env: Data | null = null): Promise<Stdio> {
 		},
 	}
 	const command = config.path.executable
-	return execFile(command, args, options)
+	try {
+		return await execFile(command, args, options)
+	} catch (e) {
+		if (isCommandNotFound(e, command)) {
+			throw new CommandNotFoundError(command)
+		}
+		throw e
+	}
 }
 
 export async function test(): Promise<void> {

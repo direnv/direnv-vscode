@@ -5,6 +5,8 @@ All notable changes to the "direnv" extension will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+### Fixed
+- Show error when direnv executable is missing
 ### Added
 - Make path to direnv executable configurable
 
