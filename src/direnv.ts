@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import * as cp from 'child_process'
 import { promisify } from 'util'
 import * as vscode from 'vscode'
@@ -28,7 +27,7 @@ function isStdio(e: unknown): e is Stdio {
 }
 
 const echo: Data = {
-	EDITOR: 'echo',
+	['EDITOR']: 'echo',
 }
 
 function cwd() {
@@ -41,7 +40,7 @@ function direnv(args: string[], env: Data | null = null): Promise<Stdio> {
 		cwd: cwd(), // same as default cwd for shell tasks
 		env: {
 			...process.env,
-			TERM: 'dumb',
+			['TERM']: 'dumb',
 			...env,
 		},
 	}
