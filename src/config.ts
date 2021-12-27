@@ -22,7 +22,17 @@ class Section {
 	}
 }
 
-export class Status extends Section {
+class Path extends Section {
+	constructor() {
+		super('path')
+	}
+
+	get executable(): string {
+		return this.get('executable') ?? 'direnv'
+	}
+}
+
+class Status extends Section {
 	constructor() {
 		super('status')
 	}
@@ -32,4 +42,5 @@ export class Status extends Section {
 	}
 }
 
-export const status: Status = new Status()
+export const path = new Path()
+export const status = new Status()

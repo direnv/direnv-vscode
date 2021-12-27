@@ -1,6 +1,7 @@
 import * as cp from 'child_process'
 import { promisify } from 'util'
 import * as vscode from 'vscode'
+import * as config from './config'
 
 const execFile = promisify(cp.execFile)
 
@@ -44,7 +45,12 @@ function direnv(args: string[], env: Data | null = null): Promise<Stdio> {
 			...env,
 		},
 	}
-	return execFile('direnv', args, options)
+	const command = config.path.executable
+	return execFile(command, args, options)
+}
+
+export async function test(): Promise<void> {
+	await direnv(['version'])
 }
 
 export async function allow(path: string): Promise<void> {

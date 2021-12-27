@@ -46,6 +46,11 @@
 		"configuration": {
 			"title": "direnv",
 			"properties": {
+				"direnv.path.executable": {
+					"type": "string",
+					"default": "direnv",
+					"description": "Path to the direnv executable"
+				},
 				"direnv.status.showChangesCount": {
 					"type": "boolean",
 					"default": true,
