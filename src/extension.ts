@@ -58,8 +58,11 @@ class Direnv implements vscode.Disposable {
 		}
 	}
 
-	configurationChanged(event: vscode.ConfigurationChangeEvent) {
+	async configurationChanged(event: vscode.ConfigurationChangeEvent) {
 		if (!config.isAffectedBy(event)) return
+		if (config.path.isAffectedBy(event)) {
+			await this.reload()
+		}
 		if (config.status.isAffectedBy(event)) {
 			this.status.refresh()
 		}
@@ -246,8 +249,8 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.workspace.onDidSaveTextDocument(async (e) => {
 			await instance.didSave(e.fileName)
 		}),
-		vscode.workspace.onDidChangeConfiguration((e) => {
-			instance.configurationChanged(e)
+		vscode.workspace.onDidChangeConfiguration(async (e) => {
+			await instance.configurationChanged(e)
 		}),
 	)
 	await instance.reload()
