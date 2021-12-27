@@ -19,7 +19,7 @@ export class State {
 	static empty = new State('$(folder)', 'direnv empty\nCreate…', command.Direnv.create)
 	static loaded(delta: Delta): State {
 		let text = '$(folder-active)'
-		if (config.status.showChangesCount) {
+		if (config.status.showChangesCount.get()) {
 			text += ` +${delta.changed}/-${delta.removed}`
 		}
 		return new State(

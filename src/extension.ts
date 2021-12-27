@@ -174,10 +174,7 @@ class Direnv implements vscode.Disposable {
 				)
 			}
 			if (choice === 'Configure') {
-				await vscode.commands.executeCommand(
-					'workbench.action.openSettings',
-					'direnv.path.executable',
-				)
+				await config.path.executable.open()
 			}
 			return
 		}

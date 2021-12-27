@@ -1,46 +1,59 @@
 import * as vscode from 'vscode'
 
-const section = 'direnv'
+const root = 'direnv'
+function config(): vscode.WorkspaceConfiguration {
+	return vscode.workspace.getConfiguration(root)
+}
 
-function config() {
-	return vscode.workspace.getConfiguration(section)
+async function open(path: string) {
+	return await vscode.commands.executeCommand('workbench.action.openSettings', path)
 }
 
 export function isAffectedBy(event: vscode.ConfigurationChangeEvent): boolean {
-	return event.affectsConfiguration(section)
+	return event.affectsConfiguration(root)
 }
 
-class Section {
-	protected constructor(private section: string) {}
-
-	protected get<T>(subsection: string): T | undefined {
-		return config().get(`${this.section}.${subsection}`)
-	}
-
-	isAffectedBy(event: vscode.ConfigurationChangeEvent): boolean {
-		return event.affectsConfiguration(`${section}.${this.section}`)
-	}
+type Section = {
+	isAffectedBy(event: vscode.ConfigurationChangeEvent): boolean
+	open(): Promise<unknown>
 }
 
-class Path extends Section {
-	constructor() {
-		super('path')
+class Option<T> {
+	constructor(private path: string, private defaultValue: T) {}
+
+	get(): T {
+		return config().get(this.path) ?? this.defaultValue
 	}
 
-	get executable(): string {
-		return this.get('executable') ?? 'direnv'
+	open(): Promise<unknown> {
+		return open(`${root}.${this.path}`)
 	}
 }
 
-class Status extends Section {
-	constructor() {
-		super('status')
-	}
-
-	get showChangesCount(): boolean {
-		return this.get('showChangesCount') ?? true
-	}
+type Options<Type> = {
+	[Name in keyof Type]: Option<Type[Name]>
 }
 
-export const path = new Path()
-export const status = new Status()
+function section<Type>(name: string, defaults: Type): Section & Options<Type> {
+	return {
+		isAffectedBy(event: vscode.ConfigurationChangeEvent): boolean {
+			return event.affectsConfiguration(`${root}.${name}`)
+		},
+		open(): Promise<unknown> {
+			return open(`${root}.${name}`)
+		},
+		...Object.fromEntries(
+			Object.entries(defaults).map(([key, value]) => [
+				key,
+				new Option(`${name}.${key}`, value),
+			]),
+		),
+	} as Section & Options<Type>
+}
+
+export const path = section('path', {
+	executable: 'direnv',
+})
+export const status = section('status', {
+	showChangesCount: true,
+})

@@ -57,7 +57,7 @@ async function direnv(args: string[], env: Data | null = null): Promise<Stdio> {
 			...env,
 		},
 	}
-	const command = config.path.executable
+	const command = config.path.executable.get()
 	try {
 		return await execFile(command, args, options)
 	} catch (e) {
