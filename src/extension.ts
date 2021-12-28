@@ -58,8 +58,11 @@ class Direnv implements vscode.Disposable {
 		}
 	}
 
-	configurationChanged(event: vscode.ConfigurationChangeEvent) {
+	async configurationChanged(event: vscode.ConfigurationChangeEvent) {
 		if (!config.isAffectedBy(event)) return
+		if (config.path.isAffectedBy(event)) {
+			await this.reload()
+		}
 		if (config.status.isAffectedBy(event)) {
 			this.status.refresh()
 		}
@@ -77,8 +80,11 @@ class Direnv implements vscode.Disposable {
 		this.didOpen(path)
 	}
 
-	reload() {
-		this.willLoad.fire()
+	async reload() {
+		await this.try(async () => {
+			await direnv.test()
+			this.willLoad.fire()
+		})
 	}
 
 	private updateEnvironment(data: direnv.Data) {
@@ -156,6 +162,22 @@ class Direnv implements vscode.Disposable {
 
 	private async onFailed(err: unknown) {
 		this.status.update(status.State.failed)
+		if (err instanceof direnv.CommandNotFoundError) {
+			const options = ['Install', 'Configure']
+			const choice = await vscode.window.showErrorMessage(
+				`direnv error: ${err.message}`,
+				...options,
+			)
+			if (choice === 'Install') {
+				await vscode.env.openExternal(
+					vscode.Uri.parse('https://direnv.net/docs/installation.html'),
+				)
+			}
+			if (choice === 'Configure') {
+				await config.path.executable.open()
+			}
+			return
+		}
 		const msg = message(err)
 		if (msg !== undefined) {
 			await vscode.window.showErrorMessage(`direnv error: ${msg}`)
@@ -210,14 +232,14 @@ async function uriFor(path: string): Promise<vscode.Uri> {
 	}
 }
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
 	const environment = context.environmentVariableCollection
 	const statusItem = new status.Item(vscode.window.createStatusBarItem())
 	const instance = new Direnv(environment, statusItem)
 	context.subscriptions.push(instance)
 	context.subscriptions.push(
-		vscode.commands.registerCommand(command.Direnv.reload, () => {
-			instance.reload()
+		vscode.commands.registerCommand(command.Direnv.reload, async () => {
+			await instance.reload()
 		}),
 		vscode.commands.registerCommand(command.Direnv.allow, async () => {
 			const path = vscode.window.activeTextEditor?.document.fileName
@@ -243,11 +265,11 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.workspace.onDidSaveTextDocument(async (e) => {
 			await instance.didSave(e.fileName)
 		}),
-		vscode.workspace.onDidChangeConfiguration((e) => {
-			instance.configurationChanged(e)
+		vscode.workspace.onDidChangeConfiguration(async (e) => {
+			await instance.configurationChanged(e)
 		}),
 	)
-	instance.reload()
+	await instance.reload()
 }
 
 export function deactivate() {

@@ -3,6 +3,7 @@ import * as path from 'path'
 import * as sinon from 'sinon'
 import * as vscode from 'vscode'
 import { workspaceRoot } from '.'
+import * as config from '../../config'
 import * as direnv from '../../direnv'
 
 describe('direnv', () => {
@@ -17,6 +18,10 @@ describe('direnv', () => {
 	})
 
 	describe('in the test workspace', () => {
+		it('finds the direnv executable', async () => {
+			await direnv.test()
+		})
+
 		it('finds the .envrc file in the workspace root', async () => {
 			const path = await direnv.find()
 			assert.equal(path, file)
@@ -41,6 +46,12 @@ describe('direnv', () => {
 			} catch ({ path }) {
 				assert.equal(path, file)
 			}
+		})
+
+		it('fails when the direnv executable is missing', async () => {
+			const missing = '/missing/executable'
+			sinon.replace(config.path.executable, 'get', () => missing)
+			await assert.rejects(() => direnv.test(), new direnv.CommandNotFoundError(missing))
 		})
 	})
 

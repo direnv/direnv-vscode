@@ -46,6 +46,11 @@
 		"configuration": {
 			"title": "direnv",
 			"properties": {
+				"direnv.path.executable": {
+					"type": "string",
+					"default": "direnv",
+					"description": "Path to the direnv executable"
+				},
 				"direnv.status.showChangesCount": {
 					"type": "boolean",
 					"default": true,
@@ -99,8 +104,9 @@
 		"package": "vsce package",
 		"lint": "eslint ./src --ext ts",
 		"fix": "eslint ./src --ext ts --fix",
+		"pretest-compile": "npm run clean",
 		"test-compile": "tsc",
-		"pretest": "npm run clean && npm run test-compile && npm run lint",
+		"pretest": "npm run test-compile && npm run lint",
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {

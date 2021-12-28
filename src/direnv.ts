@@ -1,13 +1,19 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import * as cp from 'child_process'
 import { promisify } from 'util'
 import * as vscode from 'vscode'
+import * as config from './config'
 
 const execFile = promisify(cp.execFile)
 
 export class BlockedError extends Error {
 	constructor(public readonly path: string) {
 		super(`${path} is blocked`)
+	}
+}
+
+export class CommandNotFoundError extends Error {
+	constructor(public readonly path: string) {
+		super(`${path}: command not found`)
 	}
 }
 
@@ -27,25 +33,43 @@ function isStdio(e: unknown): e is Stdio {
 	return 'stdout' in e && 'stderr' in e
 }
 
+function isCommandNotFound(e: unknown, path: string): boolean {
+	if (!(e instanceof Error)) return false
+	if (!('path' in e) || !('code' in e)) return false
+	return e['path'] === path && e['code'] === 'ENOENT'
+}
+
 const echo: Data = {
-	EDITOR: 'echo',
+	['EDITOR']: 'echo',
 }
 
 function cwd() {
 	return vscode.workspace.workspaceFolders?.[0].uri.path ?? process.cwd()
 }
 
-function direnv(args: string[], env: Data | null = null): Promise<Stdio> {
+async function direnv(args: string[], env: Data | null = null): Promise<Stdio> {
 	const options: cp.ExecOptionsWithStringEncoding = {
 		encoding: 'utf8',
 		cwd: cwd(), // same as default cwd for shell tasks
 		env: {
 			...process.env,
-			TERM: 'dumb',
+			['TERM']: 'dumb',
 			...env,
 		},
 	}
-	return execFile('direnv', args, options)
+	const command = config.path.executable.get()
+	try {
+		return await execFile(command, args, options)
+	} catch (e) {
+		if (isCommandNotFound(e, command)) {
+			throw new CommandNotFoundError(command)
+		}
+		throw e
+	}
+}
+
+export async function test(): Promise<void> {
+	await direnv(['version'])
 }
 
 export async function allow(path: string): Promise<void> {
