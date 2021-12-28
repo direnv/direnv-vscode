@@ -49,6 +49,7 @@
 				"direnv.path.executable": {
 					"type": "string",
 					"default": "direnv",
+					"scope": "machine-overridable",
 					"description": "Path to the direnv executable"
 				},
 				"direnv.status.showChangesCount": {
