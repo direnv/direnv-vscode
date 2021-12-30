@@ -94,20 +94,20 @@
 			]
 		}
 	},
-	"main": "./out/extension.js",
+	"main": "./dist/extension.js",
 	"scripts": {
+		"package": "vsce package",
 		"vscode:prepublish": "npm run build -- --minify",
-		"clean": "rimraf ./out",
+		"clean": "rimraf ./out ./dist",
 		"prebuild": "npm run clean",
-		"build": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --platform=node --external:vscode",
+		"build": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --platform=node --external:vscode",
 		"compile": "npm run build -- --sourcemap",
 		"watch": "npm run build -- --sourcemap --watch",
-		"package": "vsce package",
+		"compile-tests": "tsc",
+		"watch-tests": "tsc --watch",
 		"lint": "eslint ./src --ext ts",
 		"fix": "eslint ./src --ext ts --fix",
-		"pretest-compile": "npm run clean",
-		"test-compile": "tsc",
-		"pretest": "npm run test-compile && npm run lint",
+		"pretest": "npm run clean && npm run compile-tests && npm run lint",
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {

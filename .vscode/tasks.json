@@ -1,60 +1,55 @@
-// See https://go.microsoft.com/fwlink/?LinkId=733558
-// for the documentation about the tasks.json format
 {
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "npm: build",
-			"type": "npm",
-			"script": "build",
-			"problemMatcher": "$esbuild",
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			}
-		},
-		{
-			"label": "npm: watch",
 			"type": "npm",
 			"script": "watch",
 			"problemMatcher": "$esbuild-watch",
-			"group": "build",
 			"isBackground": true,
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
 			"presentation": {
-				"reveal": "never"
+				"reveal": "never",
+				"group": "watchers",
 			},
 		},
 		{
-			"label": "npm: test-compile",
 			"type": "npm",
-			"script": "test-compile",
+			"script": "watch-tests",
+			"problemMatcher": "$tsc-watch",
+			"isBackground": true,
 			"group": "build",
-			"problemMatcher": "$tsc",
 			"presentation": {
-				"reveal": "silent"
+				"reveal": "never",
+				"group": "watchers",
 			},
 		},
 		{
-			"label": "npm: lint",
 			"type": "npm",
 			"script": "lint",
 			"problemMatcher": "$eslint-stylish",
 			"group": {
 				"kind": "test",
 				"isDefault": true
-			}
+			},
 		},
 		{
-			"label": "npm: fix",
 			"type": "npm",
 			"script": "fix",
 			"problemMatcher": "$eslint-stylish",
+			"group": "test",
 		},
 		{
-			"label": "npm: package",
 			"type": "npm",
 			"script": "package",
 			"problemMatcher": [],
-		}
+		},
+		{
+			"label": "tasks: watch-tests",
+			"dependsOn": ["npm: watch", "npm: watch-tests"],
+			"problemMatcher": [],
+		},
 	]
 }

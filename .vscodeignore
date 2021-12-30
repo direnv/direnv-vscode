@@ -1,7 +1,8 @@
 .direnv/
 .github/
-.vscode/**
-.vscode-test/**
+.vscode/
+.vscode-test/
+out/**
 src/**
 test/**
 result
