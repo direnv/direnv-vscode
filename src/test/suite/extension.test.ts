@@ -54,28 +54,28 @@ describe('the extension', () => {
 
 			describe('with simulated user interaction', () => {
 				it('allows and loads the .envrc on direnv.reload', async () => {
-					sinon.replace(vscode.window, 'showWarningMessage', sinon.fake.resolves('Allow'))
+					sinon.stub(vscode.window, 'showWarningMessage').resolvesArg(1)
 					await vscode.commands.executeCommand('direnv.reload')
 					await assertEnvironmentIsLoaded()
 				})
 
 				it('opens and allows and loads the .envrc on direnv.reload', async () => {
-					sinon.replace(vscode.window, 'showWarningMessage', sinon.fake.resolves('View'))
-					sinon.replace(vscode.window, 'showInformationMessage', sinon.fake.resolves('Allow'))
+					sinon.stub(vscode.window, 'showWarningMessage').resolvesArg(2)
+					sinon.stub(vscode.window, 'showInformationMessage').resolvesArg(1)
 					await vscode.commands.executeCommand('direnv.reload')
 					await assertEnvironmentIsLoaded()
 				})
 
 				it('allows and loads the .envrc on direnv.open', async () => {
-					sinon.replace(vscode.window, 'showWarningMessage', sinon.fake.resolves(undefined))
-					sinon.replace(vscode.window, 'showInformationMessage', sinon.fake.resolves('Allow'))
+					sinon.stub(vscode.window, 'showWarningMessage').resolves(undefined)
+					sinon.stub(vscode.window, 'showInformationMessage').resolvesArg(1)
 					await vscode.commands.executeCommand('direnv.reload')
 					await vscode.commands.executeCommand('direnv.open')
 					await assertEnvironmentIsLoaded()
 				})
 
 				it('allows and loads the .envrc on save', async () => {
-					sinon.replace(vscode.window, 'showInformationMessage', sinon.fake.resolves('Allow'))
+					sinon.stub(vscode.window, 'showInformationMessage').resolvesArg(1)
 					await vscode.commands.executeCommand('direnv.open')
 					await vscode.window.activeTextEditor?.document.save()
 					await assertEnvironmentIsLoaded()
