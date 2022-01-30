@@ -1,0 +1,25 @@
+name: Test with nix
+
+on:
+  push:
+    branches:
+      - "nix/*"
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Nix
+        uses: cachix/install-nix-action@v16
+      - name: Test
+        run: nix flake check --print-build-logs
