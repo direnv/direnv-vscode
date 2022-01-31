@@ -119,7 +119,7 @@
 		"@typescript-eslint/eslint-plugin": "^5.10.0",
 		"@typescript-eslint/parser": "^5.10.0",
 		"@vscode/test-electron": "^2.1.1",
-		"esbuild": "^0.14.13",
+		"esbuild": "^0.14.14",
 		"eslint": "^8.7.0",
 		"eslint-config-prettier": "^8.3.0",
 		"eslint-plugin-prettier": "^4.0.0",
