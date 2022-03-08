@@ -128,7 +128,7 @@
 		"prettier": "^2.5.1",
 		"rimraf": "^3.0.2",
 		"sinon": "^13.0.0",
-		"typescript": "^4.5.5",
+		"typescript": "^4.6.2",
 		"vsce": "^2.6.5"
 	}
 }
