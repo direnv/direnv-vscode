@@ -15,16 +15,17 @@ class Direnv implements vscode.Disposable {
 	private viewBlocked = new vscode.EventEmitter<string>()
 	private blockedPath: string | undefined
 
-	constructor(
-		private environment: vscode.EnvironmentVariableCollection,
-		private status: status.Item,
-	) {
+	constructor(private context: vscode.ExtensionContext, private status: status.Item) {
 		this.willLoad.event(() => this.onWillLoad())
 		this.didLoad.event((e) => this.onDidLoad(e))
 		this.loaded.event(() => this.onLoaded())
 		this.failed.event((e) => this.onFailed(e))
 		this.blocked.event((e) => this.onBlocked(e))
 		this.viewBlocked.event((e) => this.onViewBlocked(e))
+	}
+
+	private get environment(): vscode.EnvironmentVariableCollection {
+		return this.context.environmentVariableCollection
 	}
 
 	dispose() {
@@ -233,9 +234,8 @@ async function uriFor(path: string): Promise<vscode.Uri> {
 }
 
 export async function activate(context: vscode.ExtensionContext) {
-	const environment = context.environmentVariableCollection
 	const statusItem = new status.Item(vscode.window.createStatusBarItem())
-	const instance = new Direnv(environment, statusItem)
+	const instance = new Direnv(context, statusItem)
 	context.subscriptions.push(instance)
 	context.subscriptions.push(
 		vscode.commands.registerCommand(command.Direnv.reload, async () => {
