@@ -5,6 +5,10 @@ import * as config from './config'
 import * as direnv from './direnv'
 import * as status from './status'
 
+const enum Cached {
+	environment = 'direnv.environment',
+}
+
 class Direnv implements vscode.Disposable {
 	private backup = new Map<string, string | undefined>()
 	private willLoad = new vscode.EventEmitter<void>()
@@ -26,6 +30,10 @@ class Direnv implements vscode.Disposable {
 
 	private get environment(): vscode.EnvironmentVariableCollection {
 		return this.context.environmentVariableCollection
+	}
+
+	private get workspaceState(): vscode.Memento {
+		return this.context.workspaceState
 	}
 
 	dispose() {
@@ -88,6 +96,13 @@ class Direnv implements vscode.Disposable {
 		})
 	}
 
+	restore() {
+		const data = this.workspaceState.get<direnv.Data>(Cached.environment)
+		if (data === undefined) return
+		this.updateEnvironment(data)
+		this.loaded.fire()
+	}
+
 	private updateEnvironment(data: direnv.Data) {
 		Object.entries(data).forEach(([key, value]) => {
 			if (!this.backup.has(key)) {
@@ -138,7 +153,8 @@ class Direnv implements vscode.Disposable {
 		}
 	}
 
-	private onDidLoad(data: direnv.Data) {
+	private async onDidLoad(data: direnv.Data) {
+		await this.workspaceState.update(Cached.environment, data)
 		this.updateEnvironment(data)
 		this.loaded.fire()
 	}
@@ -269,6 +285,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			await instance.configurationChanged(e)
 		}),
 	)
+	instance.restore()
 	await instance.reload()
 }
 
