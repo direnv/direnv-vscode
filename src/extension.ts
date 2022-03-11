@@ -35,7 +35,7 @@ class Direnv implements vscode.Disposable {
 		return this.context.environmentVariableCollection
 	}
 
-	private get workspaceState(): vscode.Memento {
+	private get cache(): vscode.Memento {
 		return this.context.workspaceState
 	}
 
@@ -93,6 +93,7 @@ class Direnv implements vscode.Disposable {
 	}
 
 	async reload() {
+		await this.cache.update(Cached.environment, undefined)
 		await this.try(async () => {
 			await direnv.test()
 			this.willLoad.fire()
@@ -100,10 +101,18 @@ class Direnv implements vscode.Disposable {
 	}
 
 	restore() {
-		const data = this.workspaceState.get<Data>(Cached.environment)
+		const data = this.cache.get<Data>(Cached.environment)
 		if (data === undefined) return
 		this.updateEnvironment(data)
-		this.loaded.fire()
+	}
+
+	private async updateCache() {
+		await this.cache.update(
+			Cached.environment,
+			Object.fromEntries(
+				[...this.backup.entries()].map(([key]) => [key, process.env[key]]),
+			),
+		)
 	}
 
 	private updateEnvironment(data: Data) {
@@ -118,12 +127,12 @@ class Direnv implements vscode.Disposable {
 				this.environment.replace(key, value)
 			} else {
 				delete process.env[key]
-				this.environment.delete(key)
+				this.environment.delete(key) // can't unset the variable
 			}
 		})
 	}
 
-	private resetEnvironment() {
+	private async resetEnvironment() {
 		this.backup.forEach((value, key) => {
 			if (value === undefined) {
 				delete process.env[key]
@@ -133,6 +142,7 @@ class Direnv implements vscode.Disposable {
 		})
 		this.backup.clear()
 		this.environment.clear()
+		await this.cache.update(Cached.environment, undefined)
 	}
 
 	private async try<T>(callback: () => Promise<T>): Promise<void> {
@@ -157,8 +167,8 @@ class Direnv implements vscode.Disposable {
 	}
 
 	private async onDidLoad(data: Data) {
-		await this.workspaceState.update(Cached.environment, data)
 		this.updateEnvironment(data)
+		await this.updateCache()
 		this.loaded.fire()
 	}
 
@@ -180,7 +190,6 @@ class Direnv implements vscode.Disposable {
 			state = status.State.loaded({ added, changed, removed })
 		}
 		this.status.update(state)
-		// TODO: restart extension host here?
 	}
 
 	private async onFailed(err: unknown) {
@@ -207,7 +216,7 @@ class Direnv implements vscode.Disposable {
 
 	private async onBlocked(path: string) {
 		this.blockedPath = path
-		this.resetEnvironment()
+		await this.resetEnvironment()
 		this.status.update(status.State.blocked(path))
 		const options = ['Allow', 'View']
 		const choice = await vscode.window.showWarningMessage(
