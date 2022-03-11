@@ -172,6 +172,7 @@ class Direnv implements vscode.Disposable {
 		this.updateEnvironment(data)
 		await this.updateCache()
 		this.loaded.fire()
+		if (Object.keys(data).every(isInternal)) return
 		this.didUpdate.fire()
 	}
 
@@ -182,6 +183,7 @@ class Direnv implements vscode.Disposable {
 			let changed = 0
 			let removed = 0
 			this.backup.forEach((value, key) => {
+				if (isInternal(key)) return
 				if (value === undefined) {
 					added += 1
 				} else if (key in process.env) {
@@ -253,6 +255,10 @@ class Direnv implements vscode.Disposable {
 			await vscode.commands.executeCommand('workbench.action.restartExtensionHost')
 		}
 	}
+}
+
+function isInternal(key: string): boolean {
+	return key.startsWith('DIRENV_')
 }
 
 function message(err: unknown): string | undefined {
