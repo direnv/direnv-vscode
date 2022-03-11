@@ -163,16 +163,19 @@ class Direnv implements vscode.Disposable {
 	private onLoaded() {
 		let state = status.State.empty
 		if (this.backup.size) {
+			let added = 0
 			let changed = 0
 			let removed = 0
-			this.backup.forEach((_, key) => {
-				if (key in process.env) {
+			this.backup.forEach((value, key) => {
+				if (value === undefined) {
+					added += 1
+				} else if (key in process.env) {
 					changed += 1
 				} else {
 					removed += 1
 				}
 			})
-			state = status.State.loaded({ changed, removed })
+			state = status.State.loaded({ added, changed, removed })
 		}
 		this.status.update(state)
 		// TODO: restart extension host here?

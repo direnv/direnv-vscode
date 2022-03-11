@@ -3,6 +3,7 @@ import * as command from './command'
 import * as config from './config'
 
 export type Delta = {
+	added: number
 	changed: number
 	removed: number
 }
@@ -20,11 +21,11 @@ export class State {
 	static loaded(delta: Delta): State {
 		let text = '$(folder-active)'
 		if (config.status.showChangesCount.get()) {
-			text += ` +${delta.changed}/-${delta.removed}`
+			text += ` +${delta.added}/~${delta.changed}/-${delta.removed}`
 		}
 		return new State(
 			text,
-			`direnv loaded: ${delta.changed} changed, ${delta.removed} removed\nReload…`,
+			`direnv loaded: ${delta.added} added, ${delta.changed} changed, ${delta.removed} removed\nReload…`,
 			command.Direnv.reload,
 			() => State.loaded(delta),
 		)
