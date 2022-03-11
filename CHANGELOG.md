@@ -7,6 +7,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 ### Added
 - Count added variables separate from changed variables
+- Cache environment variables for faster startup
+- Offer to restart the extension host after receiving updates
 
 ## [0.5.0] - 2021-12-28
 ### Fixed
