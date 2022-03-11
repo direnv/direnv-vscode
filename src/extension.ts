@@ -3,6 +3,7 @@ import * as vscode from 'vscode'
 import * as command from './command'
 import * as config from './config'
 import * as direnv from './direnv'
+import { Data } from './direnv'
 import * as status from './status'
 
 const enum Cached {
@@ -12,12 +13,12 @@ const enum Cached {
 class Direnv implements vscode.Disposable {
 	private backup = new Map<string, string | undefined>()
 	private willLoad = new vscode.EventEmitter<void>()
-	private didLoad = new vscode.EventEmitter<direnv.Data>()
+	private didLoad = new vscode.EventEmitter<Data>()
 	private loaded = new vscode.EventEmitter<void>()
 	private failed = new vscode.EventEmitter<unknown>()
 	private blocked = new vscode.EventEmitter<string>()
 	private viewBlocked = new vscode.EventEmitter<string>()
-	private blockedPath: string | undefined
+	private blockedPath?: string
 
 	constructor(private context: vscode.ExtensionContext, private status: status.Item) {
 		this.willLoad.event(() => this.onWillLoad())
@@ -81,7 +82,7 @@ class Direnv implements vscode.Disposable {
 		await this.open(await direnv.create())
 	}
 
-	async open(path?: string | undefined): Promise<void> {
+	async open(path?: string): Promise<void> {
 		path ??= await direnv.find()
 		const uri = await uriFor(path)
 		const doc = await vscode.workspace.openTextDocument(uri)
@@ -97,13 +98,13 @@ class Direnv implements vscode.Disposable {
 	}
 
 	restore() {
-		const data = this.workspaceState.get<direnv.Data>(Cached.environment)
+		const data = this.workspaceState.get<Data>(Cached.environment)
 		if (data === undefined) return
 		this.updateEnvironment(data)
 		this.loaded.fire()
 	}
 
-	private updateEnvironment(data: direnv.Data) {
+	private updateEnvironment(data: Data) {
 		Object.entries(data).forEach(([key, value]) => {
 			if (!this.backup.has(key)) {
 				// keep the oldest value
@@ -153,7 +154,7 @@ class Direnv implements vscode.Disposable {
 		}
 	}
 
-	private async onDidLoad(data: direnv.Data) {
+	private async onDidLoad(data: Data) {
 		await this.workspaceState.update(Cached.environment, data)
 		this.updateEnvironment(data)
 		this.loaded.fire()

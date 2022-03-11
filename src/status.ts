@@ -11,7 +11,7 @@ export class State {
 	private constructor(
 		readonly text: string,
 		readonly tooltip: string,
-		readonly command: command.Direnv | undefined = undefined,
+		readonly command?: command.Direnv,
 		readonly refresh: () => State = () => this,
 	) {}
 
