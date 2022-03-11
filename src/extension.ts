@@ -10,6 +10,8 @@ const enum Cached {
 	environment = 'direnv.environment',
 }
 
+const installationUri = vscode.Uri.parse('https://direnv.net/docs/installation.html')
+
 class Direnv implements vscode.Disposable {
 	private backup = new Map<string, string | undefined>()
 	private willLoad = new vscode.EventEmitter<void>()
@@ -190,9 +192,7 @@ class Direnv implements vscode.Disposable {
 				...options,
 			)
 			if (choice === 'Install') {
-				await vscode.env.openExternal(
-					vscode.Uri.parse('https://direnv.net/docs/installation.html'),
-				)
+				await vscode.env.openExternal(installationUri)
 			}
 			if (choice === 'Configure') {
 				await config.path.executable.open()
