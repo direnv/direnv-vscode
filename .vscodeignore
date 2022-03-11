@@ -2,6 +2,7 @@
 .github/
 .vscode/
 .vscode-test/
+bin/
 out/**
 src/**
 test/**

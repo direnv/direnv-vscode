@@ -96,6 +96,7 @@
 	},
 	"main": "./dist/extension.js",
 	"scripts": {
+		"version": "bin/version $npm_package_version && git add CHANGELOG.md",
 		"package": "vsce package",
 		"vscode:prepublish": "npm run build -- --minify",
 		"clean": "rimraf ./out ./dist",
