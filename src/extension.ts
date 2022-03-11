@@ -20,6 +20,7 @@ class Direnv implements vscode.Disposable {
 	private failed = new vscode.EventEmitter<unknown>()
 	private blocked = new vscode.EventEmitter<string>()
 	private viewBlocked = new vscode.EventEmitter<string>()
+	private didUpdate = new vscode.EventEmitter<void>()
 	private blockedPath?: string
 
 	constructor(private context: vscode.ExtensionContext, private status: status.Item) {
@@ -29,6 +30,7 @@ class Direnv implements vscode.Disposable {
 		this.failed.event((e) => this.onFailed(e))
 		this.blocked.event((e) => this.onBlocked(e))
 		this.viewBlocked.event((e) => this.onViewBlocked(e))
+		this.didUpdate.event(() => this.onDidUpdate())
 	}
 
 	private get environment(): vscode.EnvironmentVariableCollection {
@@ -170,6 +172,7 @@ class Direnv implements vscode.Disposable {
 		this.updateEnvironment(data)
 		await this.updateCache()
 		this.loaded.fire()
+		this.didUpdate.fire()
 	}
 
 	private onLoaded() {
@@ -238,6 +241,16 @@ class Direnv implements vscode.Disposable {
 		)
 		if (choice === 'Allow') {
 			await this.allow(path)
+		}
+	}
+
+	private async onDidUpdate() {
+		const choice = await vscode.window.showWarningMessage(
+			`direnv: Environment updated. Restart extensions?`,
+			'Restart',
+		)
+		if (choice === 'Restart') {
+			await vscode.commands.executeCommand('workbench.action.restartExtensionHost')
 		}
 	}
 }
