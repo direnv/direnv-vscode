@@ -29,10 +29,8 @@
         packages.vsix = npm.build {
           src = ./.;
           inherit node_modules_attrs;
-          buildCommands = [ "echo y | npm run package" ];
-          installPhase = ''
-            mv ${vsix} $out
-          '';
+          buildCommands = [ "npm run package" ];
+          installPhase = "mv ${vsix} $out";
         };
 
         devShell = npm.shell {
