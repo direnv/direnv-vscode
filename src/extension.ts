@@ -3,28 +3,42 @@ import * as vscode from 'vscode'
 import * as command from './command'
 import * as config from './config'
 import * as direnv from './direnv'
+import { Data } from './direnv'
 import * as status from './status'
+
+const enum Cached {
+	environment = 'direnv.environment',
+}
+
+const installationUri = vscode.Uri.parse('https://direnv.net/docs/installation.html')
 
 class Direnv implements vscode.Disposable {
 	private backup = new Map<string, string | undefined>()
 	private willLoad = new vscode.EventEmitter<void>()
-	private didLoad = new vscode.EventEmitter<direnv.Data>()
+	private didLoad = new vscode.EventEmitter<Data>()
 	private loaded = new vscode.EventEmitter<void>()
 	private failed = new vscode.EventEmitter<unknown>()
 	private blocked = new vscode.EventEmitter<string>()
 	private viewBlocked = new vscode.EventEmitter<string>()
-	private blockedPath: string | undefined
+	private didUpdate = new vscode.EventEmitter<void>()
+	private blockedPath?: string
 
-	constructor(
-		private environment: vscode.EnvironmentVariableCollection,
-		private status: status.Item,
-	) {
+	constructor(private context: vscode.ExtensionContext, private status: status.Item) {
 		this.willLoad.event(() => this.onWillLoad())
 		this.didLoad.event((e) => this.onDidLoad(e))
 		this.loaded.event(() => this.onLoaded())
 		this.failed.event((e) => this.onFailed(e))
 		this.blocked.event((e) => this.onBlocked(e))
 		this.viewBlocked.event((e) => this.onViewBlocked(e))
+		this.didUpdate.event(() => this.onDidUpdate())
+	}
+
+	private get environment(): vscode.EnvironmentVariableCollection {
+		return this.context.environmentVariableCollection
+	}
+
+	private get cache(): vscode.Memento {
+		return this.context.workspaceState
 	}
 
 	dispose() {
@@ -72,7 +86,7 @@ class Direnv implements vscode.Disposable {
 		await this.open(await direnv.create())
 	}
 
-	async open(path?: string | undefined): Promise<void> {
+	async open(path?: string): Promise<void> {
 		path ??= await direnv.find()
 		const uri = await uriFor(path)
 		const doc = await vscode.workspace.openTextDocument(uri)
@@ -81,13 +95,29 @@ class Direnv implements vscode.Disposable {
 	}
 
 	async reload() {
+		await this.cache.update(Cached.environment, undefined)
 		await this.try(async () => {
 			await direnv.test()
 			this.willLoad.fire()
 		})
 	}
 
-	private updateEnvironment(data: direnv.Data) {
+	restore() {
+		const data = this.cache.get<Data>(Cached.environment)
+		if (data === undefined) return
+		this.updateEnvironment(data)
+	}
+
+	private async updateCache() {
+		await this.cache.update(
+			Cached.environment,
+			Object.fromEntries(
+				[...this.backup.entries()].map(([key]) => [key, process.env[key]]),
+			),
+		)
+	}
+
+	private updateEnvironment(data: Data) {
 		Object.entries(data).forEach(([key, value]) => {
 			if (!this.backup.has(key)) {
 				// keep the oldest value
@@ -99,12 +129,12 @@ class Direnv implements vscode.Disposable {
 				this.environment.replace(key, value)
 			} else {
 				delete process.env[key]
-				this.environment.delete(key)
+				this.environment.delete(key) // can't unset the variable
 			}
 		})
 	}
 
-	private resetEnvironment() {
+	private async resetEnvironment() {
 		this.backup.forEach((value, key) => {
 			if (value === undefined) {
 				delete process.env[key]
@@ -114,6 +144,7 @@ class Direnv implements vscode.Disposable {
 		})
 		this.backup.clear()
 		this.environment.clear()
+		await this.cache.update(Cached.environment, undefined)
 	}
 
 	private async try<T>(callback: () => Promise<T>): Promise<void> {
@@ -137,27 +168,33 @@ class Direnv implements vscode.Disposable {
 		}
 	}
 
-	private onDidLoad(data: direnv.Data) {
+	private async onDidLoad(data: Data) {
 		this.updateEnvironment(data)
+		await this.updateCache()
 		this.loaded.fire()
+		if (Object.keys(data).every(isInternal)) return
+		this.didUpdate.fire()
 	}
 
 	private onLoaded() {
 		let state = status.State.empty
 		if (this.backup.size) {
+			let added = 0
 			let changed = 0
 			let removed = 0
-			this.backup.forEach((_, key) => {
-				if (key in process.env) {
+			this.backup.forEach((value, key) => {
+				if (isInternal(key)) return
+				if (value === undefined) {
+					added += 1
+				} else if (key in process.env) {
 					changed += 1
 				} else {
 					removed += 1
 				}
 			})
-			state = status.State.loaded({ changed, removed })
+			state = status.State.loaded({ added, changed, removed })
 		}
 		this.status.update(state)
-		// TODO: restart extension host here?
 	}
 
 	private async onFailed(err: unknown) {
@@ -169,9 +206,7 @@ class Direnv implements vscode.Disposable {
 				...options,
 			)
 			if (choice === 'Install') {
-				await vscode.env.openExternal(
-					vscode.Uri.parse('https://direnv.net/docs/installation.html'),
-				)
+				await vscode.env.openExternal(installationUri)
 			}
 			if (choice === 'Configure') {
 				await config.path.executable.open()
@@ -186,7 +221,7 @@ class Direnv implements vscode.Disposable {
 
 	private async onBlocked(path: string) {
 		this.blockedPath = path
-		this.resetEnvironment()
+		await this.resetEnvironment()
 		this.status.update(status.State.blocked(path))
 		const options = ['Allow', 'View']
 		const choice = await vscode.window.showWarningMessage(
@@ -210,6 +245,20 @@ class Direnv implements vscode.Disposable {
 			await this.allow(path)
 		}
 	}
+
+	private async onDidUpdate() {
+		const choice = await vscode.window.showWarningMessage(
+			`direnv: Environment updated. Restart extensions?`,
+			'Restart',
+		)
+		if (choice === 'Restart') {
+			await vscode.commands.executeCommand('workbench.action.restartExtensionHost')
+		}
+	}
+}
+
+function isInternal(key: string): boolean {
+	return key.startsWith('DIRENV_')
 }
 
 function message(err: unknown): string | undefined {
@@ -233,9 +282,8 @@ async function uriFor(path: string): Promise<vscode.Uri> {
 }
 
 export async function activate(context: vscode.ExtensionContext) {
-	const environment = context.environmentVariableCollection
 	const statusItem = new status.Item(vscode.window.createStatusBarItem())
-	const instance = new Direnv(environment, statusItem)
+	const instance = new Direnv(context, statusItem)
 	context.subscriptions.push(instance)
 	context.subscriptions.push(
 		vscode.commands.registerCommand(command.Direnv.reload, async () => {
@@ -269,6 +317,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			await instance.configurationChanged(e)
 		}),
 	)
+	instance.restore()
 	await instance.reload()
 }
 

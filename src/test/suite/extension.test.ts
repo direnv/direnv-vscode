@@ -54,14 +54,14 @@ describe('the extension', () => {
 
 			describe('with simulated user interaction', () => {
 				it('allows and loads the .envrc on direnv.reload', async () => {
-					sinon.stub(vscode.window, 'showWarningMessage').resolvesArg(1)
+					sinon.stub(vscode.window, 'showWarningMessage').withArgs(sinon.match.any, sinon.match('Allow')).resolvesArg(1)
 					await vscode.commands.executeCommand('direnv.reload')
 					await assertEnvironmentIsLoaded()
 				})
 
 				it('opens and allows and loads the .envrc on direnv.reload', async () => {
-					sinon.stub(vscode.window, 'showWarningMessage').resolvesArg(2)
-					sinon.stub(vscode.window, 'showInformationMessage').resolvesArg(1)
+					sinon.stub(vscode.window, 'showWarningMessage').withArgs(sinon.match.any, sinon.match('Allow')).resolvesArg(2)
+					sinon.stub(vscode.window, 'showInformationMessage').withArgs(sinon.match.any, sinon.match('Allow')).resolvesArg(1)
 					await vscode.commands.executeCommand('direnv.reload')
 					await assertEnvironmentIsLoaded()
 				})

@@ -39,7 +39,7 @@ function isCommandNotFound(e: unknown, path: string): boolean {
 	return e['path'] === path && e['code'] === 'ENOENT'
 }
 
-const echo: Data = {
+const echo = {
 	['EDITOR']: 'echo',
 }
 
@@ -47,7 +47,7 @@ function cwd() {
 	return vscode.workspace.workspaceFolders?.[0].uri.path ?? process.cwd()
 }
 
-async function direnv(args: string[], env: Data | null = null): Promise<Stdio> {
+async function direnv(args: string[], env?: NodeJS.ProcessEnv): Promise<Stdio> {
 	const options: cp.ExecOptionsWithStringEncoding = {
 		encoding: 'utf8',
 		cwd: cwd(), // same as default cwd for shell tasks
@@ -104,9 +104,7 @@ export async function find(): Promise<string> {
 export async function dump(): Promise<Data> {
 	try {
 		const { stdout } = await direnv(['export', 'json'])
-		if (!stdout) {
-			return {}
-		}
+		if (!stdout) return {}
 		return JSON.parse(stdout) as Data
 	} catch (e) {
 		if (isStdio(e)) {
