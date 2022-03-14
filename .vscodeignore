@@ -11,6 +11,7 @@ result
 *.nix
 .editorconfig
 .envrc
+.eslintcache
 .gitignore
 .yarnrc
 **/tsconfig.json

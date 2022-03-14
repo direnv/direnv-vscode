@@ -1,4 +1,5 @@
 .envrc.local
+.eslintcache
 out
 dist
 node_modules

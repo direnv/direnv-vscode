@@ -106,8 +106,8 @@
 		"watch": "yarn run build --sourcemap --watch",
 		"compile-tests": "tsc",
 		"watch-tests": "tsc --watch",
-		"lint": "eslint ./src --ext ts",
-		"fix": "eslint ./src --ext ts --fix",
+		"lint": "eslint --cache ./src --ext ts",
+		"fix": "eslint --cache ./src --ext ts --fix",
 		"pretest": "yarn run compile && yarn run compile-tests && yarn run lint",
 		"test": "node ./out/test/runTest.js"
 	},
