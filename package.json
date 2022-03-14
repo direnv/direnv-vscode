@@ -2,10 +2,25 @@
 	"name": "direnv",
 	"displayName": "direnv",
 	"description": "unclutter your .profile",
-	"version": "0.3.0",
+	"version": "0.6.0",
 	"preview": true,
 	"icon": "assets/icon.png",
-	"author": "Martin Kühl <martin.kuehl@posteo.net>",
+	"maintainers": [
+		{
+			"name": "The direnv VSCode extension team",
+			"url": "https://github.com/orgs/direnv/teams/vscode"
+		}
+	],
+	"contributors": [
+		{
+			"name": "cab404",
+			"url": "https://github.com/cab404"
+		},
+		{
+			"name": "mkhl",
+			"url": "https://github.com/mkhl"
+		}
+	],
 	"publisher": "mkhl",
 	"license": "0BSD",
 	"repository": {
@@ -28,6 +43,22 @@
 		}
 	},
 	"contributes": {
+		"configuration": {
+			"title": "direnv",
+			"properties": {
+				"direnv.path.executable": {
+					"type": "string",
+					"default": "direnv",
+					"scope": "machine-overridable",
+					"description": "Path to the direnv executable"
+				},
+				"direnv.status.showChangesCount": {
+					"type": "boolean",
+					"default": true,
+					"description": "Show the number of changed environment variables"
+				}
+			}
+		},
 		"commands": [
 			{
 				"command": "direnv.allow",
@@ -63,34 +94,42 @@
 			]
 		}
 	},
-	"main": "./out/extension.js",
+	"main": "./dist/extension.js",
 	"scripts": {
-		"vscode:prepublish": "yarn run compile",
-		"clean": "rm -rf ./out",
-		"precompile": "yarn run clean",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"package": "vsce package",
-		"lint": "tsfmt --verify && eslint ./src --ext ts",
-		"fix": "tsfmt --replace && eslint ./src --ext ts --fix",
-		"pretest": "yarn run compile && yarn run lint",
+		"version": "bin/version $npm_package_version && git add CHANGELOG.md",
+		"package": "vsce package --allow-star-activation",
+		"vscode:prepublish": "npm run build -- --minify",
+		"clean": "rimraf ./out ./dist",
+		"prebuild": "npm run clean",
+		"build": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --platform=node --external:vscode",
+		"compile": "npm run build -- --sourcemap",
+		"watch": "npm run build -- --sourcemap --watch",
+		"compile-tests": "tsc",
+		"watch-tests": "tsc --watch",
+		"lint": "eslint ./src --ext ts",
+		"fix": "eslint ./src --ext ts --fix",
+		"pretest": "npm run compile && npm run compile-tests && npm run lint",
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
 		"@types/glob": "^7.1.4",
-		"@types/mocha": "^9.0.0",
+		"@types/mocha": "^9.1.0",
 		"@types/node": "14.x",
-		"@types/sinon": "^10.0.6",
+		"@types/sinon": "^10.0.11",
 		"@types/vscode": "^1.62.0",
-		"@typescript-eslint/eslint-plugin": "^5.6.0",
-		"@typescript-eslint/parser": "^5.6.0",
-		"@vscode/test-electron": "^1.6.2",
-		"eslint": "^8.4.0",
+		"@typescript-eslint/eslint-plugin": "^5.14.0",
+		"@typescript-eslint/parser": "^5.14.0",
+		"@vscode/test-electron": "^2.1.3",
+		"esbuild": "^0.14.25",
+		"eslint": "^8.10.0",
+		"eslint-config-prettier": "^8.5.0",
+		"eslint-plugin-prettier": "^4.0.0",
 		"glob": "^7.1.7",
-		"mocha": "^9.1.3",
-		"sinon": "^12.0.1",
-		"typescript": "^4.4.4",
-		"typescript-formatter": "^7.2.2",
-		"vsce": "^2.5.1"
+		"mocha": "^9.2.1",
+		"prettier": "^2.5.1",
+		"rimraf": "^3.0.2",
+		"sinon": "^13.0.0",
+		"typescript": "^4.6.2",
+		"vsce": "^2.7.0"
 	}
 }

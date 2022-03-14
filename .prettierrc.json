@@ -1,0 +1,14 @@
+{
+	"printWidth": 88,
+	"semi": false,
+	"singleQuote": true,
+	"trailingComma": "all",
+	"overrides": [
+		{
+			"files": "src/test/**/*.ts",
+			"options": {
+				"printWidth": 128
+			}
+		}
+	]
+}

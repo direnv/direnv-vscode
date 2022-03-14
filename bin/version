@@ -1,0 +1,21 @@
+#!/bin/sh
+# Usage: version <version> [<file>...]
+# Update CHANGELOG.md for releasing the current state as <version>
+
+if [ $# -eq 0 ]; then
+	sed -En '2,/^$/s/^# //p' "$0" >&2
+	exit 64
+fi
+
+VERSION=$1
+shift
+
+sed -E -f- -i~ CHANGELOG.md <<SED
+/^## \[Unreleased\]\$/ a \\
+\\
+## [$VERSION] - $(date -Idate)
+
+s;^\[Unreleased\]: ([^[:blank:]]+)/v([^/[:blank:]]+)...HEAD\$;\
+[Unreleased]: \1/v$VERSION...HEAD\\
+[$VERSION]: \1/v\2...v$VERSION;
+SED

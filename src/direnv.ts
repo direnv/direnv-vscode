@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import * as cp from 'child_process'
 import { promisify } from 'util'
 import * as vscode from 'vscode'
+import * as config from './config'
 
 const execFile = promisify(cp.execFile)
 
@@ -11,39 +11,65 @@ export class BlockedError extends Error {
 	}
 }
 
+export class CommandNotFoundError extends Error {
+	constructor(public readonly path: string) {
+		super(`${path}: command not found`)
+	}
+}
+
 export type Data = {
-	[key: string]: string;
+	[key: string]: string
 }
 
 export type Stdio = {
-	stdout: string,
-	stderr: string,
+	stdout: string
+	stderr: string
 }
 
 function isStdio(e: unknown): e is Stdio {
-	if (typeof (e) !== 'object' || e === null || e === undefined) { return false }
+	if (typeof e !== 'object' || e === null || e === undefined) {
+		return false
+	}
 	return 'stdout' in e && 'stderr' in e
 }
 
-const echo: Data = {
-	EDITOR: 'echo'
+function isCommandNotFound(e: unknown, path: string): boolean {
+	if (!(e instanceof Error)) return false
+	if (!('path' in e) || !('code' in e)) return false
+	return e['path'] === path && e['code'] === 'ENOENT'
+}
+
+const echo = {
+	['EDITOR']: 'echo',
 }
 
 function cwd() {
 	return vscode.workspace.workspaceFolders?.[0].uri.path ?? process.cwd()
 }
 
-function direnv(args: string[], env: Data | null = null): Promise<Stdio> {
+async function direnv(args: string[], env?: NodeJS.ProcessEnv): Promise<Stdio> {
 	const options: cp.ExecOptionsWithStringEncoding = {
 		encoding: 'utf8',
 		cwd: cwd(), // same as default cwd for shell tasks
 		env: {
 			...process.env,
-			TERM: 'dumb',
+			['TERM']: 'dumb',
 			...env,
-		}
+		},
 	}
-	return execFile('direnv', args, options)
+	const command = config.path.executable.get()
+	try {
+		return await execFile(command, args, options)
+	} catch (e) {
+		if (isCommandNotFound(e, command)) {
+			throw new CommandNotFoundError(command)
+		}
+		throw e
+	}
+}
+
+export async function test(): Promise<void> {
+	await direnv(['version'])
 }
 
 export async function allow(path: string): Promise<void> {
@@ -78,7 +104,7 @@ export async function find(): Promise<string> {
 export async function dump(): Promise<Data> {
 	try {
 		const { stdout } = await direnv(['export', 'json'])
-		if (!stdout) { return {} }
+		if (!stdout) return {}
 		return JSON.parse(stdout) as Data
 	} catch (e) {
 		if (isStdio(e)) {

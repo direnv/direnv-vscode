@@ -1,4 +1,4 @@
-import * as assert from 'assert'
+import { strict as assert } from 'assert'
 import * as path from 'path'
 import * as sinon from 'sinon'
 import * as vscode from 'vscode'
@@ -6,10 +6,10 @@ import { workspaceRoot } from '.'
 
 async function runTask(name: string): Promise<number> {
 	const tasks = await vscode.tasks.fetchTasks()
-	const test = tasks.find(task => task.name === name)
+	const test = tasks.find((task) => task.name === name)
 	assert(test)
-	const promise = new Promise<number>(ok => {
-		const done = vscode.tasks.onDidEndTaskProcess(event => {
+	const promise = new Promise<number>((ok) => {
+		const done = vscode.tasks.onDidEndTaskProcess((event) => {
 			if (event.execution.task.name === name) {
 				done.dispose()
 				ok(event.exitCode ?? -1)
@@ -21,13 +21,13 @@ async function runTask(name: string): Promise<number> {
 }
 
 async function assertEnvironmentIsLoaded() {
-	assert.strict.equal(await runTask("test-task"), 0, "environment is loaded in task")
-	assert.strict.equal(await runTask("test-process"), 0, "environment is loaded in process")
+	assert.equal(await runTask('test-task'), 0, 'environment is loaded in task')
+	assert.equal(await runTask('test-process'), 0, 'environment is loaded in process')
 }
 
 async function assertEnvironmentIsNotLoaded() {
-	assert.strict.notEqual(await runTask("test-task"), 0, "environment is not loaded in task")
-	assert.strict.notEqual(await runTask("test-process"), 0, "environment is not loaded in process")
+	assert.notEqual(await runTask('test-task'), 0, 'environment is not loaded in task')
+	assert.notEqual(await runTask('test-process'), 0, 'environment is not loaded in process')
 }
 
 describe('the extension', () => {
@@ -43,39 +43,39 @@ describe('the extension', () => {
 			it('opens the .envrc file with direnv.open', async () => {
 				await vscode.commands.executeCommand('direnv.open')
 				const path = vscode.window.activeTextEditor?.document.fileName
-				assert.strict.equal(path, file)
+				assert.equal(path, file)
 			})
 
 			it('opens the .envrc file with direnv.create', async () => {
 				await vscode.commands.executeCommand('direnv.create')
 				const path = vscode.window.activeTextEditor?.document.fileName
-				assert.strict.equal(path, file)
+				assert.equal(path, file)
 			})
 
 			describe('with simulated user interaction', () => {
 				it('allows and loads the .envrc on direnv.reload', async () => {
-					sinon.replace(vscode.window, 'showWarningMessage', sinon.fake.resolves('Allow'))
+					sinon.stub(vscode.window, 'showWarningMessage').withArgs(sinon.match.any, sinon.match('Allow')).resolvesArg(1)
 					await vscode.commands.executeCommand('direnv.reload')
 					await assertEnvironmentIsLoaded()
 				})
 
 				it('opens and allows and loads the .envrc on direnv.reload', async () => {
-					sinon.replace(vscode.window, 'showWarningMessage', sinon.fake.resolves('View'))
-					sinon.replace(vscode.window, 'showInformationMessage', sinon.fake.resolves('Allow'))
+					sinon.stub(vscode.window, 'showWarningMessage').withArgs(sinon.match.any, sinon.match('Allow')).resolvesArg(2)
+					sinon.stub(vscode.window, 'showInformationMessage').withArgs(sinon.match.any, sinon.match('Allow')).resolvesArg(1)
 					await vscode.commands.executeCommand('direnv.reload')
 					await assertEnvironmentIsLoaded()
 				})
 
 				it('allows and loads the .envrc on direnv.open', async () => {
-					sinon.replace(vscode.window, 'showWarningMessage', sinon.fake.resolves(undefined))
-					sinon.replace(vscode.window, 'showInformationMessage', sinon.fake.resolves('Allow'))
+					sinon.stub(vscode.window, 'showWarningMessage').resolves(undefined)
+					sinon.stub(vscode.window, 'showInformationMessage').resolvesArg(1)
 					await vscode.commands.executeCommand('direnv.reload')
 					await vscode.commands.executeCommand('direnv.open')
 					await assertEnvironmentIsLoaded()
 				})
 
 				it('allows and loads the .envrc on save', async () => {
-					sinon.replace(vscode.window, 'showInformationMessage', sinon.fake.resolves('Allow'))
+					sinon.stub(vscode.window, 'showInformationMessage').resolvesArg(1)
 					await vscode.commands.executeCommand('direnv.open')
 					await vscode.window.activeTextEditor?.document.save()
 					await assertEnvironmentIsLoaded()
@@ -93,14 +93,14 @@ describe('the extension', () => {
 				await vscode.commands.executeCommand('vscode.open', vscode.Uri.file(text))
 				await vscode.commands.executeCommand('direnv.open')
 				const path = vscode.window.activeTextEditor?.document.fileName
-				assert.strict.equal(path, file)
+				assert.equal(path, file)
 			})
 
 			it('switches to the .envrc file with direnv.create', async () => {
 				await vscode.commands.executeCommand('vscode.open', vscode.Uri.file(text))
 				await vscode.commands.executeCommand('direnv.create')
 				const path = vscode.window.activeTextEditor?.document.fileName
-				assert.strict.equal(path, file)
+				assert.equal(path, file)
 			})
 
 			it('loads the .envrc file with direnv.allow', async () => {
@@ -121,7 +121,9 @@ describe('the extension', () => {
 		const subfile = path.join(subdir, '.envrc')
 
 		beforeEach(() => {
-			sinon.replaceGetter(vscode.workspace, 'workspaceFolders', () => [{ index: 0, name: 'subdir', uri: vscode.Uri.file(subdir) }])
+			sinon.replaceGetter(vscode.workspace, 'workspaceFolders', () => [
+				{ index: 0, name: 'subdir', uri: vscode.Uri.file(subdir) },
+			])
 		})
 
 		describe('without any editors', () => {
@@ -132,13 +134,13 @@ describe('the extension', () => {
 			it('opens the parent .envrc file with direnv.open', async () => {
 				await vscode.commands.executeCommand('direnv.open')
 				const path = vscode.window.activeTextEditor?.document.fileName
-				assert.strict.equal(path, file)
+				assert.equal(path, file)
 			})
 
 			it('opens a new .envrc file with direnv.create', async () => {
 				await vscode.commands.executeCommand('direnv.create')
 				const path = vscode.window.activeTextEditor?.document.fileName
-				assert.strict.equal(path, subfile)
+				assert.equal(path, subfile)
 			})
 		})
 	})

@@ -27,6 +27,7 @@ export async function run(): Promise<void> {
 	const mocha = new Mocha({
 		ui: 'bdd',
 		color: true,
+		timeout: 5000,
 		rootHooks: {
 			async beforeAll() {
 				await requireDirenv()
@@ -39,18 +40,18 @@ export async function run(): Promise<void> {
 			async afterAll() {
 				await vscode.commands.executeCommand('workbench.action.closeFolder')
 			},
-		}
+		},
 	})
 
 	const testsRoot = path.resolve(__dirname, '..')
 
 	try {
 		const files = await glob('**/**.test.js', { cwd: testsRoot })
-		files.forEach(f => mocha.addFile(path.resolve(testsRoot, f)))
+		files.forEach((f) => mocha.addFile(path.resolve(testsRoot, f)))
 
 		// mocha has a runAsync that returns a promise, but @types don't know about it...
 		await new Promise<void>((c, e) => {
-			mocha.run(failures => {
+			mocha.run((failures) => {
 				if (failures > 0) {
 					e(new Error(`${failures} tests failed.`))
 				} else {

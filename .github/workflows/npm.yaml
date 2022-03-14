@@ -1,4 +1,4 @@
-name: Test extension with yarn
+name: Test with npm
 
 on:
   push:
@@ -25,15 +25,15 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install node ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: yarn
+          cache: npm
 
       - name: Install node dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci --ignore-scripts
 
       - name: Install direnv
         run: |
@@ -45,6 +45,6 @@ jobs:
       - name: Test
         run: |
           case "$RUNNER_OS" in
-          macOs) yarn run test ;;
-          Linux) xvfb-run -a yarn run test ;;
+          macOs) npm run test ;;
+          Linux) xvfb-run -a npm run test ;;
           esac
