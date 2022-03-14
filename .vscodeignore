@@ -12,6 +12,7 @@ result
 .editorconfig
 .envrc
 .gitignore
+.yarnrc
 **/tsconfig.json
 **/.eslintrc.json
 **/.prettierrc.json
