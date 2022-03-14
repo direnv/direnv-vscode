@@ -1,4 +1,4 @@
-name: Test with npm
+name: Integration tests
 
 on:
   push:
@@ -26,14 +26,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
       - name: Install node ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: npm
+          cache: yarn
 
-      - name: Install node dependencies
-        run: npm ci --ignore-scripts
+      - run: yarn install
 
       - name: Install direnv
         run: |
@@ -45,6 +45,6 @@ jobs:
       - name: Test
         run: |
           case "$RUNNER_OS" in
-          macOs) npm run test ;;
-          Linux) xvfb-run -a npm run test ;;
+          macOs) yarn run test ;;
+          Linux) xvfb-run -a yarn run test ;;
           esac
