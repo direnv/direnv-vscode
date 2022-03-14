@@ -1,6 +1,6 @@
 import * as _cp from 'child_process'
-import * as _glob from 'glob'
-import * as Mocha from 'mocha'
+import _glob from 'glob'
+import Mocha from 'mocha'
 import * as path from 'path'
 import * as sinon from 'sinon'
 import * as util from 'util'

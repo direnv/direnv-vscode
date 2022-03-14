@@ -5,6 +5,7 @@
 		"outDir": "out",
 		"sourceMap": true,
 		"rootDir": "src",
+		"esModuleInterop": true,
 		"isolatedModules": true,
 		"strict": true,   /* enable all strict type-checking options */
 		/* Additional Checks */
