@@ -108,7 +108,7 @@
 		"watch-tests": "tsc --watch",
 		"lint": "eslint --cache ./src --ext ts",
 		"fix": "eslint --cache ./src --ext ts --fix",
-		"pretest": "yarn run compile && yarn run compile-tests && yarn run lint",
+		"pretest": "run-p compile compile-tests lint",
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
@@ -126,6 +126,7 @@
 		"eslint-plugin-prettier": "^4.0.0",
 		"glob": "^7.1.7",
 		"mocha": "^9.2.1",
+		"npm-run-all": "^4.1.5",
 		"prettier": "^2.5.1",
 		"rimraf": "^3.0.2",
 		"sinon": "^13.0.0",
