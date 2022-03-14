@@ -31,7 +31,7 @@ jobs:
 
       - name: Build
         run: |
-          nix build
+          nix build -L
           cp result ${{ env.artifact_name }}
 
       - name: Upload
