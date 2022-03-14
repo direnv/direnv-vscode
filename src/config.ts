@@ -1,4 +1,4 @@
-import * as vscode from 'vscode'
+import vscode from 'vscode'
 
 const root = 'direnv'
 function config(): vscode.WorkspaceConfiguration {

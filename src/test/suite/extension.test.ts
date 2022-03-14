@@ -1,7 +1,7 @@
 import { strict as assert } from 'assert'
-import * as path from 'path'
-import * as sinon from 'sinon'
-import * as vscode from 'vscode'
+import path from 'path'
+import sinon from 'sinon'
+import vscode from 'vscode'
 import { workspaceRoot } from '.'
 
 async function runTask(name: string): Promise<number> {

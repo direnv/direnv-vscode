@@ -1,5 +1,5 @@
-import * as fs from 'fs/promises'
-import * as vscode from 'vscode'
+import fs from 'fs/promises'
+import vscode from 'vscode'
 import * as command from './command'
 import * as config from './config'
 import * as direnv from './direnv'
