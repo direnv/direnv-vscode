@@ -22,15 +22,9 @@
 
         packages.vsix = pkgs.mkYarnPackage {
           src = ./.;
-          buildPhase = ''
-            rm deps/direnv/direnv
-            mkdir deps/direnv/direnv
-            yarn run package
-          '';
-          installPhase = ''
-            cd deps/direnv
-            mv ${vsix} $out
-          '';
+          configurePhase = "ln -s $node_modules node_modules";
+          buildPhase = "yarn run package";
+          installPhase = "mv ${vsix} $out";
           distPhase = ":";
         };
 
