@@ -24,16 +24,17 @@
           src = ./.;
           name = vsix;
           buildPhase = ''
-            # fix Error: ENOENT: no such file or directory, stat '/build/$HASH-source/deps/${name}/${name}
-            rm deps/${name}/${name}
-            # fix Warning: Using '*' activation is usually a bad idea as it impacts performance.
-            echo y |
-            yarn run --offline vsce package --yarn
+            cd deps/${name}
+            rm direnv
+            mkdir direnv
+            export VSCE_TESTS=1
+            npx --offline vsce package
+            ls -hal
           '';
           installPhase = ''
-            mv deps/${name}/${vsix} $out
+            mv ${vsix} $out
           '';
-          distPhase = "true";
+          distPhase = ":";
         };
 
         devShell = pkgs.mkShell {
