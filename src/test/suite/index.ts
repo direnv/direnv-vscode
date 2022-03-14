@@ -45,22 +45,13 @@ export async function run(): Promise<void> {
 
 	const testsRoot = path.resolve(__dirname, '..')
 
-	try {
-		const files = await glob('**/**.test.js', { cwd: testsRoot })
-		files.forEach((f) => mocha.addFile(path.resolve(testsRoot, f)))
+	const files = await glob('**/**.test.js', { cwd: testsRoot })
+	files.forEach((f) => mocha.addFile(path.resolve(testsRoot, f)))
 
-		// mocha has a runAsync that returns a promise, but @types don't know about it...
-		await new Promise<void>((c, e) => {
-			mocha.run((failures) => {
-				if (failures > 0) {
-					e(new Error(`${failures} tests failed.`))
-				} else {
-					c()
-				}
-			})
-		})
-	} catch (err) {
+	const failures = await new Promise<number>((c) => mocha.run(c))
+	if (failures > 0) {
+		const err = `${failures} tests failed.`
 		console.error(err)
-		throw err
+		throw new Error(err)
 	}
 }
