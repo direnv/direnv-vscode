@@ -28,9 +28,8 @@
           distPhase = ":";
         };
 
-        devShell = with pkgs; mkShell {
-          src = ./.;
-          buildInputs = [ nodejs yarn ];
+        devShell = pkgs.mkShell {
+          inputsFrom = [ self.defaultPackage.${system} ];
         };
       });
 }
