@@ -252,7 +252,11 @@ class Direnv implements vscode.Disposable {
 			'Restart',
 		)
 		if (choice === 'Restart') {
-			await vscode.commands.executeCommand('workbench.action.restartExtensionHost')
+			if (vscode.env.remoteName === undefined) {
+				await vscode.commands.executeCommand('workbench.action.restartExtensionHost')
+			} else {
+				await vscode.commands.executeCommand('workbench.action.reloadWindow')
+			}
 		}
 	}
 }

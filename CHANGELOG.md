@@ -5,6 +5,8 @@ All notable changes to the "direnv" extension will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+### Fixed
+- Reload window when running with a remote extension host
 
 ## [0.6.0] - 2022-03-12
 ### Added
