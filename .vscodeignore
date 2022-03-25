@@ -9,6 +9,7 @@ test/**
 result
 *.lock
 *.nix
+*.vsix
 .editorconfig
 .envrc
 .eslintcache
