@@ -5,6 +5,8 @@ All notable changes to the "direnv" extension will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+
+## [0.6.1] - 2022-03-25
 ### Fixed
 - Reload window when running with a remote extension host
 
@@ -56,7 +58,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.0.1] - 2021-11-23
 - Initial release
 
-[Unreleased]: https://github.com/direnv/direnv-vscode/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/direnv/direnv-vscode/compare/v0.6.1...HEAD
+[0.6.1]: https://github.com/direnv/direnv-vscode/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/direnv/direnv-vscode/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/direnv/direnv-vscode/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/direnv/direnv-vscode/compare/v0.3.0...v0.4.0
