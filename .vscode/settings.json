@@ -1,21 +1,21 @@
 {
-    "files.exclude": {
-        "out": false, // set this to true to hide the "out" folder with the compiled JS files
-        "dist": false, // set this to true to hide the "dist" folder with the compiled JS files
+	"files.exclude": {
+		"out": false, // set this to true to hide the "out" folder with the compiled JS files
+		"dist": false, // set this to true to hide the "dist" folder with the compiled JS files
 		".direnv": true,
 		".vscode-test": true,
-    },
-    "search.exclude": {
-        "out": true, // set this to false to include "out" folder in search results
-        "dist": true, // set this to false to include "dist" folder in search results
-    },
-    // Turn off tsc task auto detection since we have the necessary tasks as npm scripts
-    "typescript.tsc.autoDetect": "off",
+	},
+	"search.exclude": {
+		"out": true, // set this to false to include "out" folder in search results
+		"dist": true, // set this to false to include "dist" folder in search results
+	},
+	// Turn off tsc task auto detection since we have the necessary tasks as npm scripts
+	"typescript.tsc.autoDetect": "off",
 	"yaml.schemas": {
 		// these are github workflows
 		"https://json.schemastore.org/github-workflow.json": "/.github/workflows/*.yaml",
 	},
-    "[typescript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
+	"[typescript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
 }
