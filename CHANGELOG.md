@@ -26,7 +26,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.4.0] - 2021-12-12
 ### Fixed
 - Handle null values exported by direnv
-- Creating a new .envrc uses the intended file name
+- Creating a new .envrc uses the intended filename
 - Detect when a blocked .envrc is opened more reliably
 ### Added
 - Offer to allow .envrc when saving it
