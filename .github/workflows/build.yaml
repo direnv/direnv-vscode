@@ -27,7 +27,7 @@ jobs:
           branch) PROJECT_VERSION="${GITHUB_SHA:0:7}" ;;
           tag) PROJECT_VERSION="${GITHUB_REF_NAME:1}" ;;
           esac
-          echo "artifact_name=$PROJECT_NAME-$PROJECT_VERSION.vsix" >> $GITHUB_ENV
+          echo "artifact_name=$PROJECT_NAME-$PROJECT_VERSION.vsix" >> "$GITHUB_ENV"
 
       - name: Build
         run: |
