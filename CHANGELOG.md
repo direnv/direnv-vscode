@@ -5,6 +5,8 @@ All notable changes to the "direnv" extension will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+### Changed
+- Require VSCode 1.66
 
 ## [0.6.1] - 2022-03-25
 ### Fixed
