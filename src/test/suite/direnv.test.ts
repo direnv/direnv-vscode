@@ -3,7 +3,7 @@ import path from 'path'
 import sinon from 'sinon'
 import vscode from 'vscode'
 import { workspaceRoot } from '.'
-import * as config from '../../config'
+import config from '../../config'
 import * as direnv from '../../direnv'
 
 describe('direnv', () => {

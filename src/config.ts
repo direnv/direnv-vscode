@@ -1,59 +1,69 @@
 import vscode from 'vscode'
 
 const root = 'direnv'
-function config(): vscode.WorkspaceConfiguration {
-	return vscode.workspace.getConfiguration(root)
-}
 
-async function open(path: string) {
-	return await vscode.commands.executeCommand('workbench.action.openSettings', path)
-}
-
-export function isAffectedBy(event: vscode.ConfigurationChangeEvent): boolean {
-	return event.affectsConfiguration(root)
+class Value<T> {
+	constructor(readonly value: T) {}
 }
 
 type Section = {
 	isAffectedBy(event: vscode.ConfigurationChangeEvent): boolean
-	open(): Promise<unknown>
+	open(): Promise<void>
 }
 
-class Option<T> {
-	constructor(private path: string, private defaultValue: T) {}
-
-	get(): T {
-		return config().get(this.path) ?? this.defaultValue
-	}
-
-	open(): Promise<unknown> {
-		return open(`${root}.${this.path}`)
-	}
+type Setting<T> = {
+	get(): T
+	open(): Promise<void>
 }
 
-type Options<Type> = {
-	[Name in keyof Type]: Option<Type[Name]>
+type Settings<T> = Section & {
+	[Name in keyof T]: T[Name] extends Value<infer T> ? Setting<T> : Settings<T[Name]>
 }
 
-function section<Type>(name: string, defaults: Type): Section & Options<Type> {
+async function open(path: string[]): Promise<void> {
+	await vscode.commands.executeCommand('workbench.action.openSettings', path.join('.'))
+}
+
+function value<T>(value: T): Value<T> {
+	return new Value(value)
+}
+
+function setting<T>(path: string[], value: Value<T>): Setting<T> {
 	return {
-		isAffectedBy(event: vscode.ConfigurationChangeEvent): boolean {
-			return event.affectsConfiguration(`${root}.${name}`)
+		get() {
+			const [root, ...rest] = path
+			return vscode.workspace.getConfiguration(root).get(rest.join('.')) ?? value.value
 		},
-		open(): Promise<unknown> {
-			return open(`${root}.${name}`)
+		open() {
+			return open(path)
+		},
+	}
+}
+
+function section<T>(path: string[], object: T): Settings<T> {
+	return {
+		isAffectedBy(event: vscode.ConfigurationChangeEvent) {
+			return event.affectsConfiguration(path.join('.'))
+		},
+		open() {
+			return open(path)
 		},
 		...Object.fromEntries(
-			Object.entries(defaults).map(([key, value]) => [
+			Object.entries(object).map(([key, value]) => [
 				key,
-				new Option(`${name}.${key}`, value),
+				value instanceof Value
+					? setting([...path, key], value)
+					: section([...path, key], value),
 			]),
 		),
-	} as Section & Options<Type>
+	} as Settings<T>
 }
 
-export const path = section('path', {
-	executable: 'direnv',
-})
-export const status = section('status', {
-	showChangesCount: true,
+export default section([root], {
+	path: {
+		executable: value('direnv'),
+	},
+	status: {
+		showChangesCount: value(true),
+	},
 })

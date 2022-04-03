@@ -1,7 +1,7 @@
 import fs from 'fs/promises'
 import vscode from 'vscode'
 import * as command from './command'
-import * as config from './config'
+import config from './config'
 import * as direnv from './direnv'
 import { Data } from './direnv'
 import * as status from './status'

@@ -1,7 +1,7 @@
 import cp from 'child_process'
 import { promisify } from 'util'
 import vscode from 'vscode'
-import * as config from './config'
+import config from './config'
 
 const execFile = promisify(cp.execFile)
 
