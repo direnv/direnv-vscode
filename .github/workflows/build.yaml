@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install Nix
-        uses: cachix/install-nix-action@v16
+        uses: cachix/install-nix-action@v17
 
       - name: Set artifact name
         run: |
