@@ -36,7 +36,7 @@ jobs:
           cp result ${{ env.artifact_name }}
 
       - name: Upload
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: direnv-vscode.vsix
           path: ${{ env.artifact_name }}
