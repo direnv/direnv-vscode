@@ -1,0 +1,20 @@
+name: Update flakes
+
+on:
+  workflow_dispatch: # manual
+  schedule:
+    - cron: "0 0 * * 0" # weekly
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v17
+
+      - name: Update flake.lock
+        uses: DeterminateSystems/update-flake-lock@v8
