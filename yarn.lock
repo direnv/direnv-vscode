@@ -118,10 +118,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.34.tgz#520224e4be4448c279ecad09639ab460cc441a50"
   integrity sha512-UrWGDyLAlQ2Z8bNOGWTsqbP9ZcBeTYBVuTRNxXTztBy5KhWUFI3BaeDWoCP/CzV/EVGgO1NTYzv9ZytBI9GAEw==
 
-"@types/sinon@^10.0.11":
-  version "10.0.11"
-  resolved "https://registry.yarnpkg.com/@types/sinon/-/sinon-10.0.11.tgz#8245827b05d3fc57a6601bd35aee1f7ad330fc42"
-  integrity sha512-dmZsHlBsKUtBpHriNjlK0ndlvEh8dcb9uV9Afsbt89QIyydpC7NcR+nWlAhASfy3GHnxTl4FX/aKE7XZUt/B4g==
+"@types/sinon@^10.0.13":
+  version "10.0.13"
+  resolved "https://registry.yarnpkg.com/@types/sinon/-/sinon-10.0.13.tgz#60a7a87a70d9372d0b7b38cc03e825f46981fb83"
+  integrity sha512-UVjDqJblVNQYvVNUsj0PuYYw0ELRmgt1Nt5Vk0pT5f16ROGfcKJY8o1HVuMOJOpD727RrGB9EGvoaTQE5tgxZQ==
   dependencies:
     "@types/sinonjs__fake-timers" "*"
 
