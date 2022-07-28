@@ -17,4 +17,4 @@ jobs:
         uses: cachix/install-nix-action@v17
 
       - name: Update flake.lock
-        uses: DeterminateSystems/update-flake-lock@v9
+        uses: DeterminateSystems/update-flake-lock@v11
