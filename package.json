@@ -116,7 +116,7 @@
 		"@types/mocha": "^9.1.1",
 		"@types/node": "16.x",
 		"@types/sinon": "^10.0.13",
-		"@types/vscode": "^1.66.0",
+		"@types/vscode": "^1.69.1",
 		"@typescript-eslint/eslint-plugin": "^5.32.0",
 		"@typescript-eslint/parser": "^5.32.0",
 		"@vscode/test-electron": "^2.1.5",
