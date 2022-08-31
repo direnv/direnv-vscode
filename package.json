@@ -112,7 +112,7 @@
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
-		"@types/glob": "^7.1.4",
+		"@types/glob": "^8.0.0",
 		"@types/mocha": "^9.1.1",
 		"@types/node": "16.x",
 		"@types/sinon": "^10.0.13",
