@@ -40,7 +40,7 @@ function setting<T>(path: string[], value: Value<T>): Setting<T> {
 	}
 }
 
-function section<T>(path: string[], object: T): Settings<T> {
+function section<T extends object>(path: string[], object: T): Settings<T> {
 	return {
 		isAffectedBy(event: vscode.ConfigurationChangeEvent) {
 			return event.affectsConfiguration(path.join('.'))
