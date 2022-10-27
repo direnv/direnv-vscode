@@ -112,7 +112,7 @@ class Direnv implements vscode.Disposable {
 		await this.cache.update(
 			Cached.environment,
 			Object.fromEntries(
-				[...this.backup.entries()].map(([key]) => [key, process.env[key]]),
+				[...this.backup.entries()].map(([key]) => [key, process.env[key] ?? '']),
 			),
 		)
 	}
@@ -124,13 +124,9 @@ class Direnv implements vscode.Disposable {
 				this.backup.set(key, process.env[key])
 			}
 
-			if (value !== null) {
-				process.env[key] = value
-				this.environment.replace(key, value)
-			} else {
-				delete process.env[key]
-				this.environment.delete(key) // can't unset the variable
-			}
+			value ??= '' // can't unset, set to empty instead
+			process.env[key] = value
+			this.environment.replace(key, value)
 		})
 	}
 

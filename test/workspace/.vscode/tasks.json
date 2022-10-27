@@ -7,14 +7,14 @@
 			"label": "test-task",
 			"detail": "test that the .envrc environment is available in the task shell",
 			"type": "shell",
-			"command": "test -n \"$VARIABLE\"",
+			"command": "test -n \"$VARIABLE\" && test -z \"$PREDEFINED\"",
 			"problemMatcher": []
 		},
 		{
 			"label": "test-process",
 			"detail": "test that the .envrc environment is available in process.env",
 			"type": "shell",
-			"command": "test -n \"${env:VARIABLE}\"",
+			"command": "test -n \"${env:VARIABLE}\" && test -z \"${env:PREDEFINED}\"",
 			"problemMatcher": []
 		},
 	]

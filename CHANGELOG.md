@@ -7,6 +7,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 ### Changed
 - Require VSCode 1.66
+- "Unset" variables by setting them to the empty string
+### Fixed
+- Avoid continuously asking to restart
+	If this keeps happening to you, please let us know!
 
 ## [0.6.1] - 2022-03-25
 ### Fixed
