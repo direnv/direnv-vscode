@@ -15,7 +15,10 @@
 		// these are github workflows
 		"https://json.schemastore.org/github-workflow.json": "/.github/workflows/*.yaml",
 	},
-	"[typescript]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	"[javascript][typescript][yaml]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
 	},
+    "[json][jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features",
+    },
 }
