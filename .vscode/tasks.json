@@ -12,8 +12,8 @@
 			},
 			"presentation": {
 				"reveal": "never",
-				"group": "watchers",
-			},
+				"group": "watchers"
+			}
 		},
 		{
 			"type": "npm",
@@ -23,8 +23,8 @@
 			"group": "build",
 			"presentation": {
 				"reveal": "never",
-				"group": "watchers",
-			},
+				"group": "watchers"
+			}
 		},
 		{
 			"type": "npm",
@@ -33,23 +33,31 @@
 			"group": {
 				"kind": "test",
 				"isDefault": true
-			},
+			}
 		},
 		{
 			"type": "npm",
 			"script": "fix",
 			"problemMatcher": "$eslint-stylish",
-			"group": "test",
+			"group": "test"
 		},
 		{
 			"type": "npm",
 			"script": "package",
-			"problemMatcher": [],
+			"problemMatcher": []
+		},
+		{
+			"type": "npm",
+			"script": "clean",
+			"problemMatcher": []
 		},
 		{
 			"label": "tasks: watch-tests",
-			"dependsOn": ["npm: watch", "npm: watch-tests"],
-			"problemMatcher": [],
-		},
+			"dependsOn": [
+				"npm: watch",
+				"npm: watch-tests"
+			],
+			"problemMatcher": []
+		}
 	]
 }
