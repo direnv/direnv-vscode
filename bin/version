@@ -10,7 +10,7 @@ fi
 VERSION=$1
 shift
 
-sed -E -f- -i~ CHANGELOG.md <<SED
+sed -E -f- -i'' CHANGELOG.md <<SED
 /^## \[Unreleased\]\$/ a \\
 \\
 ## [$VERSION] - $(date -Idate)
