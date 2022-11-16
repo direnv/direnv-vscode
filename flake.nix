@@ -5,10 +5,14 @@
     flake-utils.url = "github:numtide/flake-utils";
     flake-compat.url = "github:edolstra/flake-compat";
     flake-compat.flake = false;
+    devshell.url = "github:numtide/devshell";
+    devshell.inputs.flake-utils.follows = "flake-utils";
+    devshell.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = {
     self,
+    devshell,
     flake-utils,
     nixpkgs,
     ...
@@ -22,7 +26,10 @@
     systems = nixpkgs.legacyPackages.x86_64-linux.vscodium.meta.platforms;
   in
     flake-utils.lib.eachSystem systems (system: let
-      pkgs = nixpkgs.legacyPackages.${system};
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [devshell.overlay];
+      };
     in {
       packages.default = self.packages.${system}.vsix;
 
@@ -34,8 +41,9 @@
         distPhase = ":";
       };
 
-      devShell = pkgs.mkShell {
-        inputsFrom = [self.packages.${system}.default];
+      devShells.default = pkgs.devshell.mkShell {
+        # packagesFrom = [self.packages.${system}.default]; # https://github.com/numtide/devshell/issues/5
+        packages = [pkgs.nodejs-16_x pkgs.yarn];
       };
     });
 }
