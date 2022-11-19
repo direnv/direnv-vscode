@@ -192,9 +192,9 @@ class Direnv implements vscode.Disposable {
 			let added = 0
 			let changed = 0
 			let removed = 0
-			this.backup.forEach((value, key) => {
+			this.backup.forEach((was, key) => {
 				if (isInternal(key)) return
-				if (value === undefined) {
+				if (was === undefined) {
 					added += 1
 					this.output.appendLine(`added: ${key}`)
 				} else if (key in process.env) {
@@ -204,12 +204,12 @@ class Direnv implements vscode.Disposable {
 					removed += 1
 					this.output.appendLine(`removed: ${key}`)
 				}
-				if (value !== undefined) {
-					this.output.appendLine(`was: ${value}`)
+				if (was) {
+					this.output.appendLine(`was: ${was}`)
 				}
-				value = process.env[key]
-				if (value !== undefined) {
-					this.output.appendLine(`now: ${value}`)
+				const now = process.env[key]
+				if (now) {
+					this.output.appendLine(`now: ${now}`)
 				}
 			})
 			state = status.State.loaded({ added, changed, removed })
