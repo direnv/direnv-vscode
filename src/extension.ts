@@ -96,17 +96,19 @@ class Direnv implements vscode.Disposable {
 	}
 
 	async reload() {
-		await this.cache.update(Cached.environment, undefined)
-		await this.try(async () => {
-			await direnv.test()
-			this.willLoad.fire()
-		})
+		await this.resetCache()
+		await this.load()
 	}
 
-	restore() {
+	async reset() {
+		await this.resetEnvironment()
+		await this.load()
+	}
+
+	async restore() {
 		const data = this.cache.get<Data>(Cached.environment)
-		if (data === undefined) return
 		this.updateEnvironment(data)
+		await this.load()
 	}
 
 	private async updateCache() {
@@ -118,7 +120,12 @@ class Direnv implements vscode.Disposable {
 		)
 	}
 
-	private updateEnvironment(data: Data) {
+	private async resetCache() {
+		await this.cache.update(Cached.environment, undefined)
+	}
+
+	private updateEnvironment(data?: Data) {
+		if (data === undefined) return
 		Object.entries(data).forEach(([key, value]) => {
 			if (!this.backup.has(key)) {
 				// keep the oldest value
@@ -142,6 +149,13 @@ class Direnv implements vscode.Disposable {
 		this.backup.clear()
 		this.environment.clear()
 		await this.cache.update(Cached.environment, undefined)
+	}
+
+	private async load() {
+		await this.try(async () => {
+			await direnv.test()
+			this.willLoad.fire()
+		})
 	}
 
 	private async try<T>(callback: () => Promise<T>): Promise<void> {
@@ -300,6 +314,9 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand(command.Direnv.reload, async () => {
 			await instance.reload()
 		}),
+		vscode.commands.registerCommand(command.Direnv.reset, async () => {
+			await instance.reset()
+		}),
 		vscode.commands.registerCommand(command.Direnv.allow, async () => {
 			const path = vscode.window.activeTextEditor?.document.fileName
 			if (path !== undefined) {
@@ -328,8 +345,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			await instance.configurationChanged(e)
 		}),
 	)
-	instance.restore()
-	await instance.reload()
+	await instance.restore()
 }
 
 export function deactivate() {

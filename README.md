@@ -49,6 +49,9 @@ since direnv executes arbitrary shell script.**
 *	"direnv: Reload environment"
 	reloads the custom environment for the workspace.
 
+*	"direnv: Reset and reload environment"
+	resets the custom environment for the workspace, then reloads it.
+
 ### Status Item
 
 The extension displays a status icon

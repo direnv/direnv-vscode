@@ -79,6 +79,10 @@
 			{
 				"command": "direnv.reload",
 				"title": "direnv: Reload environment"
+			},
+			{
+				"command": "direnv.reset",
+				"title": "direnv: Reset and reload environment"
 			}
 		],
 		"menus": {

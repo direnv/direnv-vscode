@@ -7,6 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 ### Added
 - Log details about changed environment in the `direnv` output channel
+- New command to "hard" reset the custom environment
 
 ## [0.7.0] - 2022-10-28
 ### Changed
