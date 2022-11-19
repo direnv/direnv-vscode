@@ -12,7 +12,7 @@ const glob = util.promisify(_glob)
 
 export const workspaceRoot = path.resolve(__dirname, '../../../test/workspace')
 
-async function requireDirenv(): Promise<void> {
+async function requireDirenv() {
 	await execFile('direnv', ['version'])
 }
 
@@ -24,7 +24,7 @@ async function removeWatched() {
 	}
 }
 
-async function blockWorkspace(): Promise<void> {
+async function blockWorkspace() {
 	try {
 		await execFile('direnv', ['deny', workspaceRoot])
 	} catch (_) {
@@ -36,7 +36,7 @@ async function resetExtension() {
 	await vscode.commands.executeCommand('direnv.reset')
 }
 
-export async function run(): Promise<void> {
+export async function run() {
 	const mocha = new Mocha({
 		ui: 'bdd',
 		color: true,
