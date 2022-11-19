@@ -1,4 +1,3 @@
-import fs from 'fs/promises'
 import vscode from 'vscode'
 import * as command from './command'
 import config from './config'
@@ -298,11 +297,12 @@ function message(err: unknown): string | undefined {
 }
 
 async function uriFor(path: string): Promise<vscode.Uri> {
+	const uri = vscode.Uri.file(path)
 	try {
-		await fs.access(path)
-		return vscode.Uri.file(path)
+		await vscode.workspace.fs.stat(uri)
+		return uri
 	} catch (_) {
-		return vscode.Uri.file(path).with({ scheme: 'untitled' })
+		return uri.with({ scheme: 'untitled' })
 	}
 }
 
