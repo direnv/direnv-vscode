@@ -5,6 +5,8 @@ All notable changes to the "direnv" extension will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+
+## [0.8.0] - 2022-11-19
 ### Added
 - Log details about changed environment in the `direnv` output channel
 - New command to "hard" reset the custom environment
@@ -69,7 +71,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.0.1] - 2021-11-23
 - Initial release
 
-[Unreleased]: https://github.com/direnv/direnv-vscode/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/direnv/direnv-vscode/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/direnv/direnv-vscode/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/direnv/direnv-vscode/compare/v0.6.1...v0.7.0
 [0.6.1]: https://github.com/direnv/direnv-vscode/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/direnv/direnv-vscode/compare/v0.5.0...v0.6.0
