@@ -44,6 +44,7 @@ describe('direnv', () => {
 			await direnv.block(file)
 			try {
 				await direnv.dump()
+				assert.fail('.envrc should be blocked')
 			} catch ({ path }) {
 				assert.equal(path, file)
 			}
