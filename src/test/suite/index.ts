@@ -27,7 +27,8 @@ export async function run(): Promise<void> {
 	const mocha = new Mocha({
 		ui: 'bdd',
 		color: true,
-		timeout: 5000,
+		slow: 1000,
+		timeout: 10000,
 		rootHooks: {
 			async beforeAll() {
 				await requireDirenv()
