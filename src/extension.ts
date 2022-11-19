@@ -13,6 +13,7 @@ const enum Cached {
 const installationUri = vscode.Uri.parse('https://direnv.net/docs/installation.html')
 
 class Direnv implements vscode.Disposable {
+	private output = vscode.window.createOutputChannel('direnv')
 	private backup = new Map<string, string | undefined>()
 	private willLoad = new vscode.EventEmitter<void>()
 	private didLoad = new vscode.EventEmitter<Data>()
@@ -182,10 +183,20 @@ class Direnv implements vscode.Disposable {
 				if (isInternal(key)) return
 				if (value === undefined) {
 					added += 1
+					this.output.appendLine(`added: ${key}`)
 				} else if (key in process.env) {
 					changed += 1
+					this.output.appendLine(`changed: ${key}`)
 				} else {
 					removed += 1
+					this.output.appendLine(`removed: ${key}`)
+				}
+				if (value !== undefined) {
+					this.output.appendLine(`was: ${value}`)
+				}
+				value = process.env[key]
+				if (value !== undefined) {
+					this.output.appendLine(`now: ${value}`)
 				}
 			})
 			state = status.State.loaded({ added, changed, removed })

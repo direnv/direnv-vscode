@@ -5,6 +5,8 @@ All notable changes to the "direnv" extension will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+### Added
+- Log details about changed environment in the `direnv` output channel
 
 ## [0.7.0] - 2022-10-28
 ### Changed
