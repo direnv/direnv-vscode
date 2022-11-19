@@ -50,6 +50,14 @@ describe('direnv', () => {
 			}
 		})
 
+		it('lists the .envrc file as watched', async () => {
+			await direnv.allow(file)
+			const data = await direnv.dump()
+			process.env.DIRENV_WATCHES = data.DIRENV_WATCHES
+			const paths = direnv.watches().map((it) => it.Path)
+			assert.ok(paths.includes(file))
+		})
+
 		it('fails when the direnv executable is missing', async () => {
 			const missing = '/missing/executable'
 			sinon.replace(config.path.executable, 'get', () => missing)

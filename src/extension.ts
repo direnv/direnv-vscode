@@ -22,6 +22,7 @@ class Direnv implements vscode.Disposable {
 	private viewBlocked = new vscode.EventEmitter<string>()
 	private didUpdate = new vscode.EventEmitter<void>()
 	private blockedPath?: string
+	private watchers = vscode.Disposable.from()
 
 	constructor(private context: vscode.ExtensionContext, private status: status.Item) {
 		this.willLoad.event(() => this.onWillLoad())
@@ -43,6 +44,7 @@ class Direnv implements vscode.Disposable {
 
 	dispose() {
 		this.status.dispose()
+		this.watchers.dispose()
 	}
 
 	async allow(path: string) {
@@ -123,6 +125,23 @@ class Direnv implements vscode.Disposable {
 		await this.cache.update(Cached.environment, undefined)
 	}
 
+	private updateWatchers() {
+		this.watchers.dispose()
+		const watches = direnv.watches()
+		this.watchers = vscode.Disposable.from(
+			...watches.map((it) => {
+				const watcher = vscode.workspace.createFileSystemWatcher(
+					new vscode.RelativePattern(vscode.Uri.file(it.Path), '*'),
+				)
+				watcher.onDidChange(() => this.reload())
+				watcher.onDidCreate(() => this.reload())
+				watcher.onDidDelete(() => this.reload())
+				this.output.appendLine(`watching: ${it.Path}`)
+				return watcher
+			}),
+		)
+	}
+
 	private updateEnvironment(data?: Data) {
 		if (data === undefined) return
 		Object.entries(data).forEach(([key, value]) => {
@@ -180,6 +199,7 @@ class Direnv implements vscode.Disposable {
 
 	private async onDidLoad(data: Data) {
 		this.updateEnvironment(data)
+		this.updateWatchers()
 		await this.updateCache()
 		this.loaded.fire()
 		if (Object.keys(data).every(isInternal)) return

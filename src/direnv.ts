@@ -1,6 +1,7 @@
 import cp from 'child_process'
 import { promisify } from 'util'
 import vscode from 'vscode'
+import zlib from 'zlib'
 import config from './config'
 
 const execFile = promisify(cp.execFile)
@@ -20,6 +21,8 @@ export class CommandNotFoundError extends Error {
 export type Data = {
 	[key: string]: string
 }
+
+export type Watch = Record<'Path', string>
 
 export type Stdio = {
 	stdout: string
@@ -116,4 +119,16 @@ export async function dump(): Promise<Data> {
 		}
 		throw e
 	}
+}
+
+export function watches(): Watch[] {
+	return decode(process.env.DIRENV_WATCHES) ?? []
+}
+
+function decode<T>(gzenv?: string): T | undefined {
+	if (!gzenv) return undefined
+	const deflated = Buffer.from(gzenv, 'base64url')
+	const inflated = zlib.inflateSync(deflated)
+	const json = inflated.toString('utf8')
+	return JSON.parse(json) as T
 }

@@ -19,6 +19,8 @@ This extension automatically loads the custom environment
 direnv provides for the workspace.
 If the corresponding .envrc file is not allowed yet
 it provides the option to allow or view and then allow the file.
+When any files watches by direnv are modified
+the extension automatically reloads the environment.
 
 The custom environment is available in [integrated terminals][vscode-terminal],
 in [custom tasks of type `shell`][vscode-tasks],
@@ -67,9 +69,6 @@ We also recommend hooking direnv into your shell.
 
 
 ## Known Issues
-
-This extension does *not* watch the filesystems for changes.
-You will have to reload your environment manually for now.
 
 Custom tasks with type `process` don't pick up on the modified environment.
 Several task provider extensions provide these kinds of tasks.

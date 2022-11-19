@@ -5,6 +5,8 @@ All notable changes to the "direnv" extension will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+### Added
+- Watch the same files as direnv, reload when any of them changes
 
 ## [0.8.0] - 2022-11-19
 ### Added

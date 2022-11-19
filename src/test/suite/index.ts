@@ -1,4 +1,5 @@
 import _cp from 'child_process'
+import fs from 'fs/promises'
 import _glob from 'glob'
 import Mocha from 'mocha'
 import path from 'path'
@@ -15,12 +16,24 @@ async function requireDirenv(): Promise<void> {
 	await execFile('direnv', ['version'])
 }
 
+async function removeWatched() {
+	try {
+		await fs.rm(path.join(workspaceRoot, '.envrc.local'))
+	} catch (_) {
+		// ignore
+	}
+}
+
 async function blockWorkspace(): Promise<void> {
 	try {
 		await execFile('direnv', ['deny', workspaceRoot])
 	} catch (_) {
 		// ignore
 	}
+}
+
+async function resetExtension() {
+	await vscode.commands.executeCommand('direnv.reset')
 }
 
 export async function run(): Promise<void> {
@@ -33,9 +46,11 @@ export async function run(): Promise<void> {
 			async beforeAll() {
 				await requireDirenv()
 				await blockWorkspace()
+				await resetExtension()
 			},
 			async afterEach() {
 				sinon.restore()
+				await removeWatched()
 				await blockWorkspace()
 			},
 			async afterAll() {
