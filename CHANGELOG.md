@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+### Fixed
+- When saving a watched .envrc, don't offer to allow it since we're reloading anyway.
 
 ## [0.9.0] - 2022-11-19
 ### Added
