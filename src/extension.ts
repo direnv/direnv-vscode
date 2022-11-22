@@ -43,6 +43,7 @@ class Direnv implements vscode.Disposable {
 	}
 
 	dispose() {
+		this.output.dispose()
 		this.status.dispose()
 		this.watchers.dispose()
 	}
