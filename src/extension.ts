@@ -166,7 +166,7 @@ class Direnv implements vscode.Disposable {
 		})
 		this.backup.clear()
 		this.environment.clear()
-		await this.cache.update(Cached.environment, undefined)
+		await this.resetCache()
 	}
 
 	private async load() {
