@@ -34,11 +34,11 @@ class Direnv implements vscode.Disposable {
 		this.didUpdate.event(() => this.onDidUpdate())
 	}
 
-	private get environment(): vscode.EnvironmentVariableCollection {
+	private get environment() {
 		return this.context.environmentVariableCollection
 	}
 
-	private get cache(): vscode.Memento {
+	private get cache() {
 		return this.context.workspaceState
 	}
 
@@ -89,7 +89,7 @@ class Direnv implements vscode.Disposable {
 		await this.open(await direnv.create())
 	}
 
-	async open(path?: string): Promise<void> {
+	async open(path?: string) {
 		path ??= await direnv.find()
 		const uri = await uriFor(path)
 		const doc = await vscode.workspace.openTextDocument(uri)
@@ -177,7 +177,7 @@ class Direnv implements vscode.Disposable {
 		})
 	}
 
-	private async try<T>(callback: () => Promise<T>): Promise<void> {
+	private async try<T>(callback: () => Promise<T>) {
 		try {
 			await callback()
 		} catch (err) {
@@ -302,11 +302,11 @@ class Direnv implements vscode.Disposable {
 	}
 }
 
-function isInternal(key: string): boolean {
+function isInternal(key: string) {
 	return key.startsWith('DIRENV_')
 }
 
-function message(err: unknown): string | undefined {
+function message(err: unknown) {
 	if (typeof err === 'string') {
 		return err
 	}
@@ -314,10 +314,10 @@ function message(err: unknown): string | undefined {
 		return err.message
 	}
 	console.error('unhandled error', err)
-	return undefined
+	return
 }
 
-async function uriFor(path: string): Promise<vscode.Uri> {
+async function uriFor(path: string) {
 	const uri = vscode.Uri.file(path)
 	try {
 		await vscode.workspace.fs.stat(uri)
