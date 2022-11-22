@@ -9,4 +9,4 @@ let
     src = ./.;
   };
 in
-flake.defaultNix
+  flake.defaultNix

@@ -7,29 +7,31 @@
     flake-compat.flake = false;
   };
 
-  outputs = { self, flake-utils, nixpkgs, ... }:
-    let
-      attrs = nixpkgs.lib.importJSON ./package.json;
-      inherit (attrs) name version;
-      vsix = "${name}-${version}.vsix";
-    in
-    flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = nixpkgs.legacyPackages.${system};
-      in
-      {
-        defaultPackage = self.packages.${system}.vsix;
+  outputs = {
+    self,
+    flake-utils,
+    nixpkgs,
+    ...
+  }: let
+    attrs = nixpkgs.lib.importJSON ./package.json;
+    inherit (attrs) name version;
+    vsix = "${name}-${version}.vsix";
+  in
+    flake-utils.lib.eachDefaultSystem (system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in {
+      defaultPackage = self.packages.${system}.vsix;
 
-        packages.vsix = pkgs.mkYarnPackage {
-          src = ./.;
-          configurePhase = "ln -s $node_modules node_modules";
-          buildPhase = "yarn run package";
-          installPhase = "mv ${vsix} $out";
-          distPhase = ":";
-        };
+      packages.vsix = pkgs.mkYarnPackage {
+        src = ./.;
+        configurePhase = "ln -s $node_modules node_modules";
+        buildPhase = "yarn run package";
+        installPhase = "mv ${vsix} $out";
+        distPhase = ":";
+      };
 
-        devShell = pkgs.mkShell {
-          inputsFrom = [ self.defaultPackage.${system} ];
-        };
-      });
+      devShell = pkgs.mkShell {
+        inputsFrom = [self.defaultPackage.${system}];
+      };
+    });
 }
