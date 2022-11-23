@@ -102,7 +102,8 @@ class Direnv implements vscode.Disposable {
 	}
 
 	async reset() {
-		await this.resetEnvironment()
+		this.resetEnvironment()
+		await this.resetCache()
 		await this.load()
 	}
 
@@ -142,6 +143,11 @@ class Direnv implements vscode.Disposable {
 		)
 	}
 
+	private resetWatchers() {
+		this.watchers.dispose()
+		this.watchers = vscode.Disposable.from()
+	}
+
 	private updateEnvironment(data?: Data) {
 		if (data === undefined) return
 		Object.entries(data).forEach(([key, value]) => {
@@ -154,9 +160,10 @@ class Direnv implements vscode.Disposable {
 			process.env[key] = value
 			this.environment.replace(key, value)
 		})
+		this.updateWatchers()
 	}
 
-	private async resetEnvironment() {
+	private resetEnvironment() {
 		this.backup.forEach((value, key) => {
 			if (value === undefined) {
 				delete process.env[key]
@@ -166,7 +173,7 @@ class Direnv implements vscode.Disposable {
 		})
 		this.backup.clear()
 		this.environment.clear()
-		await this.resetCache()
+		this.resetWatchers()
 	}
 
 	private async load() {
@@ -199,7 +206,6 @@ class Direnv implements vscode.Disposable {
 
 	private async onDidLoad(data: Data) {
 		this.updateEnvironment(data)
-		this.updateWatchers()
 		await this.updateCache()
 		this.loaded.fire()
 		if (Object.keys(data).every(isInternal)) return
@@ -261,7 +267,8 @@ class Direnv implements vscode.Disposable {
 
 	private async onBlocked(path: string) {
 		this.blockedPath = path
-		await this.resetEnvironment()
+		this.resetEnvironment()
+		await this.resetCache()
 		this.status.update(status.State.blocked(path))
 		const options = ['Allow', 'View']
 		const choice = await vscode.window.showWarningMessage(
