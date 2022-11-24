@@ -52,7 +52,9 @@ describe('the extension', () => {
 				assert.equal(path, file)
 			})
 
-			describe('with simulated user interaction', () => {
+			describe('with simulated user interaction', function () {
+				this.retries(3)
+
 				it('allows and loads the .envrc on direnv.reload', async () => {
 					sinon.stub(vscode.window, 'showWarningMessage').withArgs(sinon.match.any, sinon.match('Allow')).resolvesArg(1)
 					await vscode.commands.executeCommand('direnv.reload')
