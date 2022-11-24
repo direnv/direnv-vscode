@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+
+## [0.10.0] - 2022-11-24
 ### Changed
 - Store a checksum along with the cached environment.
   If the checksum doesn't match on restore, reset the cache.
@@ -82,7 +84,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.0.1] - 2021-11-23
 - Initial release
 
-[Unreleased]: https://github.com/direnv/direnv-vscode/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/direnv/direnv-vscode/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/direnv/direnv-vscode/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/direnv/direnv-vscode/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/direnv/direnv-vscode/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/direnv/direnv-vscode/compare/v0.6.1...v0.7.0
