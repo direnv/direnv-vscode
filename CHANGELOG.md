@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+### Changed
+- Store a checksum along with the cached environment.
+  If the checksum doesn't match on restore, reset the cache.
 ### Fixed
 - When saving a watched .envrc, don't offer to allow it since we're reloading anyway.
 - Update watched files when the .envrc is blocked.

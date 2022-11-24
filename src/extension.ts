@@ -1,6 +1,7 @@
 import path from 'path'
 import { isMap } from 'util/types'
 import vscode from 'vscode'
+import { Checksum } from './checksum'
 import * as command from './command'
 import config from './config'
 import * as direnv from './direnv'
@@ -8,6 +9,7 @@ import { Data, isInternal } from './direnv'
 import * as status from './status'
 
 const enum Cached {
+	checksum = 'direnv.checksum',
 	environment = 'direnv.environment',
 }
 
@@ -110,18 +112,33 @@ class Direnv implements vscode.Disposable {
 	}
 
 	async restore() {
-		const data = this.cache.get<Data>(Cached.environment)
-		if (data && isMap(data)) {
-			this.updateEnvironment(data)
-		}
+		const data = this.restoreCache()
+		this.updateEnvironment(data)
 		await this.load()
 	}
 
+	private restoreCache() {
+		const checksum = this.cache.get<string>(Cached.checksum)
+		if (checksum === undefined) return
+		const data = this.cache.get<Data>(Cached.environment)
+		if (data === undefined || !isMap(data)) return
+		const hash = new Checksum()
+		data.forEach((_, key) => {
+			hash.update(key, process.env[key])
+		})
+		if (checksum !== hash.digest()) return
+		return data
+	}
+
 	private async updateCache() {
-		await this.cache.update(
-			Cached.environment,
-			new Map([...this.backup.entries()].map(([key]) => [key, process.env[key] ?? ''])),
-		)
+		const hash = new Checksum()
+		const data = new Map<string, string>()
+		this.backup.forEach((value, key) => {
+			hash.update(key, value)
+			data.set(key, process.env[key] ?? '')
+		})
+		await this.cache.update(Cached.checksum, hash.digest())
+		await this.cache.update(Cached.environment, data)
 	}
 
 	private async resetCache() {
