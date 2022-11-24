@@ -23,6 +23,9 @@
 				"--extensionTestsPath=${workspaceFolder}/out/test/suite/index",
 				"${workspaceFolder}/test/workspace",
 			],
+			"env": {
+				"PREDEFINED": "value",
+			},
 			"outFiles": [
 				"${workspaceFolder}/out/test/**/*.js",
 				"${workspaceFolder}/dist/**/*.js"
