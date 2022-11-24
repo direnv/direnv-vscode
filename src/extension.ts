@@ -1,9 +1,10 @@
+import path from 'path'
 import { isMap } from 'util/types'
 import vscode from 'vscode'
 import * as command from './command'
 import config from './config'
 import * as direnv from './direnv'
-import { Data } from './direnv'
+import { Data, isInternal } from './direnv'
 import * as status from './status'
 
 const enum Cached {
@@ -19,7 +20,7 @@ class Direnv implements vscode.Disposable {
 	private didLoad = new vscode.EventEmitter<Data>()
 	private loaded = new vscode.EventEmitter<void>()
 	private failed = new vscode.EventEmitter<unknown>()
-	private blocked = new vscode.EventEmitter<string>()
+	private blocked = new vscode.EventEmitter<direnv.BlockedError>()
 	private viewBlocked = new vscode.EventEmitter<string>()
 	private didUpdate = new vscode.EventEmitter<void>()
 	private blockedPath?: string
@@ -127,26 +128,23 @@ class Direnv implements vscode.Disposable {
 		await this.cache.update(Cached.environment, undefined)
 	}
 
-	private updateWatchers() {
-		this.watchers.dispose()
-		const watches = direnv.watches()
-		this.watchers = vscode.Disposable.from(
-			...watches.map((it) => {
-				const watcher = vscode.workspace.createFileSystemWatcher(
-					new vscode.RelativePattern(vscode.Uri.file(it.Path), '*'),
-				)
-				watcher.onDidChange(() => this.reload())
-				watcher.onDidCreate(() => this.reload())
-				watcher.onDidDelete(() => this.reload())
-				this.output.appendLine(`watching: ${it.Path}`)
-				return watcher
-			}),
-		)
+	private createWatcher(file: string) {
+		const dirname = path.dirname(file)
+		const basename = path.basename(file)
+		const pattern = new vscode.RelativePattern(vscode.Uri.file(dirname), basename)
+		const watcher = vscode.workspace.createFileSystemWatcher(pattern)
+		watcher.onDidChange(() => this.reload())
+		watcher.onDidCreate(() => this.reload())
+		watcher.onDidDelete(() => this.reload())
+		this.output.appendLine(`watching: ${file}`)
+		return watcher
 	}
 
-	private resetWatchers() {
+	private updateWatchers(data?: Data) {
 		this.watchers.dispose()
-		this.watchers = vscode.Disposable.from()
+		this.watchers = vscode.Disposable.from(
+			...direnv.watches(data).map((it) => this.createWatcher(it.Path)),
+		)
 	}
 
 	private updateEnvironment(data?: Data) {
@@ -161,10 +159,10 @@ class Direnv implements vscode.Disposable {
 			process.env[key] = value
 			this.environment.replace(key, value)
 		})
-		this.updateWatchers()
+		this.updateWatchers(data)
 	}
 
-	private resetEnvironment() {
+	private resetEnvironment(data?: Data) {
 		this.backup.forEach((value, key) => {
 			if (value === undefined) {
 				delete process.env[key]
@@ -174,7 +172,7 @@ class Direnv implements vscode.Disposable {
 		})
 		this.backup.clear()
 		this.environment.clear()
-		this.resetWatchers()
+		this.updateWatchers(data)
 	}
 
 	private async load() {
@@ -200,7 +198,7 @@ class Direnv implements vscode.Disposable {
 			this.didLoad.fire(data)
 		} catch (e) {
 			if (e instanceof direnv.BlockedError) {
-				this.blocked.fire(e.path)
+				this.blocked.fire(e)
 			}
 		}
 	}
@@ -266,21 +264,21 @@ class Direnv implements vscode.Disposable {
 		}
 	}
 
-	private async onBlocked(path: string) {
-		this.blockedPath = path
-		this.resetEnvironment()
+	private async onBlocked(e: direnv.BlockedError) {
+		this.blockedPath = e.path
+		this.resetEnvironment(e.data)
 		await this.resetCache()
-		this.status.update(status.State.blocked(path))
+		this.status.update(status.State.blocked(e.path))
 		const options = ['Allow', 'View']
 		const choice = await vscode.window.showWarningMessage(
-			`direnv: ${path} is blocked`,
+			`direnv: ${e.path} is blocked`,
 			...options,
 		)
 		if (choice === 'Allow') {
-			await this.allow(path)
+			await this.allow(e.path)
 		}
 		if (choice === 'View') {
-			await this.open(path)
+			await this.open(e.path)
 		}
 	}
 
@@ -307,10 +305,6 @@ class Direnv implements vscode.Disposable {
 			}
 		}
 	}
-}
-
-function isInternal(key: string) {
-	return key.startsWith('DIRENV_')
 }
 
 function message(err: unknown) {

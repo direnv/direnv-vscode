@@ -55,8 +55,7 @@ describe('direnv', () => {
 		it('lists the .envrc file as watched', async () => {
 			await direnv.allow(file)
 			const data = await direnv.dump()
-			process.env.DIRENV_WATCHES = data.get('DIRENV_WATCHES')
-			const paths = direnv.watches().map((it) => it.Path)
+			const paths = direnv.watches(data).map((it) => it.Path)
 			assert.ok(paths.includes(file))
 		})
 

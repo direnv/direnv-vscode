@@ -7,7 +7,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 ### Fixed
 - When saving a watched .envrc, don't offer to allow it since we're reloading anyway.
-- Stop watching files when the .envrc is blocked.
+- Update watched files when the .envrc is blocked.
+- Keep watching files after they're deleted.
 
 ## [0.9.0] - 2022-11-19
 ### Added

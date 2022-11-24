@@ -7,7 +7,7 @@ import config from './config'
 const execFile = promisify(cp.execFile)
 
 export class BlockedError extends Error {
-	constructor(public readonly path: string) {
+	constructor(public readonly path: string, public readonly data: Data) {
 		super(`${path} is blocked`)
 	}
 }
@@ -105,23 +105,32 @@ export async function find(): Promise<string> {
 export async function dump(): Promise<Data> {
 	try {
 		const { stdout } = await direnv(['export', 'json'])
-		if (!stdout) return new Map()
-		const record = JSON.parse(stdout) as Record<string, string>
-		return new Map(Object.entries(record))
+		return parse(stdout)
 	} catch (e) {
 		if (isStdio(e)) {
 			const found = /direnv: error (?<path>.+) is blocked./.exec(e.stderr)
 			if (found && found.groups?.path) {
 				// .envrc is blocked, let caller ask user what to do
-				throw new BlockedError(found.groups.path)
+				throw new BlockedError(found.groups.path, parse(e.stdout, isInternal))
 			}
 		}
 		throw e
 	}
 }
 
-export function watches(): Watch[] {
-	return decode(process.env.DIRENV_WATCHES) ?? []
+function parse(stdout: string, predicate: (key: string) => boolean = () => true): Data {
+	if (!stdout) return new Map()
+	const record = JSON.parse(stdout) as Record<string, string>
+	return new Map(Object.entries(record).filter(([key]) => predicate(key)))
+}
+
+export function isInternal(key: string) {
+	return key.startsWith('DIRENV_')
+}
+
+export function watches(data?: Data): Watch[] {
+	if (data === undefined) return []
+	return decode(data.get('DIRENV_WATCHES')) ?? []
 }
 
 function decode<T>(gzenv?: string): T | undefined {
