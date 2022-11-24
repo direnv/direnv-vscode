@@ -1,4 +1,4 @@
-import { strict as assert } from 'assert'
+import { AssertionError, strict as assert } from 'assert'
 import path from 'path'
 import sinon from 'sinon'
 import vscode from 'vscode'
@@ -45,8 +45,10 @@ describe('direnv', () => {
 			try {
 				await direnv.dump()
 				assert.fail('.envrc should be blocked')
-			} catch ({ path }) {
-				assert.equal(path, file)
+			} catch (e) {
+				if (e instanceof AssertionError) throw e
+				assert(e instanceof direnv.BlockedError)
+				assert.equal(e.path, file)
 			}
 		})
 
