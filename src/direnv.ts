@@ -18,9 +18,7 @@ export class CommandNotFoundError extends Error {
 	}
 }
 
-export type Data = {
-	[key: string]: string
-}
+export type Data = Map<string, string>
 
 export type Watch = Record<'Path', string>
 
@@ -107,8 +105,9 @@ export async function find(): Promise<string> {
 export async function dump(): Promise<Data> {
 	try {
 		const { stdout } = await direnv(['export', 'json'])
-		if (!stdout) return {}
-		return JSON.parse(stdout) as Data
+		if (!stdout) return new Map()
+		const record = JSON.parse(stdout) as Record<string, string>
+		return new Map(Object.entries(record))
 	} catch (e) {
 		if (isStdio(e)) {
 			const found = /direnv: error (?<path>.+) is blocked./.exec(e.stderr)

@@ -1,3 +1,4 @@
+import { isMap } from 'util/types'
 import vscode from 'vscode'
 import * as command from './command'
 import config from './config'
@@ -109,16 +110,16 @@ class Direnv implements vscode.Disposable {
 
 	async restore() {
 		const data = this.cache.get<Data>(Cached.environment)
-		this.updateEnvironment(data)
+		if (data && isMap(data)) {
+			this.updateEnvironment(data)
+		}
 		await this.load()
 	}
 
 	private async updateCache() {
 		await this.cache.update(
 			Cached.environment,
-			Object.fromEntries(
-				[...this.backup.entries()].map(([key]) => [key, process.env[key] ?? '']),
-			),
+			new Map([...this.backup.entries()].map(([key]) => [key, process.env[key] ?? ''])),
 		)
 	}
 
@@ -150,7 +151,7 @@ class Direnv implements vscode.Disposable {
 
 	private updateEnvironment(data?: Data) {
 		if (data === undefined) return
-		Object.entries(data).forEach(([key, value]) => {
+		data.forEach((value, key) => {
 			if (!this.backup.has(key)) {
 				// keep the oldest value
 				this.backup.set(key, process.env[key])

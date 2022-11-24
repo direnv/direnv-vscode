@@ -36,7 +36,7 @@ describe('direnv', () => {
 			delete process.env['VARIABLE']
 			await direnv.allow(file)
 			const data = await direnv.dump()
-			assert.equal(data['VARIABLE'], 'value')
+			assert.equal(data.get('VARIABLE'), 'value')
 		})
 
 		it('fails to dump the blocked .envrc file', async () => {
@@ -53,7 +53,7 @@ describe('direnv', () => {
 		it('lists the .envrc file as watched', async () => {
 			await direnv.allow(file)
 			const data = await direnv.dump()
-			process.env.DIRENV_WATCHES = data.DIRENV_WATCHES
+			process.env.DIRENV_WATCHES = data.get('DIRENV_WATCHES')
 			const paths = direnv.watches().map((it) => it.Path)
 			assert.ok(paths.includes(file))
 		})
