@@ -7,6 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 ### Fixed
 - Fix check whether we need to restart the extension host
+- Fix storing the cached environment
 
 ## [0.10.0] - 2022-11-24
 ### Changed

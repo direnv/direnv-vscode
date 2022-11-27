@@ -1,5 +1,4 @@
 import path from 'path'
-import { isMap } from 'util/types'
 import vscode from 'vscode'
 import { Checksum } from './checksum'
 import * as command from './command'
@@ -120,8 +119,9 @@ class Direnv implements vscode.Disposable {
 	private restoreCache() {
 		const checksum = this.cache.get<string>(Cached.checksum)
 		if (checksum === undefined) return
-		const data = this.cache.get<Data>(Cached.environment)
-		if (data === undefined || !isMap(data)) return
+		const entries = this.cache.get<Array<[string, string]>>(Cached.environment)
+		if (!Array.isArray(entries)) return
+		const data = new Map(entries)
 		const hash = new Checksum()
 		data.forEach((_, key) => {
 			hash.update(key, process.env[key])
@@ -132,13 +132,13 @@ class Direnv implements vscode.Disposable {
 
 	private async updateCache() {
 		const hash = new Checksum()
-		const data = new Map<string, string>()
+		const entries = new Array<[string, string]>()
 		this.backup.forEach((value, key) => {
 			hash.update(key, value)
-			data.set(key, process.env[key] ?? '')
+			entries.push([key, process.env[key] ?? ''])
 		})
 		await this.cache.update(Cached.checksum, hash.digest())
-		await this.cache.update(Cached.environment, data)
+		await this.cache.update(Cached.environment, entries)
 	}
 
 	private async resetCache() {
