@@ -224,7 +224,7 @@ class Direnv implements vscode.Disposable {
 		this.updateEnvironment(data)
 		await this.updateCache()
 		this.loaded.fire()
-		if (Object.keys(data).every(isInternal)) return
+		if ([...data.keys()].every(isInternal)) return
 		this.didUpdate.fire()
 	}
 

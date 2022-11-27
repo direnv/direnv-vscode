@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+### Fixed
+- Fix check whether we need to restart the extension host
 
 ## [0.10.0] - 2022-11-24
 ### Changed
