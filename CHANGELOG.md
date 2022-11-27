@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+
+## [0.10.1] - 2022-11-27
 ### Fixed
 - Fix check whether we need to restart the extension host
 - Fix storing the cached environment
@@ -87,7 +89,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.0.1] - 2021-11-23
 - Initial release
 
-[Unreleased]: https://github.com/direnv/direnv-vscode/compare/v0.10.0...HEAD
+[Unreleased]: https://github.com/direnv/direnv-vscode/compare/v0.10.1...HEAD
+[0.10.1]: https://github.com/direnv/direnv-vscode/compare/v0.10.0...v0.10.1
 [0.10.0]: https://github.com/direnv/direnv-vscode/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/direnv/direnv-vscode/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/direnv/direnv-vscode/compare/v0.7.0...v0.8.0
