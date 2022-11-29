@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+### Changed
+- Require VSCode 1.71
 
 ## [0.10.1] - 2022-11-27
 ### Fixed

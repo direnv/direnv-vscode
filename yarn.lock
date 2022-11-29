@@ -164,7 +164,7 @@
   resolved "https://registry.yarnpkg.com/@types/sinonjs__fake-timers/-/sinonjs__fake-timers-8.1.2.tgz#bf2e02a3dbd4aecaf95942ecd99b7402e03fad5e"
   integrity sha512-9GcLXF0/v3t80caGs5p2rRfkB+a8VBGLJZVih6CNFkx8IZ994wiKKLSRs9nuFwk1HevWs/1mnUmkApGrSGsShA==
 
-"@types/vscode@^1.66.0":
+"@types/vscode@^1.71.0":
   version "1.73.1"
   resolved "https://registry.yarnpkg.com/@types/vscode/-/vscode-1.73.1.tgz#f2b198dca65c693c4570475aca04a34ad773609d"
   integrity sha512-eArfOrAoZVV+Ao9zQOCaFNaeXj4kTCD+bGS2gyNgIFZH9xVMuLMlRrEkhb22NyxycFWKV1UyTh03vhaVHmqVMg==
