@@ -117,7 +117,7 @@
 	},
 	"devDependencies": {
 		"@types/glob": "^8.0.0",
-		"@types/mocha": "^10.0.0",
+		"@types/mocha": "^10.0.1",
 		"@types/node": "16.x",
 		"@types/sinon": "^10.0.13",
 		"@types/vscode": "^1.66.0",
