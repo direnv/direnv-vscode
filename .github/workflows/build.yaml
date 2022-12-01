@@ -23,7 +23,7 @@ jobs:
 
       - name: Set artifact name
         run: |
-          PROJECT_NAME="${GITHUB_REPOSITORY#*/}"
+          PROJECT_NAME="$(nix develop --command node --print 'require("./package.json").name')"
           case "$GITHUB_REF_TYPE" in
           branch) PROJECT_VERSION="${GITHUB_SHA:0:7}" ;;
           tag) PROJECT_VERSION="${GITHUB_REF_NAME:1}" ;;
