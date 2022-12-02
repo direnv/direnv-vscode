@@ -101,7 +101,7 @@
 	"main": "./dist/extension.js",
 	"scripts": {
 		"version": "bin/version $npm_package_version && git add CHANGELOG.md",
-		"package": "vsce package --yarn --allow-star-activation",
+		"package": "vsce package --allow-star-activation",
 		"vscode:prepublish": "run-s 'build -- --minify'",
 		"clean": "rimraf ./out ./dist",
 		"build": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --platform=node --external:vscode",
