@@ -104,7 +104,6 @@
 		"package": "vsce package --yarn --allow-star-activation",
 		"vscode:prepublish": "run-s 'build --minify'",
 		"clean": "rimraf ./out ./dist",
-		"prebuild": "run-s clean",
 		"build": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --platform=node --external:vscode",
 		"compile": "run-s 'build --sourcemap'",
 		"watch": "run-s 'build --sourcemap --watch'",
