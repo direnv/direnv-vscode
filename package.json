@@ -111,7 +111,7 @@
 		"compile-tests": "tsc",
 		"watch-tests": "tsc --watch",
 		"lint": "eslint --cache --cache-location ./.cache/eslint/ ./src --ext ts",
-		"fix": "eslint --cache --cache-location ./.cache/eslint/ ./src --ext ts --fix",
+		"fix": "run-s 'lint --fix'",
 		"pretest": "run-p compile compile-tests lint",
 		"test": "node ./out/test/runTest.js"
 	},
