@@ -13,8 +13,7 @@
     nixpkgs,
     ...
   }: let
-    attrs = nixpkgs.lib.importJSON ./package.json;
-    inherit (attrs) name version;
+    inherit (nixpkgs.lib.importJSON ./package.json) name version;
     vsix = "${name}-${version}.vsix";
   in
     flake-utils.lib.eachDefaultSystem (system: let
