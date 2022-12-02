@@ -20,7 +20,7 @@
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
     in {
-      defaultPackage = self.packages.${system}.vsix;
+      packages.default = self.packages.${system}.vsix;
 
       packages.vsix = pkgs.mkYarnPackage {
         src = ./.;
@@ -31,7 +31,7 @@
       };
 
       devShell = pkgs.mkShell {
-        inputsFrom = [self.defaultPackage.${system}];
+        inputsFrom = [self.packages.${system}.default];
       };
     });
 }
