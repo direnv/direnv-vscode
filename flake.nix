@@ -19,8 +19,9 @@
       path = ./.;
       inherit name;
     };
+    systems = nixpkgs.legacyPackages.x86_64-linux.vscodium.meta.platforms;
   in
-    flake-utils.lib.eachDefaultSystem (system: let
+    flake-utils.lib.eachSystem systems (system: let
       pkgs = nixpkgs.legacyPackages.${system};
     in {
       packages.default = self.packages.${system}.vsix;
