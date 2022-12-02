@@ -3,6 +3,7 @@ out
 dist
 node_modules
 result
+.cache/
 .direnv/
 .vscode-test/
 *.vsix

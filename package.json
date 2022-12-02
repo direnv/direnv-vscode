@@ -110,8 +110,8 @@
 		"watch": "run-s 'build --sourcemap --watch'",
 		"compile-tests": "tsc",
 		"watch-tests": "tsc --watch",
-		"lint": "eslint --cache --cache-location ./node_modules/.cache/eslint/ ./src --ext ts",
-		"fix": "eslint --cache --cache-location ./node_modules/.cache/eslint/ ./src --ext ts --fix",
+		"lint": "eslint --cache --cache-location ./.cache/eslint/ ./src --ext ts",
+		"fix": "eslint --cache --cache-location ./.cache/eslint/ ./src --ext ts --fix",
 		"pretest": "run-p compile compile-tests lint",
 		"test": "node ./out/test/runTest.js"
 	},
