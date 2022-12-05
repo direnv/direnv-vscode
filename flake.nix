@@ -48,5 +48,32 @@
         packages = [pkgs.nodejs-16_x];
       };
       devShells.npm = npm.v2.shell {src = this;}; # TODO: hook into devshell?
+
+      checks.lint = npm.v2.build {
+        src = this;
+        buildInputs = [pkgs.direnv];
+        installPhase = "touch $out";
+        buildCommands = ["npm run lint"];
+      };
+
+      checks.test = let
+        vscodium =
+          if pkgs.stdenv.isDarwin
+          then "${pkgs.vscodium}/Applications/VSCodium.app/Contents/MacOS/Electron"
+          else "${pkgs.vscodium}/lib/vscode/codium";
+        xvfb-run =
+          if pkgs.stdenv.isDarwin
+          then ""
+          else "${pkgs.xvfb-run}/bin/xvfb-run --auto-servernum";
+      in
+        npm.v2.build {
+          src = this;
+          buildInputs = [pkgs.direnv];
+          installPhase = "touch $out";
+          buildCommands = [
+            "export HOME=$(mktemp -d $TMPDIR/direnv.XXXXXXXX)"
+            "${xvfb-run} npm test -- '${vscodium}'"
+          ];
+        };
     });
 }
