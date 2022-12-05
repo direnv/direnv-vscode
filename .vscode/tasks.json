@@ -3,7 +3,7 @@
 	"tasks": [
 		{
 			"type": "npm",
-			"script": "watch",
+			"script": "watch:source",
 			"problemMatcher": "$esbuild-watch",
 			"isBackground": true,
 			"group": {
@@ -17,7 +17,7 @@
 		},
 		{
 			"type": "npm",
-			"script": "watch-tests",
+			"script": "watch:tests",
 			"problemMatcher": "$tsc-watch",
 			"isBackground": true,
 			"group": "build",
@@ -52,10 +52,10 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "tasks: watch-tests",
+			"label": "tasks: watch all",
 			"dependsOn": [
-				"npm: watch",
-				"npm: watch-tests"
+				"npm: watch:source",
+				"npm: watch:tests"
 			],
 			"problemMatcher": []
 		}

@@ -105,13 +105,13 @@
 		"vscode:prepublish": "run-s 'build -- --minify'",
 		"clean": "rimraf ./out ./dist",
 		"build": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --platform=node --external:vscode",
-		"compile": "run-s 'build -- --sourcemap'",
-		"watch": "run-s 'build -- --sourcemap --watch'",
-		"compile-tests": "tsc",
-		"watch-tests": "tsc --watch",
+		"compile:source": "run-s 'build -- --sourcemap'",
+		"compile:tests": "tsc",
+		"watch:source": "run-s 'compile:source -- --watch'",
+		"watch:tests": "run-s 'compile:tests -- --watch'",
 		"lint": "eslint --cache --cache-location ./.cache/eslint/ ./src --ext ts",
 		"fix": "run-s 'lint -- --fix'",
-		"pretest": "run-p compile compile-tests lint",
+		"pretest": "run-p compile:*",
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
