@@ -68,12 +68,29 @@
         "type": "indirect"
       }
     },
+    "npmlock2nix": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1670017395,
+        "narHash": "sha256-Vr1e2hVoNXO3aS/viikjeUwCAijwiro+MwicfKRHB/Q=",
+        "owner": "nix-community",
+        "repo": "npmlock2nix",
+        "rev": "12ce9223a9ae8ed5830710d5897e4d08e1cb9ac1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "npmlock2nix",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "devshell": "devshell",
         "flake-compat": "flake-compat",
         "flake-utils": "flake-utils",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "npmlock2nix": "npmlock2nix"
       }
     }
   },

@@ -5,6 +5,8 @@
     flake-utils.url = "github:numtide/flake-utils";
     flake-compat.url = "github:edolstra/flake-compat";
     flake-compat.flake = false;
+    npmlock2nix.url = "github:nix-community/npmlock2nix";
+    npmlock2nix.flake = false;
     devshell.url = "github:numtide/devshell";
     devshell.inputs.flake-utils.follows = "flake-utils";
     devshell.inputs.nixpkgs.follows = "nixpkgs";
@@ -14,6 +16,7 @@
     self,
     devshell,
     flake-utils,
+    npmlock2nix,
     nixpkgs,
     ...
   }: let
@@ -30,20 +33,20 @@
         inherit system;
         overlays = [devshell.overlay];
       };
+      npm = pkgs.callPackage npmlock2nix {};
     in {
       packages.default = self.packages.${system}.vsix;
 
-      packages.vsix = pkgs.mkYarnPackage {
+      packages.vsix = npm.v2.build {
         src = this;
-        configurePhase = "ln -s $node_modules node_modules";
-        buildPhase = "yarn run package";
+        buildCommands = ["npm run package"];
         installPhase = "mv ${vsix} $out";
-        distPhase = ":";
       };
 
       devShells.default = pkgs.devshell.mkShell {
         # packagesFrom = [self.packages.${system}.default]; # https://github.com/numtide/devshell/issues/5
-        packages = [pkgs.nodejs-16_x pkgs.yarn];
+        packages = [pkgs.nodejs-16_x];
       };
+      devShells.npm = npm.v2.shell {src = this;}; # TODO: hook into devshell?
     });
 }
