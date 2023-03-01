@@ -1,6 +1,6 @@
 import _cp from 'child_process'
 import fs from 'fs/promises'
-import _glob from 'glob'
+import glob from 'glob'
 import Mocha from 'mocha'
 import path from 'path'
 import sinon from 'sinon'
@@ -8,7 +8,6 @@ import util from 'util'
 import vscode from 'vscode'
 
 const execFile = util.promisify(_cp.execFile)
-const glob = util.promisify(_glob)
 
 export const workspaceRoot = path.resolve(__dirname, '../../../test/workspace')
 
