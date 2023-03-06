@@ -31,7 +31,7 @@
     flake-utils.lib.eachSystem systems (system: let
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [devshell.overlay];
+        overlays = [devshell.overlays.default];
       };
       npm = pkgs.callPackage npmlock2nix {};
     in {
