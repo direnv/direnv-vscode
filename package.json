@@ -120,7 +120,7 @@
 		"@types/sinon": "^10.0.13",
 		"@types/vscode": "1.71.x",
 		"@typescript-eslint/eslint-plugin": "^5.55.0",
-		"@typescript-eslint/parser": "^5.54.1",
+		"@typescript-eslint/parser": "^5.55.0",
 		"@vscode/test-electron": "^2.3.0",
 		"@vscode/vsce": "^2.18.0",
 		"esbuild": "^0.17.11",
