@@ -125,7 +125,7 @@
 		"@vscode/vsce": "^2.18.0",
 		"esbuild": "^0.17.12",
 		"eslint": "^8.36.0",
-		"eslint-config-prettier": "^8.7.0",
+		"eslint-config-prettier": "^8.8.0",
 		"eslint-plugin-prettier": "^4.2.1",
 		"glob": "^9.3.0",
 		"mocha": "^10.2.0",
