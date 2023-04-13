@@ -56,6 +56,11 @@
 					"type": "boolean",
 					"default": true,
 					"description": "Show the number of changed environment variables"
+				},
+				"direnv.restart.automatic": {
+					"type": "boolean",
+					"default": false,
+					"description": "Automatically restart extension host upon environment changes"
 				}
 			}
 		},
