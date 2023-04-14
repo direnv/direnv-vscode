@@ -310,22 +310,22 @@ class Direnv implements vscode.Disposable {
 	}
 
 	private async onDidUpdate() {
-		let choice
-		if (config.restart.automatic.get()) {
-			choice = 'Restart'
-		} else {
-			choice = await vscode.window.showWarningMessage(
-				`direnv: Environment updated. Restart extensions?`,
-				'Restart',
-			)
-		}
-		if (choice === 'Restart') {
+		if (await this.shouldRestart()) {
 			if (vscode.env.remoteName === undefined) {
 				await vscode.commands.executeCommand('workbench.action.restartExtensionHost')
 			} else {
 				await vscode.commands.executeCommand('workbench.action.reloadWindow')
 			}
 		}
+	}
+
+	private async shouldRestart() {
+		if (config.restart.automatic.get()) return true
+		const choice = await vscode.window.showWarningMessage(
+			`direnv: Environment updated. Restart extensions?`,
+			'Restart',
+		)
+		return choice === 'Restart'
 	}
 }
 
