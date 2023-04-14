@@ -66,4 +66,7 @@ export default section([root], {
 	status: {
 		showChangesCount: value(true),
 	},
+	restart: {
+		automatic: value(false),
+	},
 })
