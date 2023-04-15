@@ -7,7 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 
 ## [0.11.0] - 2023-04-15
-###
+### Added
 - Offer restarting automatically via configuration
 ### Changed
 - Require VSCode 1.71
