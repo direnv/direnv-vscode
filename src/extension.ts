@@ -295,7 +295,7 @@ class Direnv implements vscode.Disposable {
 			this.allow(e.path)
 		}
 		if (choice === 'View') {
-			this.open(e.path)
+			await this.open(e.path)
 		}
 	}
 
