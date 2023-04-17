@@ -51,16 +51,16 @@ class Direnv implements vscode.Disposable {
 		this.watchers.dispose()
 	}
 
-	async allow(path: string) {
-		await this.try(async () => {
-			await direnv.allow(path)
+	allow(path: string) {
+		this.try(() => {
+			direnv.allow(path)
 			this.willLoad.fire()
 		})
 	}
 
-	async block(path: string) {
-		await this.try(async () => {
-			await direnv.block(path)
+	block(path: string) {
+		this.try(() => {
+			direnv.block(path)
 			this.willLoad.fire()
 		})
 	}
@@ -88,11 +88,11 @@ class Direnv implements vscode.Disposable {
 	}
 
 	async create() {
-		await this.open(await direnv.create())
+		await this.open(direnv.create())
 	}
 
 	async open(path?: string) {
-		path ??= await direnv.find()
+		path ??= direnv.find()
 		const uri = await uriFor(path)
 		const doc = await vscode.workspace.openTextDocument(uri)
 		await vscode.window.showTextDocument(doc)
@@ -101,13 +101,13 @@ class Direnv implements vscode.Disposable {
 
 	async reload() {
 		await this.resetCache()
-		await this.load()
+		this.load()
 	}
 
 	async reset() {
 		this.resetEnvironment()
 		await this.resetCache()
-		await this.load()
+		this.load()
 	}
 
 	restore() {
@@ -192,26 +192,26 @@ class Direnv implements vscode.Disposable {
 		this.updateWatchers(data)
 	}
 
-	private async load() {
-		await this.try(async () => {
-			await direnv.test()
+	private load() {
+		this.try(() => {
+			direnv.test()
 			this.willLoad.fire()
 		})
 	}
 
-	private async try<T>(callback: () => Promise<T>) {
+	private try<T>(callback: () => T) {
 		try {
-			await callback()
+			callback()
 		} catch (err) {
 			this.failed.fire(err)
 		}
 	}
 
-	private async onWillLoad() {
+	private onWillLoad() {
 		this.blockedPath = undefined
 		this.status.update(status.State.loading)
 		try {
-			const data = await direnv.dump()
+			const data = direnv.dump()
 			this.didLoad.fire(data)
 		} catch (err) {
 			if (err instanceof direnv.BlockedError) {
@@ -292,10 +292,10 @@ class Direnv implements vscode.Disposable {
 			...options,
 		)
 		if (choice === 'Allow') {
-			await this.allow(e.path)
+			this.allow(e.path)
 		}
 		if (choice === 'View') {
-			await this.open(e.path)
+			this.open(e.path)
 		}
 	}
 
@@ -305,7 +305,7 @@ class Direnv implements vscode.Disposable {
 			'Allow',
 		)
 		if (choice === 'Allow') {
-			await this.allow(path)
+			this.allow(path)
 		}
 	}
 
@@ -361,16 +361,16 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand(command.Direnv.reset, async () => {
 			await instance.reset()
 		}),
-		vscode.commands.registerCommand(command.Direnv.allow, async () => {
+		vscode.commands.registerCommand(command.Direnv.allow, () => {
 			const path = vscode.window.activeTextEditor?.document.fileName
 			if (path !== undefined) {
-				await instance.allow(path)
+				instance.allow(path)
 			}
 		}),
-		vscode.commands.registerCommand(command.Direnv.block, async () => {
+		vscode.commands.registerCommand(command.Direnv.block, () => {
 			const path = vscode.window.activeTextEditor?.document.fileName
 			if (path !== undefined) {
-				await instance.block(path)
+				instance.block(path)
 			}
 		}),
 		vscode.commands.registerCommand(command.Direnv.create, async () => {
