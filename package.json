@@ -34,7 +34,8 @@
 		"Other"
 	],
 	"activationEvents": [
-		"*"
+		"*",
+		"onLanguage"
 	],
 	"capabilities": {
 		"untrustedWorkspaces": {
