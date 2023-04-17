@@ -213,9 +213,9 @@ class Direnv implements vscode.Disposable {
 		try {
 			const data = await direnv.dump()
 			this.didLoad.fire(data)
-		} catch (e) {
-			if (e instanceof direnv.BlockedError) {
-				this.blocked.fire(e)
+		} catch (err) {
+			if (err instanceof direnv.BlockedError) {
+				this.blocked.fire(err)
 			}
 		}
 	}
