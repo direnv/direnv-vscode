@@ -9,41 +9,41 @@ import * as direnv from '../../direnv'
 describe('direnv', () => {
 	const file = path.join(workspaceRoot, '.envrc')
 
-	afterEach(async () => {
+	afterEach(() => {
 		try {
-			await direnv.block(file)
+			direnv.block(file)
 		} catch (_) {
 			// ignore errors
 		}
 	})
 
 	describe('in the test workspace', () => {
-		it('finds the direnv executable', async () => {
-			await direnv.test()
+		it('finds the direnv executable', () => {
+			direnv.test()
 		})
 
-		it('finds the .envrc file in the workspace root', async () => {
-			const path = await direnv.find()
+		it('finds the .envrc file in the workspace root', () => {
+			const path = direnv.find()
 			assert.equal(path, file)
 		})
 
-		it('reuses the .envrc file in the workspace root', async () => {
-			const path = await direnv.create()
+		it('reuses the .envrc file in the workspace root', () => {
+			const path = direnv.create()
 			assert.equal(path, file)
 		})
 
-		it('dumps the allowed .envrc file', async () => {
+		it('dumps the allowed .envrc file', () => {
 			delete process.env['VARIABLE']
-			await direnv.allow(file)
-			const data = await direnv.dump()
+			direnv.allow(file)
+			const data = direnv.dump()
 			assert.equal(data.get('VARIABLE'), 'value')
 		})
 
-		it('fails to dump the blocked .envrc file', async () => {
-			await direnv.allow(file)
-			await direnv.block(file)
+		it('fails to dump the blocked .envrc file', () => {
+			direnv.allow(file)
+			direnv.block(file)
 			try {
-				await direnv.dump()
+				direnv.dump()
 				assert.fail('.envrc should be blocked')
 			} catch (e) {
 				if (e instanceof AssertionError) throw e
@@ -52,17 +52,17 @@ describe('direnv', () => {
 			}
 		})
 
-		it('lists the .envrc file as watched', async () => {
-			await direnv.allow(file)
-			const data = await direnv.dump()
+		it('lists the .envrc file as watched', () => {
+			direnv.allow(file)
+			const data = direnv.dump()
 			const paths = direnv.watches(data).map((it) => it.Path)
 			assert.ok(paths.includes(file))
 		})
 
-		it('fails when the direnv executable is missing', async () => {
+		it('fails when the direnv executable is missing', () => {
 			const missing = '/missing/executable'
 			sinon.replace(config.path.executable, 'get', () => missing)
-			await assert.throws(() => direnv.test(), new direnv.CommandNotFoundError(missing))
+			assert.throws(() => direnv.test(), new direnv.CommandNotFoundError(missing))
 		})
 	})
 
@@ -76,13 +76,13 @@ describe('direnv', () => {
 			])
 		})
 
-		it('finds the .envrc file in the parent directory', async () => {
-			const path = await direnv.find()
+		it('finds the .envrc file in the parent directory', () => {
+			const path = direnv.find()
 			assert.equal(path, file)
 		})
 
-		it('creates an .envrc file in the subdirectory', async () => {
-			const path = await direnv.create()
+		it('creates an .envrc file in the subdirectory', () => {
+			const path = direnv.create()
 			assert.equal(path, subfile)
 		})
 	})
