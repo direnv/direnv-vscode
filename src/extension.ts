@@ -110,10 +110,10 @@ class Direnv implements vscode.Disposable {
 		await this.load()
 	}
 
-	async restore() {
+	restore() {
 		const data = this.restoreCache()
 		this.updateEnvironment(data)
-		await this.load()
+		void this.load()
 	}
 
 	private restoreCache() {
@@ -350,7 +350,7 @@ async function uriFor(path: string) {
 	}
 }
 
-export async function activate(context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext) {
 	const statusItem = new status.Item(vscode.window.createStatusBarItem())
 	const instance = new Direnv(context, statusItem)
 	context.subscriptions.push(instance)
@@ -389,7 +389,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			await instance.configurationChanged(e)
 		}),
 	)
-	await instance.restore()
+	instance.restore()
 }
 
 export function deactivate() {
