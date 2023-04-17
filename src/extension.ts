@@ -116,6 +116,12 @@ class Direnv implements vscode.Disposable {
 		await this.load()
 	}
 
+	restoreSync() {
+		const data = this.restoreCache()
+		this.updateEnvironment(data)
+		this.loadSync()
+	}
+
 	private restoreCache() {
 		const checksum = this.cache.get<string>(Cached.checksum)
 		if (checksum === undefined) return
@@ -197,6 +203,25 @@ class Direnv implements vscode.Disposable {
 			await direnv.test()
 			this.willLoad.fire()
 		})
+	}
+
+	private loadSync() {
+		try {
+			direnv.testSync()
+			this.blockedPath = undefined
+			this.status.update(status.State.loading)
+			const data = direnv.dumpSync()
+			this.updateEnvironment(data)
+			void this.updateCache()
+			this.loaded.fire()
+			// no need to restart
+		} catch (err) {
+			if (err instanceof direnv.BlockedError) {
+				this.blocked.fire(err)
+			} else {
+				this.failed.fire(err)
+			}
+		}
 	}
 
 	private async try<T>(callback: () => Promise<T>) {

@@ -1,4 +1,4 @@
-import cp from 'child_process'
+import cp, { execFileSync } from 'child_process'
 import { promisify } from 'util'
 import vscode from 'vscode'
 import zlib from 'zlib'
@@ -69,8 +69,33 @@ async function direnv(args: string[], env?: NodeJS.ProcessEnv): Promise<Stdio> {
 	}
 }
 
+function direnvSync(args: string[], env?: NodeJS.ProcessEnv): string {
+	const options: cp.ExecOptionsWithStringEncoding = {
+		encoding: 'utf8',
+		cwd: cwd(), // same as default cwd for shell tasks
+		env: {
+			...process.env,
+			['TERM']: 'dumb',
+			...env,
+		},
+	}
+	const command = config.path.executable.get()
+	try {
+		return execFileSync(command, args, options)
+	} catch (e) {
+		if (isCommandNotFound(e, command)) {
+			throw new CommandNotFoundError(command)
+		}
+		throw e
+	}
+}
+
 export async function test(): Promise<void> {
 	await direnv(['version'])
+}
+
+export function testSync(): void {
+	direnvSync(['version'])
 }
 
 export async function allow(path: string): Promise<void> {
@@ -105,6 +130,22 @@ export async function find(): Promise<string> {
 export async function dump(): Promise<Data> {
 	try {
 		const { stdout } = await direnv(['export', 'json'])
+		return parse(stdout)
+	} catch (e) {
+		if (isStdio(e)) {
+			const found = /direnv: error (?<path>.+) is blocked./.exec(e.stderr)
+			if (found && found.groups?.path) {
+				// .envrc is blocked, let caller ask user what to do
+				throw new BlockedError(found.groups.path, parse(e.stdout, isInternal))
+			}
+		}
+		throw e
+	}
+}
+
+export function dumpSync(): Data {
+	try {
+		const stdout = direnvSync(['export', 'json'])
 		return parse(stdout)
 	} catch (e) {
 		if (isStdio(e)) {
