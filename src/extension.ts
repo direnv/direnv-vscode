@@ -166,6 +166,9 @@ class Direnv implements vscode.Disposable {
 
 	private updateEnvironment(data?: Data) {
 		if (data === undefined) return
+		// Avoid updating the environment & cleaning out watchers if data is empty
+		// such as when `direnv.dump()` is called twice without changes
+		if (data.size === 0) return
 		data.forEach((value, key) => {
 			if (!this.backup.has(key)) {
 				// keep the oldest value
