@@ -113,7 +113,7 @@ class Direnv implements vscode.Disposable {
 	restore() {
 		const data = this.restoreCache()
 		this.updateEnvironment(data)
-		void this.load()
+		this.load()
 	}
 
 	private restoreCache() {
