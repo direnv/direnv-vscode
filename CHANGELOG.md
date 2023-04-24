@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+### Fixed
+- Avoid disposing watchers when the environment hasn't changed
 
 ## [0.12.0] - 2023-04-17
 ### Changed
