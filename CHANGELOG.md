@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+
+## [0.12.1] - 2023-04-24
 ### Fixed
 - Avoid disposing watchers when the environment hasn't changed
 
@@ -101,7 +103,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.0.1] - 2021-11-23
 - Initial release
 
-[Unreleased]: https://github.com/direnv/direnv-vscode/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/direnv/direnv-vscode/compare/v0.12.1...HEAD
+[0.12.1]: https://github.com/direnv/direnv-vscode/compare/v0.12.0...v0.12.1
 [0.12.0]: https://github.com/direnv/direnv-vscode/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/direnv/direnv-vscode/compare/v0.10.1...v0.11.0
 [0.10.1]: https://github.com/direnv/direnv-vscode/compare/v0.10.0...v0.10.1
