@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+### Fixed
+- Avoid relying on direnv's internal representations
 
 ## [0.12.1] - 2023-04-24
 ### Fixed
