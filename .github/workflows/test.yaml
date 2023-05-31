@@ -1,4 +1,4 @@
-name: Integration tests
+name: Test extension
 
 on:
   push:
@@ -12,26 +12,16 @@ on:
 
 jobs:
   test:
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          # - macos-latest
-          - ubuntu-latest
-        node-version:
-          - 16
-          - 18
-
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install node ${{ matrix.node-version }}
+      - name: Install node
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: lts/*
           cache: npm
 
       - name: Install dependencies
@@ -47,6 +37,6 @@ jobs:
       - name: Test
         run: |
           case "$RUNNER_OS" in
-          macOs) yarn run test ;;
-          Linux) xvfb-run -a yarn run test ;;
+          macOs) npm test ;;
+          Linux) xvfb-run -a npm test ;;
           esac

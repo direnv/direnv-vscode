@@ -18,12 +18,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install Nix
-        uses: cachix/install-nix-action@v21
+      - name: Install node
+        uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Set artifact name
         run: |
-          PROJECT_NAME="$(nix develop --command node --print 'require("./package.json").name')"
+          PROJECT_NAME="$(node --print 'require("./package.json").name')"
           case "$GITHUB_REF_TYPE" in
           branch) PROJECT_VERSION="${GITHUB_SHA:0:7}" ;;
           tag) PROJECT_VERSION="${GITHUB_REF_NAME:1}" ;;
@@ -32,8 +38,7 @@ jobs:
 
       - name: Build
         run: |
-          nix build --print-build-logs
-          cp result ${{ env.artifact_name }}
+          npm run package -- --out "${{ env.artifact_name }}"
 
       - name: Upload
         uses: actions/upload-artifact@v3
