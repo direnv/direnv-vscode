@@ -43,5 +43,5 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v3
         with:
-          name: direnv-vscode.vsix
+          name: direnv-vscode
           path: ${{ env.artifact_name }}
