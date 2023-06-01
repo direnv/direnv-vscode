@@ -1,13 +1,8 @@
 #!/bin/sh
-# Usage: version <version> [<file>...]
+# Usage: update-changelog <version>
 # Update CHANGELOG.md for releasing the current state as <version>
 
-if [ $# -eq 0 ]; then
-	sed -En '2,/^$/s/^# //p' "$0" >&2
-	exit 64
-fi
-
-VERSION=$1
+VERSION=${1:?version required}
 shift
 
 sed -E -f- -i'' CHANGELOG.md <<SED

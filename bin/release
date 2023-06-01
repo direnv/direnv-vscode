@@ -1,0 +1,28 @@
+#!/bin/sh
+# Usage: release <version>
+# Release the given <version> of this project.
+
+set -e
+
+# require gh jq
+
+VERSION=${1:?version required}
+shift
+: "${VERSION#v}"
+TAG="v$VERSION"
+
+test -r CHANGELOG.md
+CHANGES="$(awk -v tag="[$VERSION]" '/^## / { want = ($2 == tag) } want' CHANGELOG.md | sed -1)"
+
+TMPDIR="$(mktemp -d release)"
+trap 'rm -rf "TMPDIR"' EXIT INT HUP TERM
+
+RUN="$(gh run list --branch "$TAG" --workflow Build --status success --json databaseId --jq '.[].databaseId' || exit)"
+gh run download "$RUN" --dir "$TMPDIR"
+EXTENSION=$TMPDIR/direnv-vscode/direnv-$VERSION.vsix
+test -r "$EXTENSION"
+
+gh release create "$TAG" --verify-tag --notes "$CHANGES" "$EXTENSION"
+
+# npx --yes vsce publish --pat "$VSCE_PAT" --allow-star-activation --packagePath "$EXTENSION"
+# npx --yes ovsx publish --pat "$OVSX_PAT" --packagePath "$EXTENSION"

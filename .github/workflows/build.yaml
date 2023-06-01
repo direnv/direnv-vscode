@@ -1,4 +1,4 @@
-name: Build extension
+name: Build
 
 on:
   push:
@@ -11,21 +11,15 @@ on:
       - main
 
 jobs:
-  build:
+  Build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install node
-        uses: actions/setup-node@v3
-        with:
-          node-version: lts/*
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
+      - name: Setup
+        uses: ./.github/actions/setup
 
       - name: Set artifact name
         run: |
@@ -45,3 +39,40 @@ jobs:
         with:
           name: direnv-vscode
           path: ${{ env.artifact_name }}
+
+  Lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Lint
+        run: npm run lint
+
+  Test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Install direnv
+        run: |
+          case "$RUNNER_OS" in
+          macOs) brew install direnv ;;
+          Linux) sudo apt-get install --yes direnv ;;
+          esac
+
+      - name: Test
+        run: |
+          case "$RUNNER_OS" in
+          macOs) npm test ;;
+          Linux) xvfb-run -a npm test ;;
+          esac
