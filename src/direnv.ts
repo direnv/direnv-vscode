@@ -20,7 +20,10 @@ export class CommandNotFoundError extends Error {
 
 export type Data = Map<string, string>
 
-export type Watch = Record<'Path', string>
+type Watch = {
+	path?: string
+	['Path']?: string
+}
 
 export type Stdio = {
 	stdout: string
@@ -128,9 +131,10 @@ export function isInternal(key: string) {
 	return key.startsWith('DIRENV_')
 }
 
-export function watches(data?: Data): Watch[] {
+export function watchedPaths(data?: Data): string[] {
 	if (data === undefined) return []
-	return decode(data.get('DIRENV_WATCHES')) ?? []
+	const watches: Watch[] = decode(data.get('DIRENV_WATCHES')) ?? []
+	return watches.map((it) => it.path ?? it.Path).filter((it): it is string => !!it)
 }
 
 function decode<T>(gzenv?: string): T | undefined {
