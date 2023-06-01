@@ -2,7 +2,7 @@
 	"name": "direnv",
 	"displayName": "direnv",
 	"description": "unclutter your .profile",
-	"version": "0.12.1",
+	"version": "0.12.2",
 	"preview": true,
 	"icon": "assets/icon.png",
 	"maintainers": [

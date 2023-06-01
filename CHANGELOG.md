@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+
+## [0.12.2] - 2023-06-01
 ### Fixed
 - Avoid relying on direnv's internal representations
 
@@ -105,7 +107,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.0.1] - 2021-11-23
 - Initial release
 
-[Unreleased]: https://github.com/direnv/direnv-vscode/compare/v0.12.1...HEAD
+[Unreleased]: https://github.com/direnv/direnv-vscode/compare/v0.12.2...HEAD
+[0.12.2]: https://github.com/direnv/direnv-vscode/compare/v0.12.1...v0.12.2
 [0.12.1]: https://github.com/direnv/direnv-vscode/compare/v0.12.0...v0.12.1
 [0.12.0]: https://github.com/direnv/direnv-vscode/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/direnv/direnv-vscode/compare/v0.10.1...v0.11.0
