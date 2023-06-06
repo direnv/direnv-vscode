@@ -59,6 +59,7 @@ async function direnv(args: string[], env?: NodeJS.ProcessEnv): Promise<Stdio> {
 			...process.env,
 			['TERM']: 'dumb',
 			...env,
+			...config.extraEnv.get(),
 		},
 	}
 	const command = config.path.executable.get()

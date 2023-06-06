@@ -47,6 +47,14 @@
 		"configuration": {
 			"title": "direnv",
 			"properties": {
+				"direnv.extraEnv": {
+					"type": "object",
+					"scope": "machine-overridable",
+					"description": "Environment variables to set before running direnv",
+					"additionalProperties": {
+						"type": "string"
+					}
+				},
 				"direnv.path.executable": {
 					"type": "string",
 					"default": "direnv",
