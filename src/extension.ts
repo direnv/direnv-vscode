@@ -178,6 +178,7 @@ class Direnv implements vscode.Disposable {
 	private resetEnvironment(data?: Data) {
 		this.backup.forEach((value, key) => {
 			if (value === undefined) {
+				// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
 				delete process.env[key]
 			} else {
 				process.env[key] = value
