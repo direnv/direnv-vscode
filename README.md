@@ -73,13 +73,6 @@ We also recommend hooking direnv into your shell.
 Custom tasks with type `process` don't pick up on the modified environment.
 Several task provider extensions provide these kinds of tasks.
 
-Opening a blocked .envrc file without this extension's commands
-(e.g. from the command line, the explorer, or the Open File dialog)
-does not reliably ask to allow it.
-[VSCode does not provide API to support this functionality yet.][vscode-15178]
-
-[vscode-15178]: https://github.com/microsoft/vscode/issues/15178
-
 direnv executes arbitrary shell scripts
 so this extension requires trusted workspaces.
 

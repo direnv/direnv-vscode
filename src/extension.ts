@@ -375,6 +375,13 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand(command.Direnv.open, async () => {
 			await instance.open()
 		}),
+		vscode.window.tabGroups.onDidChangeTabs((e) => {
+			e.opened.forEach((tab) => {
+				if (tab.input instanceof vscode.TabInputText) {
+					instance.didOpen(tab.input.uri.path)
+				}
+			})
+		}),
 		vscode.workspace.onDidOpenTextDocument((e) => {
 			instance.didOpen(e.fileName)
 		}),

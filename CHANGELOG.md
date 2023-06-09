@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+### Fixed
+- Detect when a blocked .envrc is opened more reliably
 
 ## [0.13.0] - 2023-06-09
 ### Added
