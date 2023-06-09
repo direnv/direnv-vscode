@@ -12,9 +12,9 @@ shift
 TAG="v$VERSION"
 
 test -r CHANGELOG.md
-CHANGES="$(awk -v tag="[$VERSION]" '/^## / { want = ($2 == tag) } want' CHANGELOG.md | sed -1)"
+CHANGES="$(awk -v tag="[$VERSION]" '/^## / { want = ($2 == tag) } want' CHANGELOG.md | sed 1d)"
 
-TMPDIR="$(mktemp -d release)"
+TMPDIR="$(mktemp -d)"
 trap 'rm -rf "TMPDIR"' EXIT INT HUP TERM
 
 RUN="$(gh run list --branch "$TAG" --workflow Build --status success --json databaseId --jq '.[].databaseId' || exit)"
