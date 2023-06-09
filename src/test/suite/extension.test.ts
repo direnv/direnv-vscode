@@ -133,7 +133,7 @@ describe('the extension', () => {
 				await assertEnvironmentIsNotLoaded()
 			})
 
-			it.skip('reloads the .envrc file on watched change', async () => {
+			it('reloads the .envrc file on watched change', async () => {
 				await vscode.commands.executeCommand('direnv.allow')
 				const watched = vscode.Uri.file(path.join(workspaceRoot, '.envrc.local'))
 				await vscode.workspace.fs.writeFile(watched, Buffer.from('unset VARIABLE'))
