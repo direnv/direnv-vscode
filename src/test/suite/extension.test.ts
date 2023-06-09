@@ -76,6 +76,23 @@ describe('the extension', () => {
 					await assertEnvironmentIsLoaded()
 				})
 
+				it('allows and loads the .envrc on vscode.open', async () => {
+					sinon.stub(vscode.window, 'showWarningMessage').withArgs(sinon.match.any, sinon.match('Allow')).resolves(undefined)
+					sinon.stub(vscode.window, 'showInformationMessage').withArgs(sinon.match.any, sinon.match('Allow')).resolvesArg(1)
+					await vscode.commands.executeCommand('direnv.reload')
+					await vscode.commands.executeCommand('vscode.open', vscode.Uri.file(file))
+					await assertEnvironmentIsLoaded()
+				})
+
+				it('allows and loads the .envrc on vscode.workspace.openTextDocument', async () => {
+					sinon.stub(vscode.window, 'showWarningMessage').withArgs(sinon.match.any, sinon.match('Allow')).resolves(undefined)
+					sinon.stub(vscode.window, 'showInformationMessage').withArgs(sinon.match.any, sinon.match('Allow')).resolvesArg(1)
+					await vscode.commands.executeCommand('direnv.reload')
+					const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(file))
+					await vscode.window.showTextDocument(doc)
+					await assertEnvironmentIsLoaded()
+				})
+
 				it('allows and loads the .envrc on save', async () => {
 					sinon.stub(vscode.window, 'showWarningMessage').withArgs(sinon.match.any, sinon.match('Allow')).resolvesArg(1)
 					await vscode.commands.executeCommand('direnv.open')
