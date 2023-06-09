@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+### Added
+- Allow setting extra environment variables
 
 ## [0.12.2] - 2023-06-01
 ### Fixed
