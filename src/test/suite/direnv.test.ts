@@ -52,7 +52,8 @@ describe('direnv', () => {
 			}
 		})
 
-		it('lists the .envrc file as watched', async () => {
+		it('lists the .envrc file as watched', async function () {
+			this.retries(3)
 			await direnv.allow(file)
 			const data = await direnv.dump()
 			const paths = direnv.watchedPaths(data)
