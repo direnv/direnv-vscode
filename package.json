@@ -50,7 +50,7 @@
 				"direnv.extraEnv": {
 					"type": "object",
 					"scope": "machine-overridable",
-					"description": "Environment variables to set before running direnv",
+					"description": "Environment variables that will be set before running direnv",
 					"additionalProperties": {
 						"type": "string"
 					}
