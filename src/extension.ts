@@ -94,8 +94,7 @@ class Direnv implements vscode.Disposable {
 	async open(path?: string) {
 		path ??= await direnv.find()
 		const uri = await uriFor(path)
-		const doc = await vscode.workspace.openTextDocument(uri)
-		await vscode.window.showTextDocument(doc)
+		await vscode.commands.executeCommand('vscode.open', uri)
 		this.didOpen(path)
 	}
 
