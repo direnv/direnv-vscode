@@ -79,7 +79,7 @@ class Direnv implements vscode.Disposable {
 
 	async configurationChanged(event: vscode.ConfigurationChangeEvent) {
 		if (!config.isAffectedBy(event)) return
-		if (config.path.isAffectedBy(event)) {
+		if (config.path.isAffectedBy(event) || config.extraEnv.isAffectedBy(event)) {
 			await this.reload()
 		}
 		if (config.status.isAffectedBy(event)) {

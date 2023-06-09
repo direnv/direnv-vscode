@@ -13,11 +13,16 @@ type Section = {
 
 type Setting<T> = {
 	get(): T
+	isAffectedBy(event: vscode.ConfigurationChangeEvent): boolean
 	open(): Promise<void>
 }
 
 type Settings<T> = Section & {
 	[Name in keyof T]: T[Name] extends Value<infer T> ? Setting<T> : Settings<T[Name]>
+}
+
+function isAffectedBy(path: string[], event: vscode.ConfigurationChangeEvent): boolean {
+	return event.affectsConfiguration(path.join('.'))
 }
 
 async function open(path: string[]): Promise<void> {
@@ -34,6 +39,9 @@ function setting<T>(path: string[], value: Value<T>): Setting<T> {
 			const [root, ...rest] = path
 			return vscode.workspace.getConfiguration(root).get(rest.join('.')) ?? value.value
 		},
+		isAffectedBy(event: vscode.ConfigurationChangeEvent) {
+			return isAffectedBy(path, event)
+		},
 		open() {
 			return open(path)
 		},
@@ -43,7 +51,7 @@ function setting<T>(path: string[], value: Value<T>): Setting<T> {
 function section<T extends object>(path: string[], object: T): Settings<T> {
 	return {
 		isAffectedBy(event: vscode.ConfigurationChangeEvent) {
-			return event.affectsConfiguration(path.join('.'))
+			return isAffectedBy(path, event)
 		},
 		open() {
 			return open(path)
