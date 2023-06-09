@@ -18,7 +18,7 @@ export class CommandNotFoundError extends Error {
 	}
 }
 
-export type Data = Map<string, string>
+export type Data = Map<string, string | null>
 
 interface Watch {
 	path?: string
@@ -31,7 +31,7 @@ export interface Stdio {
 }
 
 function isStdio(e: unknown): e is Stdio {
-	if (typeof e !== 'object' || e === null || e === undefined) {
+	if (typeof e !== 'object' || e === null) {
 		return false
 	}
 	return 'stdout' in e && 'stderr' in e
@@ -113,7 +113,7 @@ export async function dump(): Promise<Data> {
 	} catch (e) {
 		if (isStdio(e)) {
 			const found = /direnv: error (?<path>.+) is blocked./.exec(e.stderr)
-			if (found && found.groups?.path) {
+			if (found?.groups?.path) {
 				// .envrc is blocked, let caller ask user what to do
 				throw new BlockedError(found.groups.path, parse(e.stdout, isInternal))
 			}
@@ -138,7 +138,7 @@ export function watchedPaths(data?: Data): string[] {
 	return watches.map((it) => it.path ?? it.Path).filter((it): it is string => !!it)
 }
 
-function decode<T>(gzenv?: string): T | undefined {
+function decode<T>(gzenv?: string | null): T | undefined {
 	if (!gzenv) return undefined
 	const deflated = Buffer.from(gzenv, 'base64url')
 	const inflated = zlib.inflateSync(deflated)
