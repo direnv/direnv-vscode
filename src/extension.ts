@@ -71,12 +71,6 @@ class Direnv implements vscode.Disposable {
 		}
 	}
 
-	didSave(path: string) {
-		if (this.blockedPath === path) {
-			this.viewBlocked.fire(path)
-		}
-	}
-
 	async configurationChanged(event: vscode.ConfigurationChangeEvent) {
 		if (!config.isAffectedBy(event)) return
 		if (config.path.isAffectedBy(event) || config.extraEnv.isAffectedBy(event)) {
@@ -383,9 +377,6 @@ export function activate(context: vscode.ExtensionContext) {
 		}),
 		vscode.workspace.onDidOpenTextDocument((e) => {
 			instance.didOpen(e.fileName)
-		}),
-		vscode.workspace.onDidSaveTextDocument((e) => {
-			instance.didSave(e.fileName)
 		}),
 		vscode.workspace.onDidChangeConfiguration(async (e) => {
 			await instance.configurationChanged(e)
