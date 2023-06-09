@@ -112,7 +112,7 @@ class Direnv implements vscode.Disposable {
 	private restoreCache() {
 		const checksum = this.cache.get<string>(Cached.checksum)
 		if (checksum === undefined) return
-		const entries = this.cache.get<Array<[string, string]>>(Cached.environment)
+		const entries = this.cache.get<[string, string][]>(Cached.environment)
 		if (!Array.isArray(entries)) return
 		const data = new Map(entries)
 		const hash = new Checksum()

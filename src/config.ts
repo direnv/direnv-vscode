@@ -6,12 +6,12 @@ class Value<T> {
 	constructor(readonly value: T) {}
 }
 
-type Section = {
+interface Section {
 	isAffectedBy(event: vscode.ConfigurationChangeEvent): boolean
 	open(): Promise<void>
 }
 
-type Setting<T> = {
+interface Setting<T> {
 	get(): T
 	isAffectedBy(event: vscode.ConfigurationChangeEvent): boolean
 	open(): Promise<void>

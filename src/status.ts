@@ -2,7 +2,7 @@ import vscode from 'vscode'
 import * as command from './command'
 import config from './config'
 
-export type Delta = {
+export interface Delta {
 	added: number
 	changed: number
 	removed: number

@@ -33,7 +33,7 @@ describe('direnv', () => {
 		})
 
 		it('dumps the allowed .envrc file', async () => {
-			delete process.env['VARIABLE']
+			delete process.env.VARIABLE
 			await direnv.allow(file)
 			const data = await direnv.dump()
 			assert.equal(data.get('VARIABLE'), 'value')

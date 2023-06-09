@@ -20,12 +20,12 @@ export class CommandNotFoundError extends Error {
 
 export type Data = Map<string, string>
 
-type Watch = {
+interface Watch {
 	path?: string
 	['Path']?: string
 }
 
-export type Stdio = {
+export interface Stdio {
 	stdout: string
 	stderr: string
 }
@@ -40,7 +40,7 @@ function isStdio(e: unknown): e is Stdio {
 function isCommandNotFound(e: unknown, path: string): boolean {
 	if (!(e instanceof Error)) return false
 	if (!('path' in e) || !('code' in e)) return false
-	return e['path'] === path && e['code'] === 'ENOENT'
+	return e.path === path && e.code === 'ENOENT'
 }
 
 const echo = {
