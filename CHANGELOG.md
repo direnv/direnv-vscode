@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+### Changed
+- Remove obsolete workarounds for old VS Code versions
 ### Fixed
 - Detect when a blocked .envrc is opened more reliably
 
