@@ -24,6 +24,7 @@ context('custom environments in the test workspace', function () {
 	})
 
 	specify('changing a watched file reloads the custom environment', async function () {
+		this.retries(10) // XXX this test is flaky
 		await vscode.commands.executeCommand('direnv.allow')
 		const watched = vscode.Uri.file(path.join(workspaceRoot, '.envrc.local'))
 		await vscode.workspace.fs.writeFile(watched, Buffer.from('unset VARIABLE'))

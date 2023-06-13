@@ -50,8 +50,8 @@ describe('direnv in the test workspace', function () {
 		}
 	})
 
-	// XXX this test is flaky
-	it.skip('lists the .envrc file as watched', async function () {
+	it('lists the .envrc file as watched', async function () {
+		this.retries(10) // XXX this test is flaky
 		await direnv.allow(file)
 		const data = await direnv.dump()
 		const paths = direnv.watchedPaths(data)
