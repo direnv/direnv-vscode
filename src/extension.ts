@@ -116,9 +116,9 @@ class Direnv implements vscode.Disposable {
 		if (!Array.isArray(entries)) return
 		const data = new Map(entries)
 		const hash = new Checksum()
-		data.forEach((_, key) => {
+		for (const [key] of data) {
 			hash.update(key, process.env[key])
-		})
+		}
 		if (checksum !== hash.digest()) return
 		return data
 	}
@@ -126,10 +126,10 @@ class Direnv implements vscode.Disposable {
 	private async updateCache() {
 		const hash = new Checksum()
 		const entries = new Array<[string, string]>()
-		this.backup.forEach((value, key) => {
+		for (const [key, value] of this.backup) {
 			hash.update(key, value)
 			entries.push([key, process.env[key] ?? ''])
-		})
+		}
 		await this.cache.update(Cached.checksum, hash.digest())
 		await this.cache.update(Cached.environment, entries)
 	}
@@ -162,28 +162,28 @@ class Direnv implements vscode.Disposable {
 		// Avoid updating the environment & cleaning out watchers if data is empty
 		// such as when `direnv.dump()` is called twice without changes
 		if (data.size === 0) return
-		data.forEach((value, key) => {
+		for (const [key, value] of data) {
 			if (!this.backup.has(key)) {
 				// keep the oldest value
 				this.backup.set(key, process.env[key])
 			}
 
-			value ??= '' // can't unset, set to empty instead
-			process.env[key] = value
-			this.environment.replace(key, value)
-		})
+			const val = value ?? '' // can't unset, set to empty instead
+			process.env[key] = val
+			this.environment.replace(key, val)
+		}
 		this.updateWatchers(data)
 	}
 
 	private resetEnvironment(data?: Data) {
-		this.backup.forEach((value, key) => {
+		for (const [key, value] of this.backup) {
 			if (value === undefined) {
 				// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
 				delete process.env[key]
 			} else {
 				process.env[key] = value
 			}
-		})
+		}
 		this.backup.clear()
 		this.environment.clear()
 		this.updateWatchers(data)
@@ -231,7 +231,7 @@ class Direnv implements vscode.Disposable {
 			let added = 0
 			let changed = 0
 			let removed = 0
-			this.backup.forEach((was, key) => {
+			for (const [key, was] of this.backup) {
 				if (isInternal(key)) return
 				if (was === undefined) {
 					added += 1
@@ -250,7 +250,7 @@ class Direnv implements vscode.Disposable {
 				if (now) {
 					this.output.appendLine(`now: ${now}`)
 				}
-			})
+			}
 			state = status.State.loaded({ added, changed, removed })
 		}
 		this.status.update(state)
@@ -377,11 +377,11 @@ export function activate(context: vscode.ExtensionContext) {
 			await instance.open()
 		}),
 		vscode.window.tabGroups.onDidChangeTabs((e) => {
-			e.opened.forEach((tab) => {
+			for (const tab of e.opened) {
 				if (tab.input instanceof vscode.TabInputText) {
 					instance.didOpen(tab.input.uri.path)
 				}
-			})
+			}
 		}),
 		vscode.workspace.onDidOpenTextDocument((e) => {
 			instance.didOpen(e.fileName)
