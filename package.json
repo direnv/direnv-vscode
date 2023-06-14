@@ -118,7 +118,7 @@
 		"package": "vsce package --allow-star-activation",
 		"vscode:prepublish": "run-s 'build -- --minify {@}' --",
 		"clean": "rimraf ./out ./dist",
-		"build": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --platform=node --external:vscode",
+		"build": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --platform=node --target=node16 --external:vscode",
 		"compile:source": "run-s 'build -- --sourcemap {@}' --",
 		"compile:tests": "tsc",
 		"watch:source": "run-s 'compile:source -- --watch {@}' --",
