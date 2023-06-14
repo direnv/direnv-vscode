@@ -8,6 +8,9 @@
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}"
 			],
+			"env": {
+				"PREDEFINED": "value",
+			},
 			"outFiles": [
 				"${workspaceFolder}/dist/**/*.js"
 			],
