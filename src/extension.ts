@@ -232,7 +232,7 @@ class Direnv implements vscode.Disposable {
 			let changed = 0
 			let removed = 0
 			for (const [key, was] of this.backup) {
-				if (isInternal(key)) return
+				if (isInternal(key)) continue
 				if (was === undefined) {
 					added += 1
 					this.output.appendLine(`added: ${key}`)
