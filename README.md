@@ -73,6 +73,15 @@ We also recommend hooking direnv into your shell.
 Custom tasks with type `process` don't pick up on the modified environment.
 Several task provider extensions provide these kinds of tasks.
 
+When direnv *unsets* an environment variable
+then in the terminal it will be set to empty
+(what POSIX calls null).
+[VSCode does not provide API to unset environment variables for the terminal.][vscode-evc]
+The difference between null and unset variables is mostly academic
+but some programs insist on treating them distinctly.
+
+[vscode-evc]: https://code.visualstudio.com/api/references/vscode-api#EnvironmentVariableCollection
+
 direnv executes arbitrary shell scripts
 so this extension requires trusted workspaces.
 

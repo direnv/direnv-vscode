@@ -7,6 +7,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 ### Changed
 - Remove obsolete workarounds for old VS Code versions
+- Unset variables unset by direnv from the extension host
+  (but still not in the terminal)
 ### Fixed
 - Detect when a blocked .envrc is opened more reliably
 

@@ -11,7 +11,7 @@ const enum Cached {
 	checksum = 'direnv.checksum',
 	environment = 'direnv.environment',
 }
-type EnvCache = [string, string][]
+type EnvCache = [string, string | undefined][]
 
 const installationUri = vscode.Uri.parse('https://direnv.net/docs/installation.html')
 
@@ -110,12 +110,12 @@ class Direnv implements vscode.Disposable {
 		void this.load()
 	}
 
-	private restoreCache() {
+	private restoreCache(): Data | undefined {
 		const checksum = this.cache.get<string>(Cached.checksum)
 		if (checksum === undefined) return
 		const entries = this.cache.get<EnvCache>(Cached.environment)
 		if (!Array.isArray(entries)) return
-		const data = new Map(entries)
+		const data = new Map(entries.map(([key, value]) => [key, value ?? null]))
 		const hash = new Checksum()
 		for (const [key] of data) {
 			hash.update(key, process.env[key])
@@ -129,7 +129,7 @@ class Direnv implements vscode.Disposable {
 		const entries: EnvCache = []
 		for (const [key, value] of this.backup) {
 			hash.update(key, value)
-			entries.push([key, process.env[key] ?? ''])
+			entries.push([key, process.env[key]])
 		}
 		await this.cache.update(Cached.checksum, hash.digest())
 		await this.cache.update(Cached.environment, entries)
@@ -169,9 +169,13 @@ class Direnv implements vscode.Disposable {
 				this.backup.set(key, process.env[key])
 			}
 
-			const val = value ?? '' // can't unset, set to empty instead
-			process.env[key] = val
-			this.environment.replace(key, val)
+			this.environment.replace(key, value ?? '') // can't unset, set to empty instead
+			if (value === null) {
+				// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+				delete process.env[key]
+			} else {
+				process.env[key] = value
+			}
 		}
 		this.updateWatchers(data)
 	}
