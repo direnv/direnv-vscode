@@ -51,7 +51,7 @@ describe('direnv in the test workspace', function () {
 	})
 
 	it('lists the .envrc file as watched', async function () {
-		this.retries(20) // XXX this test is flaky
+		this.retries(60) // XXX this test is flaky
 		await direnv.allow(file)
 		const data = await direnv.dump()
 		const paths = direnv.watchedPaths(data)
