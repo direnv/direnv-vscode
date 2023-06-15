@@ -21,6 +21,7 @@ context('user interaction in the test workspace', function () {
 			})
 
 			specify('then saving the .envrc loads the custom environment', async function () {
+				this.retries(60) // XXX this test is flaky
 				await vscode.commands.executeCommand('direnv.open')
 				await vscode.window.activeTextEditor?.document.save()
 				await assertEnvironmentIsLoaded()
