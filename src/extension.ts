@@ -332,12 +332,8 @@ class Direnv implements vscode.Disposable {
 }
 
 function message(err: unknown) {
-	if (typeof err === 'string') {
-		return err
-	}
-	if (err instanceof Error) {
-		return err.message
-	}
+	if (typeof err === 'string') return err
+	if (err instanceof Error) return err.message
 	console.error('unhandled error', err)
 	return
 }
