@@ -194,7 +194,11 @@ class Direnv implements vscode.Disposable {
 	}
 
 	private updateTerminalEnv(key: string, value: string | null) {
-		this.environment.replace(key, value ?? '') // can't unset, set to empty instead
+		if (value === null && this.backup.get(key) === undefined) {
+			this.environment.delete(key)
+		} else {
+			this.environment.replace(key, value ?? '') // can't unset, set to empty instead
+		}
 	}
 
 	private async load() {
