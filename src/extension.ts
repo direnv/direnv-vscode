@@ -170,28 +170,27 @@ class Direnv implements vscode.Disposable {
 			}
 
 			this.environment.replace(key, value ?? '') // can't unset, set to empty instead
-			if (value === null) {
-				// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-				delete process.env[key]
-			} else {
-				process.env[key] = value
-			}
+			this.updateProcessEnv(key, value)
 		}
 		this.updateWatchers(data)
 	}
 
 	private resetEnvironment(data?: Data) {
 		for (const [key, value] of this.backup) {
-			if (value === undefined) {
-				// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-				delete process.env[key]
-			} else {
-				process.env[key] = value
-			}
+			this.updateProcessEnv(key, value)
 		}
 		this.backup.clear()
 		this.environment.clear()
 		this.updateWatchers(data)
+	}
+
+	private updateProcessEnv(key: string, value: string | null | undefined) {
+		if (value === null || value === undefined) {
+			// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+			delete process.env[key]
+		} else {
+			process.env[key] = value
+		}
 	}
 
 	private async load() {
