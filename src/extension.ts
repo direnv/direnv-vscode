@@ -169,7 +169,7 @@ class Direnv implements vscode.Disposable {
 				this.backup.set(key, process.env[key])
 			}
 
-			this.environment.replace(key, value ?? '') // can't unset, set to empty instead
+			this.updateTerminalEnv(key, value)
 			this.updateProcessEnv(key, value)
 		}
 		this.updateWatchers(data)
@@ -191,6 +191,10 @@ class Direnv implements vscode.Disposable {
 		} else {
 			process.env[key] = value
 		}
+	}
+
+	private updateTerminalEnv(key: string, value: string | null) {
+		this.environment.replace(key, value ?? '') // can't unset, set to empty instead
 	}
 
 	private async load() {
