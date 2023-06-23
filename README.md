@@ -80,7 +80,7 @@ then in the terminal it will be set to empty
 The difference between null and unset variables is mostly academic
 but some programs insist on treating them distinctly.
 
-[vscode-evc]: https://code.visualstudio.com/api/references/vscode-api#EnvironmentVariableCollection
+[vscode-evc]: https://github.com/microsoft/vscode/issues/185200
 
 direnv executes arbitrary shell scripts
 so this extension requires trusted workspaces.
