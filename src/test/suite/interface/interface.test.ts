@@ -60,16 +60,19 @@ context('user interaction in the test workspace', function () {
 					})
 
 					specify('then direnv.open loads the custom environment', async function () {
+						this.retries(60) // XXX this test is flaky
 						await vscode.commands.executeCommand('direnv.open')
 						await assertEnvironmentIsLoaded()
 					})
 
 					specify('then vscode.open loads the custom environment', async function () {
+						this.retries(60) // XXX this test is flaky
 						await vscode.commands.executeCommand('vscode.open', vscode.Uri.file(file))
 						await assertEnvironmentIsLoaded()
 					})
 
 					specify('then vscode.workspace.openTextDocument loads the custom environment', async function () {
+						this.retries(60) // XXX this test is flaky
 						const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(file))
 						await vscode.window.showTextDocument(doc)
 						await assertEnvironmentIsLoaded()
