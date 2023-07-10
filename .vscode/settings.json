@@ -9,6 +9,7 @@
 		"out": true, // set this to false to include "out" folder in search results
 		"dist": true, // set this to false to include "dist" folder in search results
 	},
+	"editor.formatOnSave": true,
 	// Turn off tsc task auto detection since we have the necessary tasks as npm scripts
 	"typescript.tsc.autoDetect": "off",
 	"yaml.schemas": {
@@ -18,7 +19,7 @@
 	"[javascript][typescript][yaml]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode",
 	},
-    "[json][jsonc]": {
-        "editor.defaultFormatter": "vscode.json-language-features",
-    },
+	"[json][jsonc]": {
+		"editor.defaultFormatter": "vscode.json-language-features",
+	},
 }
