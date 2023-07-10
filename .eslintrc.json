@@ -13,7 +13,7 @@
 		"plugin:@typescript-eslint/recommended",
 		"plugin:@typescript-eslint/recommended-requiring-type-checking",
 		"plugin:@typescript-eslint/strict",
-		"plugin:prettier/recommended"
+		"prettier"
 	],
 	"rules": {
 		"@typescript-eslint/naming-convention": "warn",
