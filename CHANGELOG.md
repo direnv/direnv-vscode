@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+- Add loadEnvrc command which enables the user, to load any .envrc file
 
 ## [0.14.0] - 2023-06-23
 ### Changed
