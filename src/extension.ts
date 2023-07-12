@@ -30,7 +30,10 @@ class Direnv implements vscode.Disposable {
 	private cwdOverride?: string
 	private watchers = vscode.Disposable.from()
 
-	constructor(private context: vscode.ExtensionContext, private status: status.Item) {
+	constructor(
+		private context: vscode.ExtensionContext,
+		private status: status.Item,
+	) {
 		this.willLoad.event(() => this.onWillLoad())
 		this.didLoad.event((e) => this.onDidLoad(e))
 		this.loaded.event(() => this.onLoaded())

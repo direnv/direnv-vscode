@@ -7,7 +7,10 @@ import config from './config'
 const execFile = promisify(cp.execFile)
 
 export class BlockedError extends Error {
-	constructor(public readonly path: string, public readonly data: Data) {
+	constructor(
+		public readonly path: string,
+		public readonly data: Data,
+	) {
 		super(`${path} is blocked`)
 	}
 }
