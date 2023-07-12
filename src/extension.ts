@@ -169,6 +169,7 @@ class Direnv implements vscode.Disposable {
 
 	private async resetCache() {
 		await this.cache.update(Cached.environment, undefined)
+		await this.cache.update(Cached.cwdOverride, undefined)
 	}
 
 	private createWatcher(file: string) {
@@ -213,6 +214,7 @@ class Direnv implements vscode.Disposable {
 		}
 		this.backup.clear()
 		this.environment.clear()
+		this.cwdOverride = undefined
 		this.updateWatchers(data)
 	}
 
