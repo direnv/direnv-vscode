@@ -6,6 +6,7 @@ export interface Delta {
 	added: number
 	changed: number
 	removed: number
+	currentFolder: string
 }
 
 export class State {
@@ -19,7 +20,8 @@ export class State {
 	static loading = new State('$(folder)$(sync~spin)', 'direnv loading…')
 	static empty = new State('$(folder)', 'direnv empty\nCreate…', command.Direnv.create)
 	static loaded(delta: Delta): State {
-		let text = '$(folder-active)'
+		// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+		let text = `$(folder-active) ${delta.currentFolder}`
 		if (config.status.showChangesCount.get()) {
 			text += ` +${delta.added}/~${delta.changed}/-${delta.removed}`
 		}

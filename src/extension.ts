@@ -102,9 +102,7 @@ class Direnv implements vscode.Disposable {
 				canSelectFiles: true,
 				canSelectFolders: false,
 				canSelectMany: false,
-				defaultUri: vscode.Uri.file(
-					vscode.workspace.workspaceFolders?.[0].uri.path ?? process.cwd(),
-				),
+				defaultUri: vscode.Uri.file(direnv.cwd()),
 				openLabel: 'Load',
 				title: 'Select .envrc to load',
 			}
@@ -297,7 +295,15 @@ class Direnv implements vscode.Disposable {
 					this.output.appendLine(`now: ${now}`)
 				}
 			}
-			state = status.State.loaded({ added, changed, removed })
+			let cwd = ''
+			this.cwdOverride ? (cwd = this.cwdOverride) : (cwd = direnv.cwd())
+
+			state = status.State.loaded({
+				added,
+				changed,
+				removed,
+				currentFolder: cwd.substring(cwd.lastIndexOf('/') + 1),
+			})
 		}
 		this.status.update(state)
 	}

@@ -47,7 +47,7 @@ const echo = {
 	['EDITOR']: 'echo',
 }
 
-function cwd() {
+export function cwd(): string {
 	return vscode.workspace.workspaceFolders?.[0].uri.path ?? process.cwd()
 }
 
