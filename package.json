@@ -144,7 +144,7 @@
 		"@vscode/test-electron": "^2.3.3",
 		"@vscode/vsce": "^2.19.0",
 		"esbuild": "^0.18.13",
-		"eslint": "^8.44.0",
+		"eslint": "^8.45.0",
 		"eslint-config-prettier": "^8.8.0",
 		"glob": "^10.3.3",
 		"mocha": "^10.2.0",
