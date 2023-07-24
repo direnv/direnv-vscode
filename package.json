@@ -143,7 +143,7 @@
 		"@typescript-eslint/parser": "^6.1.0",
 		"@vscode/test-electron": "^2.3.3",
 		"@vscode/vsce": "^2.19.0",
-		"esbuild": "^0.18.15",
+		"esbuild": "^0.18.16",
 		"eslint": "^8.45.0",
 		"eslint-config-prettier": "^8.8.0",
 		"glob": "^10.3.3",
