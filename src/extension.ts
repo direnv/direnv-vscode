@@ -99,7 +99,6 @@ class Direnv implements vscode.Disposable {
 	}
 
 	async loadEnvrc(uri?: vscode.Uri) {
-		let envrcPath = ''
 		if (!uri) {
 			const options: vscode.OpenDialogOptions = {
 				canSelectFiles: true,
@@ -110,20 +109,17 @@ class Direnv implements vscode.Disposable {
 				title: 'Select .envrc to load',
 			}
 			const uris = await vscode.window.showOpenDialog(options)
-
-			envrcPath = uris ? uris[0].path : ''
-		} else {
-			envrcPath = uri.path
+			if (uris === undefined) return
+			if (uris.length !== 1) return
+			uri = uris[0]
 		}
 
-		if (envrcPath) {
-			if (envrcPath.substring(envrcPath.lastIndexOf('/') + 1) !== '.envrc') {
-				await vscode.window.showErrorMessage('direnv error: Not a .envrc!')
-				return
-			}
-			this.cwdOverride = envrcPath.substring(0, envrcPath.lastIndexOf('/'))
-			this.willLoad.fire()
+		if (path.basename(uri.path) !== '.envrc') {
+			await vscode.window.showErrorMessage('direnv: Not a .envrc!')
+			return
 		}
+		this.cwdOverride = path.dirname(uri.path)
+		this.willLoad.fire()
 	}
 
 	async reload() {
