@@ -10,6 +10,7 @@ import * as status from './status'
 const enum Cached {
 	checksum = 'direnv.checksum',
 	environment = 'direnv.environment',
+	cwdOverride = 'direnv.cwdOverride',
 }
 type EnvCache = [string, string | undefined][]
 
@@ -26,6 +27,7 @@ class Direnv implements vscode.Disposable {
 	private viewBlocked = new vscode.EventEmitter<string>()
 	private didUpdate = new vscode.EventEmitter<void>()
 	private blockedPath?: string
+	private cwdOverride?: string
 	private watchers = vscode.Disposable.from()
 
 	constructor(
@@ -96,6 +98,31 @@ class Direnv implements vscode.Disposable {
 		this.didOpen(path)
 	}
 
+	async loadEnvrc(uri?: vscode.Uri) {
+		if (!uri) {
+			const options: vscode.OpenDialogOptions = {
+				canSelectFiles: true,
+				canSelectFolders: false,
+				canSelectMany: false,
+				defaultUri: vscode.Uri.file(direnv.cwd()),
+				filters: { ['.envrc']: ['envrc'] },
+				openLabel: 'Load',
+				title: 'Select .envrc to load',
+			}
+			const uris = await vscode.window.showOpenDialog(options)
+			if (uris === undefined) return
+			if (uris.length !== 1) return
+			uri = uris[0]
+		}
+
+		if (path.basename(uri.path) !== '.envrc') {
+			await vscode.window.showErrorMessage('direnv: Not a .envrc!')
+			return
+		}
+		this.cwdOverride = path.dirname(uri.path)
+		this.willLoad.fire()
+	}
+
 	async reload() {
 		await this.resetCache()
 		await this.load()
@@ -114,6 +141,7 @@ class Direnv implements vscode.Disposable {
 	}
 
 	private restoreCache(): Data | undefined {
+		this.cwdOverride = this.cache.get<string>(Cached.cwdOverride)
 		const checksum = this.cache.get<string>(Cached.checksum)
 		if (checksum === undefined) return
 		const entries = this.cache.get<EnvCache>(Cached.environment)
@@ -136,10 +164,12 @@ class Direnv implements vscode.Disposable {
 		}
 		await this.cache.update(Cached.checksum, hash.digest())
 		await this.cache.update(Cached.environment, entries)
+		await this.cache.update(Cached.cwdOverride, this.cwdOverride)
 	}
 
 	private async resetCache() {
 		await this.cache.update(Cached.environment, undefined)
+		await this.cache.update(Cached.cwdOverride, undefined)
 	}
 
 	private createWatcher(file: string) {
@@ -184,6 +214,7 @@ class Direnv implements vscode.Disposable {
 		}
 		this.backup.clear()
 		this.environment.clear()
+		this.cwdOverride = undefined
 		this.updateWatchers(data)
 	}
 
@@ -223,7 +254,7 @@ class Direnv implements vscode.Disposable {
 		this.blockedPath = undefined
 		this.status.update(status.State.loading)
 		try {
-			const data = await direnv.dump()
+			const data = await direnv.dump(this.cwdOverride)
 			this.didLoad.fire(data)
 		} catch (err) {
 			if (err instanceof direnv.BlockedError) {
@@ -266,7 +297,13 @@ class Direnv implements vscode.Disposable {
 					this.output.appendLine(`now: ${now}`)
 				}
 			}
-			state = status.State.loaded({ added, changed, removed })
+
+			state = status.State.loaded({
+				added,
+				changed,
+				removed,
+				currentFolder: this.cwdOverride,
+			})
 		}
 		this.status.update(state)
 	}
@@ -387,6 +424,12 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand(command.Direnv.open, async () => {
 			await instance.open()
 		}),
+		vscode.commands.registerCommand(
+			command.Direnv.loadEnvrc,
+			async (uri?: vscode.Uri) => {
+				await instance.loadEnvrc(uri)
+			},
+		),
 		vscode.window.tabGroups.onDidChangeTabs((e) => {
 			for (const tab of e.opened) {
 				if (tab.input instanceof vscode.TabInputText) {

@@ -54,6 +54,9 @@ since direnv executes arbitrary shell script.**
 *	"direnv: Reset and reload environment"
 	resets the custom environment for the workspace, then reloads it.
 
+*	"direnv: Load .envrc file"
+	loads a custom environment from the specified .envrc file
+
 ### Status Item
 
 The extension displays a status icon

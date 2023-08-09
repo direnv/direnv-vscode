@@ -5,4 +5,5 @@ export const enum Direnv {
 	block = 'direnv.block',
 	create = 'direnv.create',
 	open = 'direnv.open',
+	loadEnvrc = 'direnv.loadEnvrc',
 }

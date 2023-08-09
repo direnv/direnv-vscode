@@ -50,14 +50,18 @@ const echo = {
 	['EDITOR']: 'echo',
 }
 
-function cwd() {
+export function cwd(): string {
 	return vscode.workspace.workspaceFolders?.[0].uri.path ?? process.cwd()
 }
 
-async function direnv(args: string[], env?: NodeJS.ProcessEnv): Promise<Stdio> {
+async function direnv(
+	args: string[],
+	env?: NodeJS.ProcessEnv,
+	cwdOverride?: string,
+): Promise<Stdio> {
 	const options: cp.ExecOptionsWithStringEncoding = {
 		encoding: 'utf8',
-		cwd: cwd(), // same as default cwd for shell tasks
+		cwd: cwdOverride ?? cwd(),
 		env: {
 			...process.env,
 			['TERM']: 'dumb',
@@ -109,9 +113,9 @@ export async function find(): Promise<string> {
 	}
 }
 
-export async function dump(): Promise<Data> {
+export async function dump(cwdOverride?: string): Promise<Data> {
 	try {
-		const { stdout } = await direnv(['export', 'json'])
+		const { stdout } = await direnv(['export', 'json'], undefined, cwdOverride)
 		return parse(stdout)
 	} catch (e) {
 		if (isStdio(e)) {

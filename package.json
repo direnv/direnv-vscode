@@ -97,6 +97,10 @@
 			{
 				"command": "direnv.reset",
 				"title": "direnv: Reset and reload environment"
+			},
+			{
+				"command": "direnv.loadEnvrc",
+				"title": "direnv: Load .envrc file"
 			}
 		],
 		"menus": {
@@ -108,6 +112,13 @@
 				{
 					"command": "direnv.block",
 					"when": "editorLangId == shellscript"
+				}
+			],
+			"explorer/context": [
+				{
+					"when": "resourceFilename == .envrc",
+					"command": "direnv.loadEnvrc",
+					"group": "5_direnv@1"
 				}
 			]
 		}

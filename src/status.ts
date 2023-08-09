@@ -1,11 +1,14 @@
+import path from 'path'
 import vscode from 'vscode'
 import * as command from './command'
+import * as direnv from './direnv'
 import config from './config'
 
 export type Delta = {
 	added: number
 	changed: number
 	removed: number
+	currentFolder?: string
 }
 
 export class State {
@@ -20,14 +23,22 @@ export class State {
 	static empty = new State('$(folder)', 'direnv empty\nCreate…', command.Direnv.create)
 	static loaded(delta: Delta): State {
 		let text = '$(folder-active)'
+		const tooltip = [
+			`direnv loaded: ${delta.added} added, ${delta.changed} changed, ${delta.removed} removed`,
+		]
+		if (delta.currentFolder) {
+			const folder = path.relative(direnv.cwd(), delta.currentFolder)
+			if (folder) {
+				text += ` ${folder}`
+				tooltip.push(`in: ${folder}`)
+			}
+		}
 		if (config.status.showChangesCount.get()) {
 			text += ` +${delta.added}/~${delta.changed}/-${delta.removed}`
 		}
-		return new State(
-			text,
-			`direnv loaded: ${delta.added} added, ${delta.changed} changed, ${delta.removed} removed\nReload…`,
-			command.Direnv.reload,
-			() => State.loaded(delta),
+		tooltip.push('Reload…')
+		return new State(text, tooltip.join(`\n`), command.Direnv.reload, () =>
+			State.loaded(delta),
 		)
 	}
 	static blocked(path: string): State {
