@@ -105,6 +105,7 @@ class Direnv implements vscode.Disposable {
 				canSelectFolders: false,
 				canSelectMany: false,
 				defaultUri: vscode.Uri.file(direnv.cwd()),
+				filters: { ['.envrc']: ['envrc'] },
 				openLabel: 'Load',
 				title: 'Select .envrc to load',
 			}
