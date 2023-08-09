@@ -28,11 +28,15 @@ export class State {
 		if (config.status.showChangesCount.get()) {
 			text += ` +${delta.added}/~${delta.changed}/-${delta.removed}`
 		}
-		return new State(
-			text,
-			`direnv loaded: ${delta.added} added, ${delta.changed} changed, ${delta.removed} removed\nReload…`,
-			command.Direnv.reload,
-			() => State.loaded(delta),
+		const tooltip = [
+			`direnv loaded: ${delta.added} added, ${delta.changed} changed, ${delta.removed} removed`,
+		]
+		if (delta.currentFolder) {
+			tooltip.push(`in ${delta.currentFolder}`)
+		}
+		tooltip.push('Reload…')
+		return new State(text, tooltip.join(`\n`), command.Direnv.reload, () =>
+			State.loaded(delta),
 		)
 	}
 	static blocked(path: string): State {
