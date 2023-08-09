@@ -131,7 +131,7 @@
 		"clean": "rimraf ./out ./dist",
 		"build": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --platform=node --target=node16 --external:vscode",
 		"eslint": "eslint --cache --cache-location ./.cache/eslint/ .",
-		"prettier": "prettier --cache --cache-location ./.cache/prettier/ ./src",
+		"prettier": "prettier --cache --cache-location ./.cache/prettier/ .",
 		"compile:source": "run-s 'build -- --sourcemap {@}' --",
 		"compile:tests": "tsc",
 		"watch:source": "run-s 'compile:source -- --watch {@}' --",
