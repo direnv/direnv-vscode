@@ -113,7 +113,6 @@
 					"command": "direnv.block",
 					"when": "editorLangId == shellscript"
 				}
-
 			],
 			"explorer/context": [
 				{
