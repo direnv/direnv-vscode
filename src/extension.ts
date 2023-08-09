@@ -300,14 +300,12 @@ class Direnv implements vscode.Disposable {
 					this.output.appendLine(`now: ${now}`)
 				}
 			}
-			let cwd = ''
-			this.cwdOverride ? (cwd = this.cwdOverride) : (cwd = direnv.cwd())
 
 			state = status.State.loaded({
 				added,
 				changed,
 				removed,
-				currentFolder: cwd.substring(cwd.lastIndexOf('/') + 1),
+				currentFolder: this.cwdOverride,
 			})
 		}
 		this.status.update(state)
