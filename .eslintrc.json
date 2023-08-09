@@ -16,9 +16,9 @@
 		"prettier"
 	],
 	"rules": {
-		"@typescript-eslint/naming-convention": "warn",
-		"eqeqeq": "warn",
-		"no-throw-literal": "warn"
+		"@typescript-eslint/naming-convention": "error",
+		"eqeqeq": "error",
+		"no-throw-literal": "error"
 	},
 	"ignorePatterns": [
 		"out",
