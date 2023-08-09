@@ -23,12 +23,12 @@ export class CommandNotFoundError extends Error {
 
 export type Data = Map<string, string | null>
 
-interface Watch {
+type Watch = {
 	path?: string
 	['Path']?: string
 }
 
-export interface Stdio {
+export type Stdio = {
 	stdout: string
 	stderr: string
 }
