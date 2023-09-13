@@ -1,4 +1,5 @@
 import cp from 'child_process'
+import os from 'os'
 import { promisify } from 'util'
 import vscode from 'vscode'
 import zlib from 'zlib'
@@ -51,7 +52,7 @@ const echo = {
 }
 
 export function cwd(): string {
-	return vscode.workspace.workspaceFolders?.[0].uri.path ?? process.cwd()
+	return vscode.workspace.workspaceFolders?.[0].uri.path ?? os.homedir()
 }
 
 async function direnv(
