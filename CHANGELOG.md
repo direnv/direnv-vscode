@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+
+## [0.15.2] - 2023-09-13
 ### Fixed
 - Windows without workspaces load from the user home directory
 
@@ -127,7 +129,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.0.1] - 2021-11-23
 - Initial release
 
-[Unreleased]: https://github.com/direnv/direnv-vscode/compare/v0.15.1...HEAD
+[Unreleased]: https://github.com/direnv/direnv-vscode/compare/v0.15.2...HEAD
+[0.15.2]: https://github.com/direnv/direnv-vscode/compare/v0.15.1...v0.15.2
 [0.15.1]: https://github.com/direnv/direnv-vscode/compare/v0.15.0...v0.15.1
 [0.15.0]: https://github.com/direnv/direnv-vscode/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/direnv/direnv-vscode/compare/v0.13.0...v0.14.0
