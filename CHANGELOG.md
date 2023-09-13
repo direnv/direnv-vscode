@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+### Fixed
+- Windows without workspaces load from the user home directory
 
 ## [0.15.0] - 2023-09-12
 ### Added
