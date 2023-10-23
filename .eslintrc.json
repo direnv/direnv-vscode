@@ -21,7 +21,6 @@
 			"error",
 			"type"
 		],
-		"@typescript-eslint/naming-convention": "error",
 		"eqeqeq": "error",
 		"no-throw-literal": "error"
 	},
