@@ -6,6 +6,8 @@ import zlib from 'zlib'
 import config from './config'
 
 const execFile = promisify(cp.execFile)
+const exec = promisify(cp.exec)
+const isWindows = process.platform === "win32";
 
 export class BlockedError extends Error {
 	constructor(
@@ -72,13 +74,28 @@ async function direnv(
 	}
 	const command = config.path.executable.get()
 	try {
-		return await execFile(command, args, options)
+		return await execute(command, args, options)
 	} catch (e) {
 		if (isCommandNotFound(e, command)) {
 			throw new CommandNotFoundError(command)
 		}
 		throw e
 	}
+}
+
+async function execute(command: string, args: readonly string[], options: cp.ExecOptions) {
+    return isWindows?
+		execCommandWindows(command, args, options) :
+		execCommand(command, args, options)
+}
+
+async function execCommand(command: string, args: readonly string[], options: cp.ExecOptions) {
+	return execFile(command, args, options)
+}
+
+async function execCommandWindows(command: string, args: readonly string[], options: cp.ExecOptions) {
+	let _command = command + " " + args.join(" ")
+	return exec(_command , options)
 }
 
 export async function test(): Promise<void> {
