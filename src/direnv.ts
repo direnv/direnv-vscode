@@ -94,7 +94,7 @@ async function execCommand(command: string, args: readonly string[], options: cp
 }
 
 async function execCommandWindows(command: string, args: readonly string[], options: cp.ExecOptions) {
-	let _command = command + " " + args.join(" ")
+	const _command = command + " " + args.join(" ")
 	return exec(_command , options)
 }
 
