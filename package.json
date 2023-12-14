@@ -152,7 +152,7 @@
 		"@types/vscode": "1.71.x",
 		"@typescript-eslint/eslint-plugin": "^6.14.0",
 		"@typescript-eslint/parser": "^6.14.0",
-		"@vscode/test-electron": "^2.3.6",
+		"@vscode/test-electron": "^2.3.8",
 		"@vscode/vsce": "^2.22.0",
 		"esbuild": "^0.19.9",
 		"eslint": "^8.55.0",
