@@ -52,7 +52,7 @@ const echo = {
 }
 
 export function cwd(): string {
-	return vscode.workspace.workspaceFolders?.[0].uri.path ?? os.homedir()
+	return vscode.workspace.workspaceFolders?.[0].uri.fsPath ?? os.homedir()
 }
 
 async function direnv(
