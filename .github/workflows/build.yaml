@@ -35,7 +35,7 @@ jobs:
           npm run package -- --out "${{ env.artifact_name }}"
 
       - name: Upload
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: direnv-vscode
           path: ${{ env.artifact_name }}
