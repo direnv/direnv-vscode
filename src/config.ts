@@ -69,6 +69,7 @@ function section<T extends object>(path: string[], object: T): Settings<T> {
 
 export default section([root], {
 	extraEnv: value({}),
+	watchForChanges: value(true),
 	path: {
 		executable: value('direnv'),
 	},
