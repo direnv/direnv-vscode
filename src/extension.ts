@@ -186,9 +186,11 @@ class Direnv implements vscode.Disposable {
 
 	private updateWatchers(data?: Data) {
 		this.watchers.dispose()
-		this.watchers = vscode.Disposable.from(
-			...direnv.watchedPaths(data).map((it) => this.createWatcher(it)),
-		)
+		if (config.watchForChanges.get()) {
+			this.watchers = vscode.Disposable.from(
+				...direnv.watchedPaths(data).map((it) => this.createWatcher(it)),
+			)
+		}
 	}
 
 	private updateEnvironment(data?: Data) {

@@ -55,6 +55,11 @@
 						"type": "string"
 					}
 				},
+				"direnv.watchForChanges": {
+					"type": "boolean",
+					"default": true,
+					"description": "Automatically reload environment on file changes"
+				},
 				"direnv.path.executable": {
 					"type": "string",
 					"default": "direnv",

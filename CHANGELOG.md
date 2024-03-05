@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+### Added
+- Add direnv.watchForChanges setting
 
 ## [0.16.0] - 2024-01-18
 ### Added
