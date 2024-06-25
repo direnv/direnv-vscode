@@ -155,7 +155,7 @@
 		"@types/node": "16.x",
 		"@types/sinon": "^17.0.3",
 		"@types/vscode": "1.71.x",
-		"@typescript-eslint/eslint-plugin": "^7.13.0",
+		"@typescript-eslint/eslint-plugin": "^7.14.1",
 		"@typescript-eslint/parser": "^7.13.1",
 		"@vscode/test-electron": "^2.4.0",
 		"@vscode/vsce": "^2.27.0",
