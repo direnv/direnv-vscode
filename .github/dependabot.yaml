@@ -6,8 +6,12 @@ updates:
       interval: daily
     open-pull-requests-limit: 100
     ignore:
-      - dependency-name: '@types/vscode'  # determined by engines.vscode
-      - dependency-name: '@types/node'    # determined by engines.vscode's electron
+      - dependency-name: "@types/vscode" # determined by engines.vscode
+      - dependency-name: "@types/node" # determined by engines.vscode's electron
+    groups:
+      typescript-eslint:
+        patterns:
+          - "@typescript-eslint/*"
   - package-ecosystem: github-actions
     directory: /
     schedule:
