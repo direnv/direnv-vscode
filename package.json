@@ -28,7 +28,7 @@
 		"url": "https://github.com/direnv/direnv-vscode"
 	},
 	"engines": {
-		"vscode": "^1.71.0"
+		"vscode": "^1.91.0"
 	},
 	"categories": [
 		"Other"
@@ -134,7 +134,7 @@
 		"package": "vsce package --allow-star-activation",
 		"vscode:prepublish": "run-s \"build -- --minify {@}\" --",
 		"clean": "rimraf ./out ./dist",
-		"build": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --platform=node --target=node16 --external:vscode",
+		"build": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --platform=node --target=node20 --external:vscode",
 		"eslint": "eslint --cache --cache-location ./.cache/eslint/ .",
 		"prettier": "prettier --cache --cache-location ./.cache/prettier/ .",
 		"compile:source": "run-s \"build -- --sourcemap {@}\" --",
@@ -152,7 +152,7 @@
 	},
 	"devDependencies": {
 		"@types/mocha": "^10.0.7",
-		"@types/node": "16.x",
+		"@types/node": "20.x",
 		"@types/sinon": "^17.0.3",
 		"@types/vscode": "1.71.x",
 		"@typescript-eslint/eslint-plugin": "^7.15.0",
