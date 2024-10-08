@@ -151,7 +151,7 @@
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
-		"@types/mocha": "^10.0.7",
+		"@types/mocha": "^10.0.9",
 		"@types/node": "16.x",
 		"@types/sinon": "^17.0.3",
 		"@types/vscode": "1.71.x",
