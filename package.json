@@ -168,6 +168,6 @@
 		"prettier": "^3.3.3",
 		"rimraf": "^5.0.7",
 		"sinon": "^18.0.0",
-		"typescript": "^5.5.4"
+		"typescript": "^5.6.3"
 	}
 }
