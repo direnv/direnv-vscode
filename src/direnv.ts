@@ -52,7 +52,12 @@ const echo = {
 }
 
 export function cwd(): string {
-	return vscode.workspace.workspaceFolders?.[0].uri.fsPath ?? os.homedir()
+	return (
+		vscode.workspace.workspaceFolders?.[0].uri.fsPath.replace(
+			/^(\w)/g,
+			(_: string, driveLetter: string) => driveLetter.toUpperCase(),
+		) ?? os.homedir()
+	)
 }
 
 async function direnv(
