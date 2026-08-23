@@ -41,10 +41,6 @@ export async function runSuite(workspaceRoot: string, testRoot: string, testPatt
 		await vscode.commands.executeCommand('workbench.action.closeAllEditors')
 	}
 
-	async function closeWorkspace() {
-		await vscode.commands.executeCommand('workbench.action.closeFolder')
-	}
-
 	async function resetExtension() {
 		await vscode.commands.executeCommand('direnv.reset')
 	}
@@ -68,9 +64,6 @@ export async function runSuite(workspaceRoot: string, testRoot: string, testPatt
 				await closeTabs()
 				await removeWatched()
 				await blockWorkspace()
-			},
-			async afterAll() {
-				await closeWorkspace()
 			},
 		},
 	})
