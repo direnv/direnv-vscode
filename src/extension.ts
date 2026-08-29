@@ -233,7 +233,11 @@ class Direnv implements vscode.Disposable {
 		if (value === null && this.backup.get(key) === undefined) {
 			this.environment.delete(key)
 		} else {
-			this.environment.replace(key, value ?? '') // can't unset, set to empty instead
+			// can't unset, set to empty instead
+			this.environment.replace(key, value ?? '', {
+				applyAtProcessCreation: true,
+				applyAtShellIntegration: true,
+			})
 		}
 	}
 
