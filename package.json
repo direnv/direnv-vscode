@@ -60,6 +60,11 @@
 					"default": true,
 					"description": "Automatically reload environment on file changes"
 				},
+				"direnv.terminalEnvironment": {
+					"type": "boolean",
+					"default": true,
+					"description": "Apply the environment to integrated terminals"
+				},
 				"direnv.path.executable": {
 					"type": "string",
 					"default": "direnv",
