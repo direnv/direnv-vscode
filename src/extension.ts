@@ -82,6 +82,13 @@ class Direnv implements vscode.Disposable {
 		if (config.path.isAffectedBy(event) || config.extraEnv.isAffectedBy(event)) {
 			await this.reload()
 		}
+		if (config.terminalEnvironment.isAffectedBy(event)) {
+			if (config.terminalEnvironment.get()) {
+				await this.load()
+			} else {
+				this.environment.clear()
+			}
+		}
 		if (config.status.isAffectedBy(event)) {
 			this.status.refresh()
 		}
@@ -230,6 +237,7 @@ class Direnv implements vscode.Disposable {
 	}
 
 	private updateTerminalEnv(key: string, value: string | null) {
+		if (!config.terminalEnvironment.get()) return
 		if (value === null && this.backup.get(key) === undefined) {
 			this.environment.delete(key)
 		} else {
